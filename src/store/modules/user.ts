@@ -72,6 +72,7 @@ class User extends VuexModule implements IUserState {
 
   @Action
   public async GetUserInfo() {
+   
     if (this.token === '') {
       throw Error('GetUserInfo: token is undefined!')
     }

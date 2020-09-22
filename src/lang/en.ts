@@ -65,6 +65,7 @@ export default {
     recentitems: 'Recent Items',
     profile: 'Profile',
     forms: 'Forms',
+    formdesigner:'Form Designer',
     workflows: 'Workflows',
     mywork: 'MyWork',
     entities: 'Entities',

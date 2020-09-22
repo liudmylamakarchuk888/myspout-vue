@@ -76,10 +76,11 @@ export default class extends Vue {
       },
     ],
   };
+
   private selected: any;
-  private hasSelectedRows: boolean;
+  private hasSelectedRows: boolean|undefined;
   private totalRows: any;
-  private currentPage: number;
+  private currentPage: number|undefined;
 
   onRowClick(row: any) {
     console.log(row);
@@ -95,6 +96,9 @@ export default class extends Vue {
     // Trigger pagination to update the number of buttons/pages due to filtering
     this.totalRows = filteredItems.length;
     this.currentPage = 1;
+  }
+  mounted(){
+    console.log('recent items '+ this.$store.state['recentItems'].length)
   }
 }
 </script>
