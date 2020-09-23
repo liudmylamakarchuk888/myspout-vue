@@ -1,21 +1,12 @@
 <template>
   <el-card class="box-card">
-    <div
-      slot="header"
-      class="clearfix"
-    >
+    <div slot="header" class="clearfix">
       <span>Availble Forms</span>
     </div>
 
-    <el-form
-      :inline="true"
-      style="float:right"
-    >
+    <el-form :inline="true" style="float:right">
       <el-form-item itemref>
-        <el-input
-          v-model="search"
-          placeholder="Find form"
-        />
+        <el-input v-model="search" placeholder="Find form" />
       </el-form-item>
       <el-form-item>
         <el-select
@@ -47,15 +38,9 @@
           :before-close="onNewDialogClose"
         >
           <NewForm />
-          <span
-            slot="footer"
-            class="dialog-footer"
-          >
+          <span slot="footer" class="dialog-footer">
             <el-button @click="showNewForm = false">Cancel</el-button>
-            <el-button
-              type="primary"
-              @click="showNewForm = false"
-            >Confirm</el-button>
+            <el-button type="primary" @click="showNewForm = false">Confirm</el-button>
           </span>
         </el-dialog>
         <el-button
@@ -90,22 +75,11 @@
       row-key="dateModified"
       @current-change="onSelectedRow"
     >
-      <el-table-column
-        type="index"
-        :index="indexMethod"
-      />
+      <el-table-column type="index" :index="indexMethod" />
       <!-- <el-table-column prop="name" label="Name" sortable width="180"></el-table-column> -->
-      <el-table-column
-        prop="displayName"
-        label="Display name"
-        sortable
-      />
+      <el-table-column prop="displayName" label="Display name" sortable />
 
-      <el-table-column
-        prop="dateModified"
-        label="Date Modified"
-        sortable
-      >
+      <el-table-column prop="dateModified" label="Date Modified" sortable>
         <template slot-scope="scope">
           <span
             v-if="scope.row.dateModified"
@@ -113,52 +87,44 @@
           >{{ new Date(scope.row.dateModified).toDateString() }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="modifiedBy"
-        column-key="date"
-        label="modified By"
-        sortable
-      />
-      <el-table-column
-        prop="entityName"
-        label="Entity"
-        sortable
-      />
+      <el-table-column prop="modifiedBy" column-key="date" label="modified By" sortable />
+      <el-table-column prop="entityName" label="Entity" sortable />
     </el-table>
   </el-card>
 </template>
 <script lang="ts">
-// import { RSA_PKCS1_PADDING } from "constants";
-import { Component, Vue } from 'vue-property-decorator'
-import NewForm from './components/newForm'
+// import { RSA_PKCS1_PADDING } from "constants"
+import { Component, Vue } from "vue-property-decorator"
+import NewForm from "./components/newForm"
 @Component({
-  name: 'forms',
-  components: { NewForm }
+  name: "forms",
+  components: { NewForm },
 })
 export default class extends Vue {
   formInline = {
-    user: '',
-    region: ''
-  };
+    user: "",
+    region: "",
+  }
 
-  search = '';
+  search = ""
 
-  showNewForm = false;
-  tableData = [];
-  selectedEntityType = null;
-  selectedRow = null;
+  showNewForm = false
+  tableData = []
+  selectedEntityType = null
+  selectedRow = null
 
   get formsData() {
     return this.$store.getters.Forms
   }
 
   onSubmit() {
-    console.log('submit!')
+    console.log("submit!")
   }
 
   onOpenClick() {
-    console.log('open clicked' + this.selectedRow)
-    this.$router.push('designer/' + this.selectedRow.itemId)
+    if (this.selectedRow) {
+      this.$router.push("designer/" + this.selectedRow.itemId)
+    }
   }
 
   indexMethod(index) {
@@ -174,7 +140,7 @@ export default class extends Vue {
   }
 
   onNewDialogClose(done) {
-    this.$confirm('Are you sure to close this dialog?')
+    this.$confirm("Are you sure to close this dialog?")
       .then((_) => {
         console.log(_)
         done()
@@ -185,20 +151,20 @@ export default class extends Vue {
   }
 
   onEntityTypeChanged(value: string) {
-    console.log('selected value is ' + value)
+    console.log("selected value is " + value)
     this.tableGropuedData.filter((x) => {
       return x.itemType === value
     })
   }
 
   get getEntityTypeList() {
-    const rs = []
+    const rs: any[] = []
     this.formsData.forEach((x) => {
-      console.log('data:' + x.entityName)
+      console.log("data:" + x.entityName)
       rs.push({ key: x.entityName, value: x.itemType })
     })
-    console.log('entittypes = ' + rs.length)
-    /// return [...new Set(rs.map((item) => item.value))];
+    console.log("entittypes = " + rs.length)
+    /// return [...new Set(rs.map((item) => item.value))]
     return rs
   }
 
@@ -212,11 +178,11 @@ export default class extends Vue {
     })
 
     this.tableData.push({
-      displayName: 'Added Forms',
+      displayName: "Added Forms",
       children: nonoutofbox
     })
     this.tableData.push({
-      displayName: 'Out-of-the-box Forms',
+      displayName: "Out-of-the-box Forms",
       children: outofbox
     })
 

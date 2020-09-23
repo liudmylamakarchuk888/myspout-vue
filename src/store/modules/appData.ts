@@ -6,6 +6,7 @@ import local from '@/views/i18n-demo/local';
 
 export interface IAppData {
     Cache: any[]
+    RecentItems:any[]
     AppSettings: any
     AppFlexSettings: any
     Recents: any
@@ -25,8 +26,8 @@ class AppData extends VuexModule implements IAppData {
     }
 
 
-    get Recents() {
-        return JSON.parse(localStorage.getItem('recentItems'))
+    get RecentItems() {
+        return <ItemInstance[]>JSON.parse(localStorage.getItem('recentItems'))
     }
     get Entities() {
         //return JSON.parse(localStorage.getItem('Entities'));
