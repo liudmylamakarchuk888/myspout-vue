@@ -142,8 +142,8 @@ export default class extends Vue {
   private loading = false;
   private entityKey = '';
   private selectedDiscip: any = '';
-  private allEntities: any = _allEntities;
-  private allDisciplines: any = _allDisciplines;
+  private allEntities: any = [];
+  private allDisciplines: any = [];
 
   get entitiesList() {
     const result = this.allEntities.children.map((entity: any) => {
