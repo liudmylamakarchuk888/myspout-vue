@@ -7756,10 +7756,10 @@ export default class extends Vue {
     return result
   }
 
-  private fetchEntities() {
+  private async fetchEntities() {
     this.entitiesLoading = true
     try {
-      // this.allEntities = await axios.get("http://52.152.148.181:3000/api/getEntities")
+      this.allEntities = await axios.get('http://52.152.148.181:3000/api/getEntities')
       console.log(this.items)
     } catch (error) {
       console.log('entities ----', error)
