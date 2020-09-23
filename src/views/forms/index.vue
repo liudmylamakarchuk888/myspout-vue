@@ -122,18 +122,21 @@ export default class extends Vue {
 
   onOpenClick() {
     console.log("open clicked" + this.selectedRow);
-    this.$router.push('designer/'+this.selectedRow.itemId)
+    this.$router.push("designer/" + this.selectedRow.itemId);
   }
 
   indexMethod(index) {
     return index;
   }
+
   get hasSelectedRows() {
     return this.selectedRow != null;
   }
+
   onSelectedRow(val) {
     this.selectedRow = val;
   }
+
   onNewDialogClose(done) {
     this.$confirm("Are you sure to close this dialog?")
       .then((_) => {
@@ -145,7 +148,7 @@ export default class extends Vue {
   onEntityTypeChanged(value: string) {
     console.log("selected value is " + value);
     this.tableGropuedData.filter((x) => {
-      return x.itemType == value;
+      return x.itemType === value;
     });
   }
 
@@ -156,17 +159,16 @@ export default class extends Vue {
       rs.push({ key: x.entityName, value: x.itemType });
     });
     console.log("entittypes = " + rs.length);
-    ///return [...new Set(rs.map((item) => item.value))];
     return rs;
   }
 
   get tableGropuedData() {
-    let outofbox = this.formsData.filter((x) => {
-      return x.outOfTheBox == true;
+    const outofbox = this.formsData.filter((x) => {
+      return x.outOfTheBox === true;
     });
 
-    let nonoutofbox = this.formsData.filter((x) => {
-      return x.outOfTheBox == false;
+    const nonoutofbox = this.formsData.filter((x) => {
+      return x.outOfTheBox === false;
     });
 
     this.tableData.push({
@@ -178,9 +180,9 @@ export default class extends Vue {
       children: outofbox,
     });
 
-    let index: number = 1;
-    this.tableData.forEach((row) => {
-      row["id"] = index;
+    let index = 1;
+    this.tableData.forEach((row: any) => {
+      row.id = index;
       index++;
     });
     return this.tableData;

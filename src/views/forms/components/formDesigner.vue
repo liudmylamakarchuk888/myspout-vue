@@ -199,7 +199,9 @@ export default class extends Vue {
   private allEntities = [];
 
   get entities() {
-    return this.$store.getters.Entities;
+    let data = this.$store.getters.Entities;
+
+    return data;
   }
 
   formData = {};
