@@ -2,8 +2,8 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input
-        size="mini"
         v-model="listQuery.title"
+        size="mini"
         :placeholder="$t('table.title')"
         style="width: 200px;"
         class="filter-item"
@@ -11,8 +11,8 @@
       />
 
       <el-select
-        size="mini"
         v-model="listQuery.type"
+        size="mini"
         :placeholder="$t('table.type')"
         clearable
         class="filter-item"
@@ -26,7 +26,6 @@
           :value="item.key"
         />
       </el-select>
- 
     </div>
 
     <el-table
@@ -40,11 +39,15 @@
       highlight-current-row
       style="width: 100%;"
     >
-
-
-      <el-table-column :label="$t('table.title')" min-width="150px">
+      <el-table-column
+        :label="$t('table.title')"
+        min-width="150px"
+      >
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
+          <span
+            class="link-type"
+            @click="handleUpdate(row)"
+          >{{ row.title }}</span>
           <el-tag>{{ row.type | typeFilter }}</el-tag>
         </template>
       </el-table-column>
@@ -52,7 +55,7 @@
     <!-- <hr/>
       <el-tree
                :data="list"
-               
+
                node-key="id"
                :expand-on-click-node="false"
                ref="markupTree"
@@ -67,44 +70,37 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { Form } from "element-ui";
-import { cloneDeep } from "lodash";
+import { Component, Vue } from 'vue-property-decorator'
 import {
   getArticles,
-  getPageviews,
-  createArticle,
-  updateArticle,
-  defaultArticleData,
-} from "@/api/articles";
-import { IArticleData } from "@/api/types";
-import { exportJson2Excel } from "@/utils/excel";
-import { formatJson } from "@/utils";
+  defaultArticleData
+} from '@/api/articles'
+import { IArticleData } from '@/api/types'
 
 const typeOptions = [
-  { key: "CN", displayName: "China" },
-  { key: "US", displayName: "USA" },
-  { key: "JP", displayName: "Japan" },
-  { key: "EU", displayName: "Eurozone" },
-];
+  { key: 'CN', displayName: 'China' },
+  { key: 'US', displayName: 'USA' },
+  { key: 'JP', displayName: 'Japan' },
+  { key: 'EU', displayName: 'Eurozone' }
+]
 
 // arr to obj, such as { CN : "China", US : "USA" }
 const calendarTypeKeyValue = typeOptions.reduce(
   (acc: { [key: string]: string }, cur) => {
-    acc[cur.key] = cur.displayName;
-    return acc;
+    acc[cur.key] = cur.displayName
+    return acc
   },
   {}
-) as { [key: string]: string };
+) as { [key: string]: string }
 
 @Component({
-  name: "miniTable",
+  name: 'miniTable',
   components: {},
   filters: {
     typeFilter: (type: string) => {
-      return calendarTypeKeyValue[type];
-    },
-  },
+      return calendarTypeKeyValue[type]
+    }
+  }
 })
 export default class extends Vue {
   private tableKey = 0;
@@ -116,49 +112,44 @@ export default class extends Vue {
     limit: 20,
 
     title: undefined,
-    type: undefined,
+    type: undefined
   };
 
   private typeOptions = typeOptions;
 
   private rules = {
-    type: [{ required: true, message: "type is required", trigger: "change" }],
+    type: [{ required: true, message: 'type is required', trigger: 'change' }],
     timestamp: [
-      { required: true, message: "timestamp is required", trigger: "change" },
+      { required: true, message: 'timestamp is required', trigger: 'change' }
     ],
-    title: [{ required: true, message: "title is required", trigger: "blur" }],
+    title: [{ required: true, message: 'title is required', trigger: 'blur' }]
   };
 
   private tempArticleData = defaultArticleData;
 
   created() {
-    this.getList();
+    this.getList()
   }
 
   private async getList() {
-    this.listLoading = true;
-    const { data } = await getArticles(this.listQuery);
-    this.list = data.items;
-    this.total = data.total;
+    this.listLoading = true
+    const { data } = await getArticles(this.listQuery)
+    this.list = data.items
+    this.total = data.total
     // Just to simulate the time of the request
     setTimeout(() => {
-      this.listLoading = false;
-    }, 0.5 * 1000);
+      this.listLoading = false
+    }, 0.5 * 1000)
   }
 
   private handleFilter() {
-    this.listQuery.page = 1;
-    this.getList();
+    this.listQuery.page = 1
+    this.getList()
   }
 
- 
-
-  
   private getSortClass(key: string) {
-    const sort = this.listQuery.sort;
-    return sort === `+${key}` ? "ascending" : "descending";
+    const sort = this.listQuery.sort
+    return sort === `+${key}` ? 'ascending' : 'descending'
   }
-
-
 }
 </script>

@@ -26,22 +26,31 @@
                 class="add-container"
               >
                 <el-col
+                  class="add-text"
                   :span="8"
-                  text-xs-right
+                  text-right
                 >
-                  <a>New</a>
+                  <a
+                    href="#"
+                    class="href-button"
+                  >New</a>
                 </el-col>
                 <el-col
+                  class="add-text"
                   :span="2"
-                  text-xs-right
+                  text-right
                 >
                   |
                 </el-col>
                 <el-col
+                  class="add-text"
                   :span="14"
-                  text-xs-right
+                  text-right
                 >
-                  <a>New Virtual</a>
+                  <a
+                    href="#"
+                    class="href-button"
+                  >New Virtual</a>
                 </el-col>
               </el-row>
             </el-col>
@@ -57,25 +66,64 @@
               />
             </el-col>
             <el-col :span="10">
-              <el-input
-                v-model="entityKey"
-                placeholder="Please input"
-              />
+              <el-select
+                v-model="selectedDiscip"
+                placeholder="Find discipline"
+              >
+                <el-option
+                  v-for="item in disciplinesList"
+                  :key="item.value"
+                  :label="item.key"
+                  :value="item.value"
+                  filterable
+                />
+              </el-select>
             </el-col>
           </el-row>
         </el-row>
-        <el-row>
-          <p v-if="entitiesLoading">
-            loading...
-          </p>
-          <tree-view
-            v-else
-            :items="items"
-          />
-        </el-row>
+        <div class="scroll-wrap">
+          <el-row>
+            <p v-if="loading">
+              loading...
+            </p>
+            <el-tree
+              ref="entitiesTree"
+              :data="entitiesList"
+              :filter-node-method="filterEntities"
+              @node-click="handleNodeClick"
+            >
+              <span
+                slot-scope="{node, data}"
+                class="custom-tree-node"
+              >
+                <span>
+                  <img
+                    v-if="existIcons(data.label, node.level).length"
+                    :src="existIcons(data.label, node.level)[0]['source']"
+                  >
+                  <i
+                    v-else-if="
+                      !existIcons(data.label, node.level).length && node.isLeaf
+                    "
+                    class="el-icon-document"
+                  />
+                  <label
+                    :class="[
+                      node.isLeaf ? 'tree-node-normal' : 'tree-node-bold'
+                    ]"
+                  >{{
+                    node.isLeaf
+                      ? data.label
+                      : `${data.label} (${node.childNodes.length})`
+                  }}</label>
+                </span>
+              </span>
+            </el-tree>
+          </el-row>
+        </div>
       </el-col>
       <el-col :span="18">
-        <div class="grid-content bg-purple-light" />
+        <div class="grid-content" />
       </el-col>
     </el-row>
   </el-container>
@@ -83,42 +131,90 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import TreeView from '@/components/TreeView/index.vue'
 import axios from 'axios'
+import { _allEntities, _allDisciplines } from './data.js'
 
 @Component({
   name: 'Entities',
-  components: { TreeView }
+  components: {}
 })
 export default class extends Vue {
-  private entitiesLoading = true
-  private entityKey = ''
-  private allEntities=[]
+  private loading = false;
+  private entityKey = '';
+  private selectedDiscip: any = '';
+  private allEntities: any = _allEntities;
+  private allDisciplines: any = _allDisciplines;
 
-  get items() {
-    const result = this.allEntities.data.children.map((entity) => {
+  get entitiesList() {
+    const result = this.allEntities.children.map((entity: any) => {
       if (entity.children && entity.children.length) {
-        const children = entity.children.map((child) => {
-          return { text: child.name }
+        const children = entity.children.map((child: any) => {
+          return { label: child.name }
         })
-        return { text: `${entity.name} (${children.length})`, children }
+        return {
+          label: `${entity.name}`,
+          icon: '',
+          children
+        }
       } else {
-        return { text: `${entity.name}` }
+        return { label: `${entity.name}` }
       }
     })
 
     return result
   }
 
+  get disciplinesList(): any {
+    return this.allDisciplines.disciplines
+  }
+
+  existIcons(label: string, level: number) {
+    label = level === 1 ? label.split(' (')[0] : label
+    let icons:any = []
+    this.allEntities.children.filter((entity: any) => {
+      if (entity.children && entity.children.length) {
+        entity.children.filter((child: any) => {
+          if (child.name === label) icons = child.icons
+          return false
+        })
+        return false
+      }
+      if (entity.name === label) icons = entity.icons
+      return false
+    })
+    return icons
+  }
+
+  handleNodeClick(data: object) {
+    console.log(data)
+  }
+
+  @Watch('entityKey')
+  private emitEntitiesFilter(val: any) {
+    this.$refs.entitiesTree.filter(val)
+  }
+
+  filterEntities(value: any, data: any) {
+    if (!value) return true
+    return data.label.indexOf(value) !== -1
+  }
+
   private async fetchEntities() {
-    this.entitiesLoading = true
+    this.loading = true
     try {
-      this.allEntities = await axios.get('http://52.152.148.181:3000/api/getEntities')
-      console.log('entities loaded '+this.items)
+      this.allEntities = await axios.get(
+        'http://52.152.148.181:3000/api/getEntities'
+      )
+      this.allDisciplines = await axios.get(
+        'http://52.152.148.181:3000/api/getFlexApplicationPreferences'
+      )
+
+      // console.log(this.disciplinesList)
+      this.loading = false
     } catch (error) {
       console.log('entities ----', error)
     }
-    this.entitiesLoading = false
+    this.loading = false
   }
 
   mounted() {
@@ -128,6 +224,12 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.tree-node-bold {
+  font-weight: bold;
+}
+.tree-node-normal {
+  font-weight: 400;
+}
 .el-container {
   margin: 12px 0 0 14px;
   .el-row {
@@ -139,29 +241,36 @@ export default class extends Vue {
   }
   .treeview-container {
     height: calc(100vh - 4.5em);
-    overflow-y: auto;
+    // overflow: auto;
     border: 1px solid e2e3e6;
     box-shadow: 1px 1px 10px #525050;
     padding: 0 !important;
+    min-width: 250px !important;
+    display: flex;
+    flex-direction: column;
+    .scroll-wrap {
+      position: relative;
+      height: 100%;
+      overflow: auto;
+    }
   }
   .treeview-header {
     background-color: #e2e3e6;
     margin: 0px !important;
     padding: 24px 18px;
     .add-container {
-      .el-col {
-        text-align: center;
+      .add-text {
+        padding: 0 !important;
+        text-align: right;
       }
     }
+    .href-button {
+      color: #1890ff;
+      text-decoration: underline;
+    }
   }
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-  .bg-purple {
-    background: #d3dce6;
-  }
-  .bg-purple-light {
-    background: #e5e9f2;
+  .el-tree-node__content {
+    cursor: default !important;
   }
 }
 </style>
