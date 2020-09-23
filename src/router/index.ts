@@ -46,39 +46,8 @@ Vue.use(Router)
  * the routes that need to be dynamically loaded based on user roles
 */
 export const asyncRoutes: RouteConfig[] = [
-  
-  {
-    path: '/icon',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import(/* webpackChunkName: "icons" */ '@/views/icons/index.vue'),
-        name: 'Icons',
-        meta: {
-          title: 'icons',
-          icon: 'icon',
-          noCache: true
-        }
-      }
-    ]
-  },
- 
-  {
-    path: '/tab',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import(/* webpackChunkName: "tab" */ '@/views/tab/index.vue'),
-        name: 'Tab',
-        meta: {
-          title: 'tab',
-          icon: 'tab'
-        }
-      }
-    ]
-  }, 
+
+
   {
     path: '/',
     component: Layout,
@@ -100,10 +69,21 @@ export const asyncRoutes: RouteConfig[] = [
     children: [
       {
         path: 'index',
-        component: () => import(/* webpackChunkName: "forms" */ '@/views/forms/index.vue'),
+        component: () => import(  '@/views/forms/index.vue'),
         name: 'Forms',
         meta: {
           title: 'forms',
+          icon: 'form'
+        },
+        
+      }
+      ,
+      {
+        path: 'designer/:formid',
+        component: () => import(  '@/views/forms/components/formDesigner.vue'),
+        name: 'formdesigner',
+        meta: {
+          title: 'formdesigner',
           icon: 'form'
         }
       }
@@ -205,7 +185,7 @@ export const asyncRoutes: RouteConfig[] = [
     redirect: '/404',
     meta: { hidden: true }
   },
- 
+
 ]
 
 
@@ -241,7 +221,7 @@ export const constantRoutes: RouteConfig[] = [
     component: () => import(/* webpackChunkName: "401" */ '@/views/error-page/401.vue'),
     meta: { hidden: true }
   },
-  
+
 ]
 
 const createRouter = () => new Router({

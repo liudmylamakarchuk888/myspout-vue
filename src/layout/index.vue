@@ -33,7 +33,7 @@ import { SettingsModule } from '@/store/modules/settings'
 import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
 import RightPanel from '@/components/RightPanel/index.vue'
 import ResizeMixin from './mixin/resize'
-
+import { AppDataModule } from '@/store/modules/appData'
 @Component({
   name: 'Layout',
   components: {
@@ -42,7 +42,8 @@ import ResizeMixin from './mixin/resize'
     RightPanel,
     Settings,
     Sidebar,
-    TagsView
+    TagsView,
+    AppDataModule
   }
 })
 export default class extends mixins(ResizeMixin) {
@@ -70,6 +71,12 @@ export default class extends mixins(ResizeMixin) {
   private handleClickOutside() {
     AppModule.CloseSideBar(false)
   }
+
+  mounted() {
+    console.log('loading Application Cache.')
+
+    this.$store.dispatch('getAppCache')
+  }
 }
 </script>
 
@@ -93,7 +100,7 @@ export default class extends mixins(ResizeMixin) {
 
 .main-container {
   min-height: 100%;
-  transition: margin-left .28s;
+  transition: margin-left 0.28s;
   margin-left: $sideBarWidth;
   position: relative;
 }
@@ -130,7 +137,7 @@ export default class extends mixins(ResizeMixin) {
   }
 
   .fixed-header {
-    width: calc(100% - 54px)
+    width: calc(100% - 54px);
   }
 }
 
@@ -141,7 +148,7 @@ export default class extends mixins(ResizeMixin) {
   }
 
   .sidebar-container {
-    transition: transform .28s;
+    transition: transform 0.28s;
     width: $sideBarWidth !important;
   }
 

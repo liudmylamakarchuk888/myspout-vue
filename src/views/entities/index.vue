@@ -218,7 +218,7 @@ export default class extends Vue {
   }
 
   mounted() {
-    // this.fetchEntities();
+    this.fetchEntities()
   }
 }
 </script>

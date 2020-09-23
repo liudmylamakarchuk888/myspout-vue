@@ -1,27 +1,54 @@
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
-import store from '@/store' 
-import axios from 'axios' 
- 
-export interface IAppData {
+import store from '@/store'
+import axios from 'axios'
+import { mapGetters } from 'vuex';
+import local from '@/views/i18n-demo/local';
 
+export interface IAppData {
+    Cache: any[]
     AppSettings: any
     AppFlexSettings: any
     Recents: any
+    Entities: any[]
+    Forms:any[]
 }
+
+axios.defaults.baseURL = "http://52.152.148.181:3000/";
+
+
 @Module({ dynamic: true, store, name: 'appData' })
 class AppData extends VuexModule implements IAppData {
-    public AppSettings: any
-    public AppFlexSettings: any
-    public Recents: any
+    Cache: any[] = [];
 
-    public Cache: any;
+    get AppFlexSettings() {
+        return this.FlexApplicationPreferences();
+    }
 
-    get getRecentItems() {
-        //return this.Cache['recentItems'];
-        return this.getApiData('recentItems');
+
+    get Recents() {
+        return JSON.parse(localStorage.getItem('recentItems'))
+    }
+    get Entities() {
+        //return JSON.parse(localStorage.getItem('Entities'));
+        return JSON.parse(localStorage.getItem('Entities'));
+    }
+
+    get FlexApplicationPreferences() {
+        return JSON.parse(localStorage.getItem('FlexApplicationPreferences'));
+    }
+    get AppSettings() {
+        return this.FlexApplicationPreferences.AppSettings;
+    }
+
+    get Forms(){
+    return JSON.parse(localStorage.getItem('Forms'));
+    }
+
+    getStoredItem(key: string) {
+        return this.getApiData(key)
     }
     //Vue.axios.defaults.baseURL = "http://52.152.148.181:3000/";
-    ApplicationBusy: any
+    public ApplicationBusy: boolean = false;
     @Mutation
     private CHANGE_SETTING(payload: { key: string, value: any }) {
         const { key, value } = payload
@@ -29,30 +56,37 @@ class AppData extends VuexModule implements IAppData {
             (this as any)[key] = value
         }
     }
+
     @Mutation
     setAppState(isbusy: boolean) {
-        this.ApplicationBusy = isbusy;
+        //const {key} = isbusy;
+        if (Object.prototype.hasOwnProperty.call(this, isbusy)) {
+            (this as any)[isbusy]();
+        }
+        // this.ApplicationBusy = isbusy;
     }
     @Mutation
-    getApiData(payload: string) {
+    SetCache(key, value) {
+        this.Cache[key] = value;
+    }
+
+    @Mutation
+    private getApiData(payload: string) {
         const cacheName: string = payload.replace('get', '');
-        // console.log("getting ." + cacheName)
+        console.log("getting ." + cacheName)
         if (localStorage[cacheName]) {
             console.log(`${cacheName} reading from cache `);
-            // this.Cache[cacheName] = JSON.parse(localStorage.getItem(cacheName));
-
+            this.Cache[cacheName] = JSON.parse(localStorage.getItem(cacheName));
+            return this.Cache[cacheName];
         }
         else {
-            getRecentItems({
-                url: 'http://52.152.148.181:3000/api/' + payload,
-                method: 'get'
-            }).then((result: { data: any }) => {
-  
-                // axios.get('http://52.152.148.181:3000/api/' + payload).then((result: { data: any }) => {
+            axios.get('http://52.152.148.181:3000/api/' + payload).then((result: { data: any }) => {
 
                 localStorage.setItem(cacheName, JSON.stringify(result.data));
-                this.Cache[cacheName] = result.data;
-
+                //this.Cache[cacheName] = result.data;
+                //this.$store.state[cacheName] = result.data;
+                //store.state[cacheName] = result.data;
+                this.SetCache(cacheName, result.data);
             }).catch((error: any) => {
                 throw new Error(`API ${error}`);
             });
@@ -66,8 +100,11 @@ class AppData extends VuexModule implements IAppData {
     }
 
     @Action
-    getAppCache({ }) {
+    getAppCache() {
+        console.log('getting app cache')
+        //this.context.commit('setAppState', 'true');
         this.setAppState(true);
+        //this.context.commit('getApiData', 'recentItems');
 
         this.getApiData('getFlexApplicationPreferences');
         this.getApiData('recentItems');
@@ -76,14 +113,15 @@ class AppData extends VuexModule implements IAppData {
 
         this.getApiData('getAuthorizableEntities');
         this.setAppState(false);
+
+        console.log('app cache loaded.')
     }
     @Mutation
     setAppBusy(value: boolean) {
         this.setAppState(value)
     }
-    commit(value: string) {
-        this.getApiData(value);
-    }
+
+
 
 
 }
