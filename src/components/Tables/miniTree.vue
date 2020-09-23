@@ -2,41 +2,38 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input
-        v-model="listQuery.title"
+        v-model="query.text"
         size="mini"
-        :placeholder="$t('table.title')"
+        placeholder="Search for"
         style="width: 200px;"
         class="filter-item"
-        @keyup.enter.native="handleFilter"
       />
 
       <el-select
-        v-model="listQuery.type"
+        v-model="query.type"
         size="mini"
-        :placeholder="$t('table.type')"
+        placeholder="Select Type"
         clearable
         class="filter-item"
         style="width: 130px"
-        @change="handleFilter"
       >
         <el-option
           v-for="item in typeOptions"
           :key="item.key"
-          :label="item.displayName+'('+item.key+')'"
-          :value="item.key"
+          :label="item.key"
+          :value="item.value"
         />
       </el-select>
     </div>
-
+ 
     <el-tree
-      ref="markupTree"
-      :data="list"
+      ref="elTree"
+      :data="treeData"
       node-key="id"
+      @node-click="handleNodeClick"
+      :filter-node-method="filterNode"
     >
-      <span
-        slot-scope="{node, data}"
-        class="custom-tree-node"
-      >
+      <span slot-scope="{node, data}" class="custom-tree-node">
         <span>
           <i class="el-icon-edit" />
           {{ data.name }}
@@ -47,68 +44,76 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
-
-import {
-  defaultArticleData
-} from '@/api/articles'
-
-const typeOptions = [
-  { key: 'CN', displayName: 'China' },
-  { key: 'US', displayName: 'USA' },
-  { key: 'JP', displayName: 'Japan' },
-  { key: 'EU', displayName: 'Eurozone' }
-]
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = typeOptions.reduce(
-  (acc: { [key: string]: string }, cur) => {
-    acc[cur.key] = cur.displayName
-    return acc
-  },
-  {}
-) as { [key: string]: string }
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 
 @Component({
-  name: 'miniTree',
+  name: "miniTree",
   components: {},
-  filters: {
-    typeFilter: (type: string) => {
-      return calendarTypeKeyValue[type]
-    }
-  }
 })
 export default class extends Vue {
-  @Prop({ required: true }) private treeData!: string[];
+  @Prop({ required: true }) private treeData!: any[];
+  @Prop({ required: false }) private typeOptions!: {
+    key: string;
+    value: string;
+  }[];
 
-  private tableKey = 0;
-  private list: any[] = this.treeData;
-  private total = 0;
-  private listLoading = true;
-  private listQuery = {
-
-    title: undefined,
-    type: undefined
+  private query = {
+    text: undefined,
+    type: undefined,
   };
 
-  private typeOptions = typeOptions;
-
-  private tempArticleData = defaultArticleData;
-
-  private async getList() {
-    this.listLoading = true
-
-    this.list = this.treeData.filter((x) => {
-      return x || x.name === this.listQuery.title
-    })
-    // Just to simulate the time of the request
-    setTimeout(() => {
-      this.listLoading = false
-    }, 0.5 * 1000)
+  @Watch("query.text")
+  filterText(val) {
+    this.$refs.elTree.filter(val);
   }
 
+  @Watch("query.type")
+  filtertype(val) {
+    this.$refs.elTree.filter(val);
+  }
+
+  filterNode(value, data) {
+    if (!value) return true;
+    return (
+      data.name.toLowerCase().includes(value.toLowerCase()) ||
+      data.id.toLowerCase().includes(value.toLowerCase())
+    );
+  }
+  selectedNode = null;
+  handleNodeClick(data) {
+    console.log(data);
+    this.selectedNode = data;
+  }
+  // getchilds(node) {
+  //   if (node) {
+  //     let types = [];
+  //     try {
+  //       types.push({ key: node.name, value: node.id });
+
+  //       if (node.children && node.children.length > 0) {
+  //         node.children.forEach((child) => {
+  //           let rs = this.getchilds(child);
+  //           rs.forEach((element) => {
+  //             types.push(element);
+  //           });
+  //         });
+  //       }
+  //     } catch (err) {}
+  //     return types;
+  //   }
+  // }
+
+  // get typeOptions() {
+  //   let types = [
+  //     { name: "Release", value: "com.msp.dao.entities.Release" },
+  //     { name: "Team", value: "com.msp.dao.entities.Team" },
+  //   ];
+
+  //   return types;
+  // }
+
   private handleFilter() {
-    this.getList()
+    //this.getList();
   }
 }
 </script>
