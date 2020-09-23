@@ -87,6 +87,7 @@
               loading...
             </p>
             <el-tree
+              v-else
               ref="entitiesTree"
               :data="entitiesList"
               :filter-node-method="filterEntities"
@@ -142,8 +143,8 @@ export default class extends Vue {
   private loading = false;
   private entityKey = '';
   private selectedDiscip: any = '';
-  private allEntities: any = [];
-  private allDisciplines: any = [];
+  private allEntities: any = _allEntities;
+  private allDisciplines: any = _allDisciplines;
 
   get entitiesList() {
     const result = this.allEntities.children.map((entity: any) => {
