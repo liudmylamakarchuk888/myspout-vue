@@ -105,9 +105,7 @@ class AppData extends VuexModule implements IAppData {
         }).catch((error: any) => {
             //throw new Error(`API ERROR ${payload} =>${error}`);
             console.error(`API ERROR ${payload} =>${error}`);
-        });
-        
-    
+        }); 
     }
 
     @Action

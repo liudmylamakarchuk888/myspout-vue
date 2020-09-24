@@ -24,12 +24,7 @@
         :span="18"
         class="card-panel-right"
       >
-        <right-side
-          :title="`Risk`"
-          :selected-entity="selectedEntity"
-          :data="propertyData"
-          :loading="rightLoading"
-        />
+        <right-side :selected-entity="selectedEntity" />
         <!-- <left-side
           :entities="allEntities.children"
           :disciplines="allDisciplines.disciplines"
@@ -56,7 +51,10 @@ export default class extends Vue {
   private allEntities: any = _allEntities;
   private allDisciplines: any = _allDisciplines;
   private propertyData = _riskProperties;
-  private selectedEntity = '';
+  private selectedEntity = {
+    id: '',
+    name: ''
+  };
 
   private async fetchEntities() {
     this.leftLoading = true
@@ -72,23 +70,12 @@ export default class extends Vue {
     this.leftLoading = false
   }
 
-  private async fetchProperties() {
-    this.rightLoading = true
-    const apiUrl =
-      'http://52.152.148.181:3000/api/getEntity/com.msp.dao.entities.Risk'
-    try {
-      this.propertyData = await axios.get(apiUrl)
-      this.rightLoading = false
-    } catch (e) {
-      console.log(e)
-      this.rightLoading = false
-    }
-  }
-
-  handleEntityClick(data: any) {
-    if (data.id === 'com.msp.dao.entities.Risk') {
-      this.selectedEntity = data.id
-      this.fetchProperties()
+  handleEntityClick(data: any, node: any) {
+    if (node.isLeaf) {
+      this.selectedEntity = {
+        id: data.id,
+        name: data.name
+      }
     }
   }
 }
