@@ -1,8 +1,5 @@
 <template>
-  <el-container
-    style="height: 100%; border: 1px solid #eee"
-    size="mini"
-  >
+  <el-container style="height: 100%; border: 1px solid #eee" size="mini">
     <!--  <el-aside width="275px">
        <el-collapse accordion>
         <el-collapse-item title="Properties" name="1">
@@ -109,36 +106,18 @@
               :key="row.displayName"
               shadow="always"
             >
-              <div
-                slot="header"
-                class="clearfix"
-              >
-                <el-popover
-                  placement="right"
-                  trigger="hover"
-                >
+              <div slot="header" class="clearfix">
+                <el-popover placement="right" trigger="hover">
                   <el-row>
                     <el-col>
-                      <el-button
-                        type="text"
-                        icon="el-icon-plus"
-                      />
-                      <el-button
-                        type="text"
-                        icon="el-icon-edit"
-                      />
-                      <el-button
-                        type="text"
-                        icon="el-icon-delete"
-                      />
+                      <el-button type="text" icon="el-icon-plus" />
+                      <el-button type="text" icon="el-icon-edit" />
+                      <el-button type="text" icon="el-icon-delete" />
                     </el-col>
                   </el-row>
-                  <el-button
-                    slot="reference"
-                    type="text"
-                  >
-                    {{ row.displayName }}
-                  </el-button>
+                  <el-button slot="reference" type="text">{{
+                    row.displayName
+                  }}</el-button>
                 </el-popover>
               </div>
 
@@ -152,13 +131,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import miniTable from '@/components/Tables/miniTable'
-import miniTree from '@/components/Tables/miniTree'
-import propertyselector from './propertyselector'
-import axios from 'axios'
+import { Component, Vue } from "vue-property-decorator";
+import miniTable from "@/components/Tables/miniTable";
+import miniTree from "@/components/Tables/miniTree";
+import propertyselector from "./propertyselector";
+import axios from "axios";
+
 @Component({
-  name: 'formDesigner',
+  name: "formDesigner",
   components: { miniTable, miniTree, propertyselector }
 })
 export default class extends Vue {
@@ -169,17 +149,17 @@ export default class extends Vue {
   };
 
   tabsData = {
-    editableTabsValue: '2',
+    editableTabsValue: "2",
     editableTabs: [
       {
-        title: 'Tab 1',
-        name: '1',
-        content: 'Tab 1 content'
+        title: "Tab 1",
+        name: "1",
+        content: "Tab 1 content"
       },
       {
-        title: 'Tab 2',
-        name: '2',
-        content: 'Tab 2 content'
+        title: "Tab 2",
+        name: "2",
+        content: "Tab 2 content"
       }
     ],
     tabIndex: 2
@@ -188,33 +168,31 @@ export default class extends Vue {
   formId = this.$route.params.formid;
 
   handleTabsEdit(targetName, action) {
-    if (action === 'add') {
-      const newTabName = ++this.tabsData.tabIndex + ''
+    if (action === "add") {
+      const newTabName = ++this.tabsData.tabIndex + "";
       this.tabsData.editableTabs.push({
-        title: 'New Tab',
+        title: "New Tab",
         name: newTabName,
-        content: 'New Tab content'
-      })
-      this.tabsData.editableTabsValue = newTabName
+        content: "New Tab content"
+      });
+      this.tabsData.editableTabsValue = newTabName;
     }
-    if (action === 'remove') {
-      const tabs = this.tabsData.editableTabs
-      let activeName = this.tabsData.editableTabsValue
+    if (action === "remove") {
+      const tabs = this.tabsData.editableTabs;
+      let activeName = this.tabsData.editableTabsValue;
       if (activeName === targetName) {
         tabs.forEach((tab, index) => {
           if (tab.name === targetName) {
-            const nextTab = tabs[index + 1] || tabs[index - 1]
+            const nextTab = tabs[index + 1] || tabs[index - 1];
             if (nextTab) {
-              activeName = nextTab.name
+              activeName = nextTab.name;
             }
           }
-        })
+        });
       }
 
-      this.tabsData.editableTabsValue = activeName
-      this.tabsData.editableTabs = tabs.filter(
-        (tab) => tab.name !== targetName
-      )
+      this.tabsData.editableTabsValue = activeName;
+      this.tabsData.editableTabs = tabs.filter(tab => tab.name !== targetName);
     }
   }
 
@@ -227,26 +205,29 @@ export default class extends Vue {
   private allEntities = [];
 
   get entities() {
-    return this.$store.getters.Entities
+    return this.$store.getters.Entities;
   }
 
   formData = {};
-  private async getFormData(formId:any) {
+  private async getFormData(formId: any) {
     return await axios
-      .get('api/form/' + formId)
-      .then((rs) => {
-        return rs.data
+      .get("api/form/" + formId)
+      .then(rs => {
+        return rs.data;
       })
-      .catch((err) => {
-        console.error('eeror while getting form data.', err)
-      })
+      .catch(err => {
+        console.error("eeror while getting form data.", err);
+      });
   }
 
   mounted() {
     const formid = this.$route.params.formid
-
-    this.getFormData(formid).then((rs) => {
-      this.formData = rs
+    debugger
+    if (!formid) {
+      this.$router.push("forms")
+    }
+    this.getFormData(formid).then(rs => {
+      this.formData =  rs
     })
   }
 }

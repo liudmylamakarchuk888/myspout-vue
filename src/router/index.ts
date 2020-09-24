@@ -79,7 +79,7 @@ export const asyncRoutes: RouteConfig[] = [
       }
       ,
       {
-        path: 'designer/:formid',
+        path: 'designer/:formid?',
         component: () => import(  '@/views/forms/components/formDesigner.vue'),
         name: 'formdesigner',
         meta: {

@@ -90,6 +90,8 @@
       <el-table-column prop="modifiedBy" column-key="date" label="modified By" sortable />
       <el-table-column prop="entityName" label="Entity" sortable />
     </el-table>
+
+
   </el-card>
 </template>
 <script lang="ts">
