@@ -28,31 +28,41 @@ class AppData extends VuexModule implements IAppData {
 
 
     get RecentItems() {
-        return <ItemInstance[]>JSON.parse(localStorage.getItem('recentItems'))
+        return <ItemInstance[]>JSON.parse(localStorage.getItem(ApiEndpoints.RECENTITEMS))
     }
     get Entities() {
         //return JSON.parse(localStorage.getItem('Entities'));
-        return JSON.parse(localStorage.getItem('Entities'));
+        return JSON.parse(localStorage.getItem(ApiEndpoints.ENTITIES));
     }
 
     get FlexApplicationPreferences() {
-        return JSON.parse(localStorage.getItem('FlexApplicationPreferences'));
+        return JSON.parse(localStorage.getItem(ApiEndpoints.FLEXAPPLICATIONPREFERENCES));
     }
     get AppSettings() {
         return this.FlexApplicationPreferences.AppSettings;
     }
 
     get Forms(){
-    return <ItemInstance[]>JSON.parse(localStorage.getItem('Forms'));
+    return <ItemInstance[]>JSON.parse(localStorage.getItem(ApiEndpoints.FORMS));
     }
 
     get AuthorizableEntities(){
-        return JSON.parse(localStorage.getItem('AuthorizableEntities'))
+        return JSON.parse(localStorage.getItem(ApiEndpoints.AUTHORIZABLEENTITIES))
     }
-    getStoredItem(key: string) {
-        return this.getApiData(key)
+
+    async tryGetData(key:string){
+        if(window.localStorage[key]){
+            let cachedData:string = window.localStorage.getItem(key) ;
+            return JSON.parse(cachedData)
+        }
+        else{
+          await this.context.commit('getApiData',key)
+        }
     }
-    //Vue.axios.defaults.baseURL = "http://52.152.148.181:3000/";
+ 
+    get IsAppBusy(){
+        return this.ApplicationBusy;
+    }
     public ApplicationBusy: boolean = false;
     @Mutation
     private CHANGE_SETTING(payload: { key: string, value: any }) {
@@ -78,9 +88,8 @@ class AppData extends VuexModule implements IAppData {
     @Mutation
     private getApiData(payload: string) {
         const cacheName: string = payload.replace('get', '');
+       //const cacheName: string = payload.trim();
        
-        try{
-
         if (localStorage[cacheName]) {
             console.log(`${cacheName} reading from cache `);
             this.Cache[cacheName] = JSON.parse(localStorage.getItem(cacheName));
@@ -88,22 +97,17 @@ class AppData extends VuexModule implements IAppData {
         }
         
 
-        axios.get('api/' + payload).then((result: { data: any }) => {
+        axios.get('api/' + payload)
+            .then((result: { data: any }) => {
 
-            localStorage.setItem(cacheName, JSON.stringify(result.data));
-            
+            localStorage.setItem(cacheName, JSON.stringify(result.data));            
             this.SetCache(cacheName, result.data);
         }).catch((error: any) => {
             //throw new Error(`API ERROR ${payload} =>${error}`);
             console.error(`API ERROR ${payload} =>${error}`);
         });
         
-    }
-    catch(error){
-        console.error('Unable to get data for '+cacheName + error.toString())
-    };
     
-        // console.log("done ." + payload)
     }
 
     @Action
@@ -116,28 +120,32 @@ class AppData extends VuexModule implements IAppData {
         console.log('getting app cache')
  
         this.setAppState(true);
+       
+        
+        this.getApiData(ApiEndpoints.APPLICATIONPREFERENCES)
+        this.getApiData(ApiEndpoints.FORMSAPPLICATIONPREFERENCES)
+        
+        this.getApiData(ApiEndpoints.FLEXAPPLICATIONPREFERENCES)
+        this.getApiData(ApiEndpoints.ICONSINFOLDER)
+        
+        this.getApiData(ApiEndpoints.RECENTITEMS)
+        this.getApiData(ApiEndpoints.MYWORKPOLICIES)
+        this.getApiData(ApiEndpoints.ENTITIES)
+   
+        this.getApiData(ApiEndpoints.AUTHORIZABLEENTITIES)
+        this.getApiData(ApiEndpoints.WORKFLOWS)
+        
+        this.getApiData(ApiEndpoints.FORMS)
+        this.getApiData(ApiEndpoints.MYWORKCALENDARS)
+        this.getApiData(ApiEndpoints.ENTITYRELATIONSHIPICONS)
  
-
-        
-        this.getApiData('getFormsApplicationPreferences')
-        this.getApiData('getMyWorkPolicies')
-        this.getApiData('getEntities')
-        this.getApiData('getOrchestrators')
-        this.getApiData('getAuthorizableEntities')
-        this.getApiData('getWorkflows')
-        
-        this.getApiData('getRecentItems')
-        this.getApiData('getFlexApplicationPreferences')
-        this.getApiData('getForms')
-        this.getApiData('getMyWorkCalendars')
-        this.getApiData('getEntityRelationshipIcons')
-        this.getApiData('getAvailableOrchestratorIlios')
-        this.getApiData('getAvailableOrchestratorOlios')
-        this.getApiData('getIconsInFolder')
          
-        this.getApiData('getDialogRoles')
-        this.getApiData('getProducts')
-        this.getApiData('getApplicationPreferences')
+        this.getApiData(ApiEndpoints.DIALOGROLES)
+        this.getApiData(ApiEndpoints.PRODUCTS)
+
+        this.getApiData(ApiEndpoints.ORCHESTRATORS)
+        this.getApiData(ApiEndpoints.AVAILABLEORCHESTRATORILIOS)
+        this.getApiData(ApiEndpoints.AVAILABLEORCHESTRATOROLIOS)
 
 
         // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.MyWorkPoliciesAssignmentOrderRequest')
@@ -165,6 +173,27 @@ class AppData extends VuexModule implements IAppData {
 
 }
 
+
+
+export enum ApiEndpoints{
+	FORMSAPPLICATIONPREFERENCES= 'getFormsApplicationPreferences',
+	MYWORKPOLICIES= 'getMyWorkPolicies',
+	ENTITIES= 'getEntities',
+	ORCHESTRATORS= 'getOrchestrators',
+	AUTHORIZABLEENTITIES= 'getAuthorizableEntities',
+	WORKFLOWS='getWorkflows',    
+	RECENTITEMS= 'recentItems',
+	FLEXAPPLICATIONPREFERENCES= 'getFlexApplicationPreferences',
+	FORMS= 'getForms',
+	MYWORKCALENDARS= 'getMyWorkCalendars',
+	ENTITYRELATIONSHIPICONS= 'getEntityRelationshipIcons',
+	AVAILABLEORCHESTRATORILIOS= 'getAvailableOrchestratorIlios',
+	AVAILABLEORCHESTRATOROLIOS= 'getAvailableOrchestratorOlios',
+	ICONSINFOLDER='getIconsInFolder',     
+	DIALOGROLES= 'getDialogRoles',
+	PRODUCTS= 'getProducts',
+	APPLICATIONPREFERENCES= 'getApplicationPreferences',
+}
 export const AppDataModule = getModule(AppData)
 
 

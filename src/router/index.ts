@@ -84,7 +84,8 @@ export const asyncRoutes: RouteConfig[] = [
         name: 'formdesigner',
         meta: {
           title: 'formdesigner',
-          icon: 'form'
+          icon: 'form',
+          hidden:true
         }
       }
     ]

@@ -1,13 +1,19 @@
 <template>
-  <div :class="classObj" class="app-wrapper">
+  <div
+    :class="classObj"
+    class="app-wrapper"
+  >
     <div
       v-if="classObj.mobile && sidebar.opened"
       class="drawer-bg"
       @click="handleClickOutside"
     />
     <sidebar class="sidebar-container" />
-    <div :class="{ hasTagsView: showTagsView }" class="main-container">
-      <div :class="{ 'fixed-header': fixedHeader }">
+    <div
+      :class="{hasTagsView: showTagsView}"
+      class="main-container"
+    >
+      <div :class="{'fixed-header': fixedHeader}">
         <navbar />
         <tags-view v-if="showTagsView" />
       </div>
@@ -20,16 +26,16 @@
 </template>
 
 <script lang="ts">
-import { Component } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
-import { DeviceType, AppModule } from "@/store/modules/app";
-import { SettingsModule } from "@/store/modules/settings";
-import { AppMain, Navbar, Settings, Sidebar, TagsView } from "./components";
-import RightPanel from "@/components/RightPanel/index.vue";
-import ResizeMixin from "./mixin/resize";
-import { AppDataModule } from "@/store/modules/appData";
+import { Component } from 'vue-property-decorator'
+import { mixins } from 'vue-class-component'
+import { DeviceType, AppModule } from '@/store/modules/app'
+import { SettingsModule } from '@/store/modules/settings'
+import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
+import RightPanel from '@/components/RightPanel/index.vue'
+import ResizeMixin from './mixin/resize'
+import { AppDataModule } from '@/store/modules/appData'
 @Component({
-  name: "Layout",
+  name: 'Layout',
   components: {
     AppMain,
     Navbar,
@@ -37,8 +43,8 @@ import { AppDataModule } from "@/store/modules/appData";
     Settings,
     Sidebar,
     TagsView,
-    AppDataModule,
-  },
+    AppDataModule
+  }
 })
 export default class extends mixins(ResizeMixin) {
   get classObj() {
@@ -46,30 +52,34 @@ export default class extends mixins(ResizeMixin) {
       hideSidebar: !this.sidebar.opened,
       openSidebar: this.sidebar.opened,
       withoutAnimation: this.sidebar.withoutAnimation,
-      mobile: this.device === DeviceType.Mobile,
-    };
+      mobile: this.device === DeviceType.Mobile
+    }
   }
 
   get showSettings() {
-    return SettingsModule.showSettings;
+    return SettingsModule.showSettings
   }
 
   get showTagsView() {
-    return SettingsModule.showTagsView;
+    return SettingsModule.showTagsView
   }
 
   get fixedHeader() {
-    return SettingsModule.fixedHeader;
+    return SettingsModule.fixedHeader
   }
 
   private handleClickOutside() {
-    AppModule.CloseSideBar(false);
+    AppModule.CloseSideBar(false)
+  }
+
+  get isAppBusy() {
+    return this.$store.getters.IsAppBusy
   }
 
   mounted() {
-    console.log("loading Application Cache.");
+    console.log('loading Application Cache.')
 
-    this.$store.dispatch("getAppCache");
+    this.$store.dispatch('getAppCache')
   }
 }
 </script>
