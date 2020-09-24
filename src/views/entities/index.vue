@@ -43,21 +43,17 @@ export default class extends Vue {
   private allDisciplines: any = _allDisciplines;
 
   private async fetchEntities() {
-    this.loading = true
+    this.loading = true;
     try {
-      this.allEntities = await axios.get(
-        'http://52.152.148.181:3000/api/getEntities'
-      )
-      this.allDisciplines = await axios.get(
-        'http://52.152.148.181:3000/api/getFlexApplicationPreferences'
-      )
+      this.allEntities = this.$store.getters.Entities;
+      this.allDisciplines = this.$store.getters.FlexApplicationPreferences;
 
       // console.log(this.disciplinesList)
-      this.loading = false
+      this.loading = false;
     } catch (error) {
-      console.log('entities ----', error)
+      console.log("entities ----", error);
     }
-    this.loading = false
+    this.loading = false;
   }
 
   mounted() {
