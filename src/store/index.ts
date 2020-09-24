@@ -8,6 +8,7 @@ import { IErrorLogState } from './modules/error-log'
 import { IPermissionState } from './modules/permission'
 import { ISettingsState } from './modules/settings'
 import { IAppData } from './modules/appData'
+import { IEntitiesState } from './modules/entities'
  
 Vue.use(Vuex)
  
@@ -22,7 +23,8 @@ export interface IRootState {
   errorLog: IErrorLogState
   permission: IPermissionState
   settings: ISettingsState
-  AppData:IAppData
+  AppData:IAppData,
+  Entities: IEntitiesState
 }
 
 

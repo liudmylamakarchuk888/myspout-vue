@@ -106,14 +106,12 @@ class AppData extends VuexModule implements IAppData {
         axios.get('api/' + payload)
             .then((result: { data: any }) => {
 
-                localStorage.setItem(cacheName, JSON.stringify(result.data));
-                this.SetCache(cacheName, result.data);
-            }).catch((error: any) => {
-                //throw new Error(`API ERROR ${payload} =>${error}`);
-                console.error(`API ERROR ${payload} =>${error}`);
-            });
-
-
+            localStorage.setItem(cacheName, JSON.stringify(result.data));            
+            this.SetCache(cacheName, result.data);
+        }).catch((error: any) => {
+            //throw new Error(`API ERROR ${payload} =>${error}`);
+            console.error(`API ERROR ${payload} =>${error}`);
+        }); 
     }
 
     @Action

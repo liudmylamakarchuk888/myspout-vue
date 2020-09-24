@@ -2,7 +2,7 @@
   <el-container>
     <el-row class="app-container">
       <el-col>
-        <p>{{ title }}</p>
+        <p>{{ selectedEntity.name }}</p>
       </el-col>
       <el-col>
         <el-row
@@ -19,7 +19,7 @@
           </el-col>
         </el-row>
       </el-col>
-      <el-col style="padding-top: 20px">
+      <el-col style="padding-top: 20px; overflow: hidden">
         <el-tabs
           type="card"
           class="tab-container"
@@ -27,8 +27,8 @@
         >
           <!-- <el-tab-pane :label="`Properies List (${data.properties.length})`"> -->
           <el-tab-pane :label="`Properies List`">
-            <el-row style="padding-top: 10px">
-              <el-col>
+            <el-row style="padding-top: 10px; hegith: 100%">
+              <el-col class="list-header">
                 <el-row type="flex">
                   <el-col
                     style="padding-left: 30px"
@@ -77,11 +77,8 @@
                   </el-col>
                 </el-row>
               </el-col>
-              <el-col style="padding-top: 20px">
-                <mini-list
-                  :list-items="listData"
-                  :loading="loading"
-                />
+              <el-col class="list-body">
+                <mini-list :entity-id="selectedEntity" />
               </el-col>
             </el-row>
           </el-tab-pane>
@@ -97,7 +94,7 @@
   </el-container>
 </template>
 <script lang='ts'>
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import MiniList from './miniList.vue'
 
 @Component({
@@ -107,14 +104,7 @@ import MiniList from './miniList.vue'
   }
 })
 export default class extends Vue {
-  @Prop({ default: () => 'no title' }) private title!: string;
-  @Prop({ default: () => [] }) private tabLabels!: any;
   @Prop({ default: () => '' }) private selectedEntity!: string;
-  @Prop({ default: () => [] }) private data!: any;
-  @Prop({ default: () => true }) private loading!: boolean;
-
-  private listData = this.data
-  private _loading = this.loading
 
   private description = '';
   private options = [
@@ -158,17 +148,35 @@ export default class extends Vue {
   height: 100%;
   margin: 0;
   .description {
+    width: 276px;
     input {
       border: none;
     }
   }
   .app-container {
+    display: flex;
+    flex-direction: column;
+    .tab-container {
+      height: 100%;
+    }
     .el-tabs__header {
       margin: 0px;
     }
     .el-tabs__content {
+      height: calc(100% - 41px);
       border: 1px solid #dfe4ed;
       border-top: none;
+      .el-tab-pane {
+        height: 100%;
+        & > div.el-row {
+          height: 100%;
+        }
+        .list-body {
+          overflow: auto;
+          height: calc(100% - 36px);
+          padding-top: 20px;
+        }
+      }
     }
   }
 }

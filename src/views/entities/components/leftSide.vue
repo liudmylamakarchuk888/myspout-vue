@@ -45,10 +45,10 @@ import MiniTree from './miniTree.vue'
   name: 'LeftSide',
   components: { MiniTree }
 })
-export default class ComponentName extends Vue {
-  @Prop({ default: () => [] }) private entities!: any;
-  @Prop({ default: () => [] }) private disciplines!: any;
-  @Prop({ default: '' }) private handleEntityClick!: any;
+export default class extends Vue {
+  @Prop({ required: true }) private entities!: any;
+  @Prop({ required: true }) private disciplines!: any;
+  @Prop({ required: true }) private handleEntityClick!: any;
 
   private entityKey = '';
   private selectedDiscip: any = '';
