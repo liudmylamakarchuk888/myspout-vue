@@ -160,8 +160,8 @@ export default class extends Vue {
     padding: 0px 10px;
     padding-top: 5px;
     position: relative;
-    height: 100%;
     overflow: auto;
+    height: calc(100% - 46px);
     .tree-content {
       position: relative;
     }

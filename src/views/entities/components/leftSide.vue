@@ -61,6 +61,9 @@ export default class ComponentName extends Vue {
 
 <style lang='scss' scoped>
 .container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   .el-row {
     margin: 0px;
     padding: 0px;
@@ -76,6 +79,11 @@ export default class ComponentName extends Vue {
     background-color: #e2e3e6;
     margin: 0px !important;
     padding: 24px 12px;
+  }
+  .scroll-wrap {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
   }
 }
 </style>
