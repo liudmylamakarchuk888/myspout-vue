@@ -9,6 +9,7 @@
         <el-input
           v-model="query.text"
           placeholder="Search for"
+          size="mini"
           class="filter-item"
         />
       </el-col>
@@ -18,6 +19,7 @@
           clearable
           placeholder="Select Type"
           class="filter-item"
+          size="mini"
         >
           <el-option
             v-for="item in typeOptions"
@@ -161,7 +163,7 @@ export default class extends Vue {
     padding-top: 5px;
     position: relative;
     overflow: auto;
-    height: calc(100% - 46px);
+    height: calc(100% - 38px);
     .tree-content {
       position: relative;
     }
