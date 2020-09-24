@@ -62,7 +62,6 @@
 </template>
 
 <script lang="ts">
-import { filter } from 'jszip'
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
 @Component({
@@ -75,6 +74,8 @@ export default class extends Vue {
     key: string
     value: string
   }[];
+
+  @Prop({ required: true }) private handleNodeClick!: any;
 
   private query = {
     text: '',
@@ -107,9 +108,6 @@ export default class extends Vue {
   }
 
   selectedNode = null;
-  handleNodeClick(data: any) {
-    this.selectedNode = data
-  }
   // getchilds(node) {
   //   if (node) {
   //     let types = [];

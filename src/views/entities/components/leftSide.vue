@@ -13,30 +13,33 @@
         :span="10"
         style="text-align: right"
       >
-        <a
-          href="#"
-          class="href-button"
-        >New</a> |
-        <a
-          href="#"
-          class="href-button"
-        >New Virtual</a>
+        <el-button
+          type="text"
+          style="text-decoration: underline"
+        >
+          New
+        </el-button>
+        |
+        <el-button
+          type="text"
+          style="text-decoration: underline; margin: 0;"
+        >
+          New Virtual
+        </el-button>
       </el-col>
     </el-row>
     <div class="scroll-wrap">
-      <el-row>
-        <mini-tree
-          :tree-data="entities"
-          :type-options="disciplines"
-        />
-      </el-row>
+      <mini-tree
+        :tree-data="entities"
+        :type-options="disciplines"
+        :handle-node-click="handleEntityClick"
+      />
     </div>
   </div>
 </template>
 <script lang='ts'>
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import MiniTree from './miniTree.vue'
-import { component } from 'vue/types/umd'
 
 @Component({
   name: 'LeftSide',
@@ -45,13 +48,10 @@ import { component } from 'vue/types/umd'
 export default class ComponentName extends Vue {
   @Prop({ default: () => [] }) private entities!: any;
   @Prop({ default: () => [] }) private disciplines!: any;
+  @Prop({ default: '' }) private handleEntityClick!: any;
 
   private entityKey = '';
   private selectedDiscip: any = '';
-
-  handleNodeClick(data: object) {
-    console.log(data)
-  }
 
   mounted() {
     console.log('Mounted left side component')
@@ -76,14 +76,6 @@ export default class ComponentName extends Vue {
     background-color: #e2e3e6;
     margin: 0px !important;
     padding: 24px 12px;
-    .href-button {
-      color: #1890ff;
-      text-decoration: underline;
-      padding:0 4px;
-      &:last-child {
-        padding-right: 0;
-      }
-    }
   }
 }
 </style>
