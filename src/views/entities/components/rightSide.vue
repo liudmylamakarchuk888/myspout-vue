@@ -19,7 +19,7 @@
           </el-col>
         </el-row>
       </el-col>
-      <el-col style="padding-top: 20px">
+      <el-col style="padding-top: 20px; overflow: hidden;">
         <el-tabs
           type="card"
           class="tab-container"
@@ -27,8 +27,8 @@
         >
           <!-- <el-tab-pane :label="`Properies List (${data.properties.length})`"> -->
           <el-tab-pane :label="`Properies List`">
-            <el-row style="padding-top: 10px">
-              <el-col>
+            <el-row style="padding-top: 10px; hegith: 100%;">
+              <el-col class="list-header">
                 <el-row type="flex">
                   <el-col
                     style="padding-left: 30px"
@@ -77,7 +77,7 @@
                   </el-col>
                 </el-row>
               </el-col>
-              <el-col style="padding-top: 20px">
+              <el-col class="list-body">
                 <mini-list
                   :list-items="listData"
                   :loading="loading"
@@ -158,17 +158,35 @@ export default class extends Vue {
   height: 100%;
   margin: 0;
   .description {
+    width: 276px;
     input {
       border: none;
     }
   }
   .app-container {
+    display: flex;
+    flex-direction: column;
+    .tab-container {
+      height: 100%;
+    }
     .el-tabs__header {
       margin: 0px;
     }
     .el-tabs__content {
+      height: calc(100% - 41px);
       border: 1px solid #dfe4ed;
       border-top: none;
+      .el-tab-pane {
+        height: 100%;
+        & > div.el-row {
+          height: 100%;
+        }
+        .list-body {
+          overflow: auto;
+          height: calc(100% - 36px);
+          padding-top: 20px;
+        }
+      }
     }
   }
 }

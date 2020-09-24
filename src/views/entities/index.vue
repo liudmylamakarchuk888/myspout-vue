@@ -7,7 +7,7 @@
       v-else
       type="flex"
       :gutter="10"
-      class="row-bg"
+      class="entity-container"
       justify="center"
     >
       <el-col
@@ -103,6 +103,11 @@ export default class extends Vue {
       margin-bottom: 0;
     }
     width: 100%;
+  }
+  .entity-container {
+    @media (max-width: 648px) {
+      min-width: 640px;
+    }
   }
   .card-panel-left {
     height: calc(100vh - 4.5em);
