@@ -16,6 +16,7 @@
         />
       </el-col>
       <el-col :span="18">
+        <right-side :title="Risk" />
         <!-- <left-side
           :entities="allEntities.children"
           :disciplines="allDisciplines.disciplines"
@@ -28,12 +29,13 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import LeftSide from './components/leftSide.vue'
+import RgithSide from './components/rightSide.vue'
 import axios from 'axios'
 import { _allEntities, _allDisciplines } from './data.js'
 
 @Component({
   name: 'Entities',
-  components: { LeftSide }
+  components: { LeftSide, RgithSide }
 })
 export default class extends Vue {
   private loading = false;
