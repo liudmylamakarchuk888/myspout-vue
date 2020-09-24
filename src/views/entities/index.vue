@@ -1,6 +1,10 @@
 <template>
   <el-container>
+    <p v-if="loading">
+      Loading...
+    </p>
     <el-row
+      v-else
       type="flex"
       :gutter="15"
       class="row-bg"
@@ -16,7 +20,7 @@
         />
       </el-col>
       <el-col :span="18">
-        <right-side :title="Risk" />
+        <right-side :title="`Risk`" />
         <!-- <left-side
           :entities="allEntities.children"
           :disciplines="allDisciplines.disciplines"
@@ -29,13 +33,13 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import LeftSide from './components/leftSide.vue'
-import RgithSide from './components/rightSide.vue'
+import RightSide from './components/rightSide.vue'
 import axios from 'axios'
 import { _allEntities, _allDisciplines } from './data.js'
 
 @Component({
   name: 'Entities',
-  components: { LeftSide, RgithSide }
+  components: { LeftSide, RightSide }
 })
 export default class extends Vue {
   private loading = false;
@@ -43,17 +47,17 @@ export default class extends Vue {
   private allDisciplines: any = _allDisciplines;
 
   private async fetchEntities() {
-    this.loading = true;
+    this.loading = true
     try {
-      this.allEntities = this.$store.getters.Entities;
-      this.allDisciplines = this.$store.getters.FlexApplicationPreferences;
+      this.allEntities = this.$store.getters.Entities
+      this.allDisciplines = this.$store.getters.FlexApplicationPreferences
 
       // console.log(this.disciplinesList)
-      this.loading = false;
+      this.loading = false
     } catch (error) {
-      console.log("entities ----", error);
+      console.log('entities ----', error)
     }
-    this.loading = false;
+    this.loading = false
   }
 
   mounted() {
