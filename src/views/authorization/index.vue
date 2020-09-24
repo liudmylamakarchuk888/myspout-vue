@@ -7,10 +7,46 @@
       <miniTree
         :tree-data="nodelist"
         :type-options="typeOptions"
-      />
+        show-search="false"
+        title="Authorization Tree"
+      >
+        <div slot="header">
+          <el-form>
+            <el-form-item>
+              <el-button
+              round
+                icon="el-icon-plus"
+                @click="onNew"
+              >
+                New
+              </el-button>
+              <el-button
+               round
+                @click="showRoles =true"
+              >
+                Roles
+              </el-button>
+              <el-button
+                round
+                @click="onNewProduct"
+              >
+                Products
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </miniTree>
     </el-aside>
+    <el-dialog
+      title="Outer Dialog"
+      :visible.sync="showRoles"
+      center
+    >
+      <RolesView />
+    </el-dialog>
+
     <el-main class="elmain">
-      main view
+      <authMainView />
     </el-main>
   </el-container>
 </template>
@@ -18,13 +54,20 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import miniTree from '@/components/Tables/miniTree'
+import authMainView from './components/mainView'
+import RolesView from './components/RolesView'
 @Component({
   name: 'authorization',
-  components: { miniTree }
+  components: { miniTree, authMainView, RolesView }
 })
 export default class extends Vue {
   nodelist = [];
   typeOptions: [] | undefined;
+
+  onNew() {
+    alert('on New ')
+  }
+
   mounted() {
     this.nodelist = this.$store.getters.AuthorizableEntities.children
     this.typeOptions = [

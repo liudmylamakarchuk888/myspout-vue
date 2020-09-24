@@ -5,6 +5,11 @@
         <span>{{ title }}</span>
       </el-col>
     </el-row>
+    <el-row>
+      <el-col>
+        <slot name="header" />
+      </el-col>
+    </el-row>
     <el-row
       v-if="showSearch"
       type="flex"
@@ -38,30 +43,33 @@
         </el-select>
       </el-col>
     </el-row>
-    <div class="tree-container">
-      <el-tree
-        ref="elTree"
-        class="tree-content"
-        :data="treeData"
-        node-key="id"
-        default-expand-all
-        highlight-current
-        :filter-node-method="filterNode"
-        @node-click="handleNodeClick"
-      >
-        <span
-          slot-scope="{node, data}"
-          class="custom-tree-node"
+    <div class="scroll-wrap">
+      <div class="tree-container">
+        <el-tree
+          ref="elTree"
+          class="tree-content"
+          :data="treeData"
+          node-key="id"
+          default-expand-all
+          highlight-current
+          :filter-node-method="filterNode"
+          @node-click="handleNodeClick"
         >
-          <span>
-            <!-- <i v-if="data.children.length >0" class="el-icon-plus"/>
+          <span
+            slot-scope="{node, data}"
+            class="custom-tree-node"
+          >
+            <span>
+              <!-- <i v-if="data.children.length >0" class="el-icon-plus"/>
           <i v-else class='el-icon-edit' /> -->
-            <i class="el-icon-edit" />
-            {{ data.name }}
+              <i class="el-icon-edit" />
+              {{ data.name }}
+            </span>
           </span>
-        </span>
-      </el-tree>
+        </el-tree>
+      </div>
     </div>
+
     </el-row>
   </div>
 </template>
@@ -166,6 +174,11 @@ export default class extends Vue {
       position: relative;
       overflow: auto;
     }
+  }
+  .scroll-wrap {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
   }
 }
 </style>

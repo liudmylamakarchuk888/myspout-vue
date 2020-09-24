@@ -1,18 +1,19 @@
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
 import store from '@/store'
 import axios from 'axios'
-import { mapGetters } from 'vuex';
+import { ItemInstance } from '@/models/ItemInstance'
+import { FlexApplicationPreferences } from '@/models/FlexApplicationPreferences';
+import { Node } from '@/models/Node'
+import { Entity } from '@/models/Entity';
+import { ApplicationPreference } from '@/models/ApplicationPreference';
 import local from '@/views/i18n-demo/local';
-import { error } from 'console';
-
 export interface IAppData {
     Cache: any[]
-    RecentItems:any[]
-    AppSettings: any
-    AppFlexSettings: any
-    Recents: any
+    RecentItems: ItemInstance[]
+
+    FlexApplicationPreferences: FlexApplicationPreferences[]
     Entities: any[]
-    Forms:any[]
+    Forms: ItemInstance[]
 }
 
 axios.defaults.baseURL = "http://52.152.148.181:3000/";
@@ -20,47 +21,51 @@ axios.defaults.baseURL = "http://52.152.148.181:3000/";
 
 @Module({ dynamic: true, store, name: 'appData' })
 class AppData extends VuexModule implements IAppData {
+
     Cache: any[] = [];
 
     get AppFlexSettings() {
-        return this.FlexApplicationPreferences();
+        return this.FlexApplicationPreferences;
     }
 
 
     get RecentItems() {
-        return <ItemInstance[]>JSON.parse(localStorage.getItem(ApiEndpoints.RECENTITEMS))
+
+        return JSON.parse(localStorage.getItem(ApiEndpoints.RECENTITEMS)) as ItemInstance[]
     }
     get Entities() {
-        //return JSON.parse(localStorage.getItem('Entities'));
-        return JSON.parse(localStorage.getItem(ApiEndpoints.ENTITIES));
+
+        return JSON.parse(localStorage.getItem(ApiEndpoints.ENTITIES)) as Entity[];
     }
 
     get FlexApplicationPreferences() {
-        return JSON.parse(localStorage.getItem(ApiEndpoints.FLEXAPPLICATIONPREFERENCES));
-    }
-    get AppSettings() {
-        return this.FlexApplicationPreferences.AppSettings;
+        return JSON.parse(localStorage.getItem(ApiEndpoints.FLEXAPPLICATIONPREFERENCES)) as FlexApplicationPreferences[];
     }
 
-    get Forms(){
-    return <ItemInstance[]>JSON.parse(localStorage.getItem(ApiEndpoints.FORMS));
+
+    get Forms() {
+        return JSON.parse(localStorage.getItem(ApiEndpoints.FORMS)) as ItemInstancep[]
     }
 
-    get AuthorizableEntities(){
-        return JSON.parse(localStorage.getItem(ApiEndpoints.AUTHORIZABLEENTITIES))
+    get AuthorizableEntities() {
+        return JSON.parse(localStorage.getItem(ApiEndpoints.AUTHORIZABLEENTITIES)) as Node
+    }
+    get ApplicationPrefrences() {
+        return JSON.parse(localStorage.getItem(ApiEndpoints.APPLICATIONPREFERENCES)) as ApplicationPreference[]
     }
 
-    async tryGetData(key:string){
-        if(window.localStorage[key]){
-            let cachedData:string = window.localStorage.getItem(key) ;
-            return JSON.parse(cachedData)
+
+    public tryGetData<T>(key: string): T {
+        if (window.localStorage[key]) {
+            const dataStr = localStorage.getItem(key);
+
+            return JSON.parse(dataStr) as T
         }
-        else{
-          await this.context.commit('getApiData',key)
-        }
+
+        return this.context.commit('getApiData', key)
     }
- 
-    get IsAppBusy(){
+
+    get IsAppBusy() {
         return this.ApplicationBusy;
     }
     public ApplicationBusy: boolean = false;
@@ -76,38 +81,39 @@ class AppData extends VuexModule implements IAppData {
     setAppState(isbusy: boolean) {
         //const {key} = isbusy;
         if (Object.prototype.hasOwnProperty.call(this, isbusy)) {
-            (this as any)[ApplicationBusy]=isbusy;
+            (this as any)['ApplicationBusy'] = isbusy;
         }
         // this.ApplicationBusy = isbusy;
     }
     @Mutation
-    SetCache(key, value) {
+    SetCache(key: string, value: any) {
         this.Cache[key] = value;
     }
 
     @Mutation
-    private getApiData(payload: string) {
+    public getApiData(payload: string) {
         const cacheName: string = payload.replace('get', '');
-       //const cacheName: string = payload.trim();
-       
+        //const cacheName: string = payload.trim();
+
         if (localStorage[cacheName]) {
             console.log(`${cacheName} reading from cache `);
-            this.Cache[cacheName] = JSON.parse(localStorage.getItem(cacheName));
+            const cache = localStorage.getItem(cacheName);
+            this.Cache[cacheName] = JSON.parse(cache);
             return this.Cache[cacheName];
         }
-        
+
 
         axios.get('api/' + payload)
             .then((result: { data: any }) => {
 
-            localStorage.setItem(cacheName, JSON.stringify(result.data));            
-            this.SetCache(cacheName, result.data);
-        }).catch((error: any) => {
-            //throw new Error(`API ERROR ${payload} =>${error}`);
-            console.error(`API ERROR ${payload} =>${error}`);
-        });
-        
-    
+                localStorage.setItem(cacheName, JSON.stringify(result.data));
+                this.SetCache(cacheName, result.data);
+            }).catch((error: any) => {
+                //throw new Error(`API ERROR ${payload} =>${error}`);
+                console.error(`API ERROR ${payload} =>${error}`);
+            });
+
+
     }
 
     @Action
@@ -116,30 +122,35 @@ class AppData extends VuexModule implements IAppData {
     }
 
     @Action
+    getData(payload: string) {
+        this.getApiData(payload)
+    }
+
+    @Action
     getAppCache() {
         console.log('getting app cache')
- 
+
         this.setAppState(true);
-       
-        
+
+
         this.getApiData(ApiEndpoints.APPLICATIONPREFERENCES)
         this.getApiData(ApiEndpoints.FORMSAPPLICATIONPREFERENCES)
-        
+
         this.getApiData(ApiEndpoints.FLEXAPPLICATIONPREFERENCES)
         this.getApiData(ApiEndpoints.ICONSINFOLDER)
-        
+
         this.getApiData(ApiEndpoints.RECENTITEMS)
         this.getApiData(ApiEndpoints.MYWORKPOLICIES)
         this.getApiData(ApiEndpoints.ENTITIES)
-   
+
         this.getApiData(ApiEndpoints.AUTHORIZABLEENTITIES)
         this.getApiData(ApiEndpoints.WORKFLOWS)
-        
+
         this.getApiData(ApiEndpoints.FORMS)
         this.getApiData(ApiEndpoints.MYWORKCALENDARS)
         this.getApiData(ApiEndpoints.ENTITYRELATIONSHIPICONS)
- 
-         
+
+
         this.getApiData(ApiEndpoints.DIALOGROLES)
         this.getApiData(ApiEndpoints.PRODUCTS)
 
@@ -152,7 +163,7 @@ class AppData extends VuexModule implements IAppData {
         // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.EntityReportOrderApplicationInformationRequest')
         // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.ApplicationPreferenceCategoriesRequest')
         // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.DisplayLanguagesRequest')
-        
+
 
         // this.getApiData('getFlexApplicationPreferences');
         // this.getApiData('recentItems');
@@ -175,24 +186,24 @@ class AppData extends VuexModule implements IAppData {
 
 
 
-export enum ApiEndpoints{
-	FORMSAPPLICATIONPREFERENCES= 'getFormsApplicationPreferences',
-	MYWORKPOLICIES= 'getMyWorkPolicies',
-	ENTITIES= 'getEntities',
-	ORCHESTRATORS= 'getOrchestrators',
-	AUTHORIZABLEENTITIES= 'getAuthorizableEntities',
-	WORKFLOWS='getWorkflows',    
-	RECENTITEMS= 'recentItems',
-	FLEXAPPLICATIONPREFERENCES= 'getFlexApplicationPreferences',
-	FORMS= 'getForms',
-	MYWORKCALENDARS= 'getMyWorkCalendars',
-	ENTITYRELATIONSHIPICONS= 'getEntityRelationshipIcons',
-	AVAILABLEORCHESTRATORILIOS= 'getAvailableOrchestratorIlios',
-	AVAILABLEORCHESTRATOROLIOS= 'getAvailableOrchestratorOlios',
-	ICONSINFOLDER='getIconsInFolder',     
-	DIALOGROLES= 'getDialogRoles',
-	PRODUCTS= 'getProducts',
-	APPLICATIONPREFERENCES= 'getApplicationPreferences',
+export enum ApiEndpoints {
+    FORMSAPPLICATIONPREFERENCES = 'getFormsApplicationPreferences',
+    MYWORKPOLICIES = 'getMyWorkPolicies',
+    ENTITIES = 'getEntities',
+    ORCHESTRATORS = 'getOrchestrators',
+    AUTHORIZABLEENTITIES = 'getAuthorizableEntities',
+    WORKFLOWS = 'getWorkflows',
+    RECENTITEMS = 'recentItems',
+    FLEXAPPLICATIONPREFERENCES = 'getFlexApplicationPreferences',
+    FORMS = 'getForms',
+    MYWORKCALENDARS = 'getMyWorkCalendars',
+    ENTITYRELATIONSHIPICONS = 'getEntityRelationshipIcons',
+    AVAILABLEORCHESTRATORILIOS = 'getAvailableOrchestratorIlios',
+    AVAILABLEORCHESTRATOROLIOS = 'getAvailableOrchestratorOlios',
+    ICONSINFOLDER = 'getIconsInFolder',
+    DIALOGROLES = 'getDialogRoles',
+    PRODUCTS = 'getProducts',
+    APPLICATIONPREFERENCES = 'getApplicationPreferences',
 }
 export const AppDataModule = getModule(AppData)
 

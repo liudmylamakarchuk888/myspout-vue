@@ -18,9 +18,11 @@
         <tags-view v-if="showTagsView" />
       </div>
       <app-main />
-      <right-panel v-if="showSettings">
+      <!--
+        useful for Theme selection and customization for client specific settings.
+        <right-panel v-if="showSettings">
         <settings />
-      </right-panel>
+      </right-panel> -->
     </div>
   </div>
 </template>

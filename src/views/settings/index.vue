@@ -1,116 +1,61 @@
 <template>
-  <div role="tablist">
-    <b-card
-      no-body
-      class="mb-1"
+  <el-card class="box-card">
+    <div
+      slot="header"
+      class="clearfix"
     >
-      <b-card-header
-        v-b-toggle.appPrefrences
-        header-tag="header"
-        class="p-1"
-        role="tab"
-      >
-        <b-button variant="Link">
-          Application Prefrences
-        </b-button>
-      </b-card-header>
-      <b-collapse
-        id="appPrefrences"
-        visible
-        accordion="my-accordion"
-        role="tabpanel"
-      >
-        <b-card-body>
-          <!-- <app-prefrences></app-prefrences> -->
-        </b-card-body>
-      </b-collapse>
+      <span>Settings</span>
+    </div>
 
-      <b-card-header
-        v-b-toggle.tabDisplayLangs
-        header-tag="header"
-        class="p-1"
-        role="tab"
+    <el-collapse
+      v-model="ativeName"
+      accordion
+    >
+      <el-collapse-item
+        title="Application Prefrences"
+        name="1"
       >
-        <b-button variant="Link">
-          Display languages
-        </b-button>
-      </b-card-header>
-      <b-collapse
-        id="tabDisplayLangs"
-        accordion="my-tabDisplayLangs"
-        role="tabpanel"
-      >
-        <b-card-body>
-          <!-- <app-languages></app-languages> -->
-        </b-card-body>
-      </b-collapse>
-
-      <b-card-header
-        v-b-toggle.tablOrchestrators
-        header-tag="header"
-        class="p-1"
-        role="tab"
-      >
-        <b-button variant="Link">
-          Orchestrators
-        </b-button>
-      </b-card-header>
-      <b-collapse
-        id="tablOrchestrators"
-        accordion="my-tablOrchestrators"
-        role="tabpanel"
-      >
-        <b-card-body>
-          <div class="mid-sec forms-doc-sec mt-3">
-            <b-container fluid>
-              <b-row>
-                <b-col>Orchestrators are the components responsible for running integration operations. After installing new orchestrators, add them to this list.</b-col>
-              </b-row>
-              <!-- <app-orchestrators></app-orchestrators> -->
-            </b-container>
-          </div>
-        </b-card-body>
-      </b-collapse>
-
-      <b-card-header
-        v-b-toggle.tabServerHealth
-        header-tag="header"
-        class="p-1"
-        role="tab"
-      >
-        <b-button variant="Link">
-          Server Health
-        </b-button>
-      </b-card-header>
-      <b-collapse
-        id="tabServerHealth"
-        accordion="my-tabServerHealth"
-        role="tabpanel"
-      >
-        <b-card-body>
-          <div class="mid-sec forms-doc-sec mt-1">
-            <b-form inline>
-              <b-container fluid>
-                <b-row class="my-1">
-                  <b-col lg="8">
-                    Long running operations
-                  </b-col>
-                </b-row>
-                <!-- <app-server-health></app-server-health> -->
-              </b-container>
-            </b-form>
-          </div>
-        </b-card-body>
-      </b-collapse>
-    </b-card>
-  </div>
+        <ApplicationPerfrences />
+      </el-collapse-item>
+      <el-collapse-item title="Display languages">
+        <!-- <app-languages></app-languages> -->
+      </el-collapse-item>
+      <el-collapse-item title="Orchestrators">
+        <div class="mid-sec forms-doc-sec mt-3">
+          <el-container fluid>
+            <el-row>
+              <el-col>
+                Orchestrators are the components responsible for running integration operations. After installing new orchestrators, add them to this list.</b-col>
+              </el-col>
+            </el-row>
+            <!-- <app-orchestrators></app-orchestrators> -->
+          </el-container>
+        </div>
+      </el-collapse-item>
+      <el-collapse-item title="Server Health">
+        <div class="mid-sec forms-doc-sec mt-1">
+          <el-form inline>
+            <el-container fluid>
+              <el-row class="my-1">
+                <el-col lg="8">
+                  Long running operations
+                </el-col>
+              </el-row>
+              <!-- <app-server-health></app-server-health> -->
+            </el-container>
+          </el-form>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
+  </el-card>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import ApplicationPerfrences from './components/AppPrefrences.vue'
 @Component({
   name: 'settings',
-  components: {}
+  components: { ApplicationPerfrences }
 })
 export default class extends Vue {
   prefTable: any;
@@ -149,7 +94,7 @@ export default class extends Vue {
   }
 
   mounted() {
-    console.log('recent items ' + this.$store.state.recentItems.length)
+   
   }
 }
 </script>

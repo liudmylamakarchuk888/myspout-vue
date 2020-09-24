@@ -20,6 +20,15 @@ import * as directives from '@/directives'
 import * as filters from '@/filters'
 import { Store } from 'vuex'
 
+import VueGoodTablePlugin from 'vue-good-table';
+
+// import the styles
+import 'vue-good-table/dist/vue-good-table.css'
+
+Vue.use(VueGoodTablePlugin);
+
+
+
 Vue.use(ElementUI, {
   size: AppModule.size, // Set element-ui default size
   i18n: (key: string, value: string) => i18n.t(key, value)

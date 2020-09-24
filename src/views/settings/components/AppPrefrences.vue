@@ -1,126 +1,185 @@
 <template>
-  <div class="mid-sec forms-doc-sec mt-3">
-    <b-form inline>
-      <b-container fluid>
-        <b-row inline>
-          <b-col class="md-8">
-            <b-form-group>
-              <b-input-group size="sm">
-                <b-form-input
-                  v-model="filter"
-                  type="search"
-                  class="w-50"
-                  id="filterInput"
-                  placeholder="Type to Search"
-                ></b-form-input>
-
-                <b-form-select class="w-50" :options="datatypes" placeholder="filter by data type"></b-form-select>
-              </b-input-group>
-            </b-form-group>
-          </b-col>
-          <b-col class="md-3">
-            <b-button variant="default" class="mr-xs" size="sm">New</b-button>
-            <b-button :disabled="!hasSelectedRows" variant="default" class="mr-xs" size="sm">Copy</b-button>
-            <b-button :disabled="!hasSelectedRows" variant="default" class="mr-xs" size="sm">Open</b-button>
-            <b-button :disabled="!hasSelectedRows" variant="default" class="mr-xs" size="sm">Delete</b-button>
-          </b-col>
-        </b-row>
-      </b-container>
-    </b-form>
-
-    <b-table
-      ref="langTable"
-      sticky-header="300px"
-      striped
-      hover
-      small
-      fixed
-      selectable
-      :select-mode="selectMode"
-      @row-selected="onRowSelected"
-      responsive="sm"
-      :items="data"
-      :fields="fields"
-      :filter="filter"
-      :filterIncludedFields="filterOn"
+  <el-card class="box-card">
+    <el-form
+      :inline="true"
+      style="float:right"
     >
-      <!-- A custom formatted column -->
-      <!-- <template v-slot:cell(dateModified)="data">
-                    <b class="text-info">{{ data.value |toDate }}</b>
-      </template>-->
-    </b-table>
-  </div>
-</template>
+      <el-form-item itemref>
+        <el-input
+          v-model="search.text"
+          placeholder="Find prefrence"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-select
+          v-model="search.type"
+          placeholder="find by Property type"
+          @change="onSearchTypeChanged"
+        >
+          <el-option
+            v-for="item in propertyDataTypes"
+            :key="item.key"
+            :label="item.key"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          variant="outline-primary"
+          title="create New Form"
+          icon="el-icon-plus"
+          @click="showNewForm = !showNewForm"
+        />
+        <el-dialog
+          ref="newFormModel"
+          :visible.sync="showNewForm"
+          width="30%"
+          center
+          title="New Form"
+          :before-close="onNewDialogClose"
+        >
+          ApplicationPerfrences
+          <span
+            slot="footer"
+            class="dialog-footer"
+          >
+            <el-button @click="showNewForm = false">Cancel</el-button>
+            <el-button
+              type="primary"
+              @click="showNewForm = false"
+            >Confirm</el-button>
+          </span>
+        </el-dialog>
+        <el-button
+          :disabled="!selectedRow"
+          icon="el-icon-document-copy"
+          title="Copy selected Form"
+          variant="outline-primary"
+        />
+        <el-button
+          :disabled="!selectedRow"
+          variant="outline-primary"
+          icon="el-icon-view"
+          title="open selected form"
+          @click="onOpenClick"
+        />
+        <el-button
+          variant="outline-danger"
+          title="Delete"
+          icon="el-icon-delete"
+          :disabled="!selectedRow"
+        />
+      </el-form-item>
+    </el-form>
 
-<script>
-import axios from "axios";
-import { mapActions } from "vuex";
-import { Component, Vue, Watch } from "vue-property-decorator";
+    <vue-good-table
+      :columns="fields"
+      compact-mode
+      max-height="300px"
+      :fixed-header="true"
+      style-class="vgt-table striped bordered condensed"
+      :rows="tableData"
+      :group-options="{
+        enabled: true,
+        rowKey:'indexId',
+        collapsable: true
+      }"
+      :search-options="{
+        enabled: true,
+        externalQuery: search.text
+      }"
+    >
+    <!-- <template slot="table-header-row" slot-scope="props">
+    <span >
+      {{ props.row.category }}
+    </span>
+  </template> -->
+    </vue-good-table>
+  </el-card>
+</template>
+<script lang="ts">
+// import { RSA_PKCS1_PADDING } from "constants"
+import { Component, Vue, Watch } from 'vue-property-decorator'
+
 @Component({
-  name: 'app-prefrences',
-  components: { axios }
+  name: 'ApplicationPerfrences',
+  components: { }
 })
 export default class extends Vue {
-  data = [];
-  selected = [];
-  selectMode = "single";
-  hasSelectedRows = false;
-  filter = null;
-  filterOn = [];
-  fields = [
-    {
-      key: "displayName",
-      sortable: true,
-    },
-    {
-      key: "value",
-      sortable: true,
-    },
-    {
-      key: "description",
-      sortable: true,
-    },
-  ];
+   search={
+     text: null,
+     type: null
+   }
 
-  onRowClick(row) {
-    console.log(row);
-  }
+  selectedPropertyType=null;
 
-  onRowSelected(items) {
-    this.selected = items;
-    if (this.selected.length > 0) this.hasSelectedRows = true;
-    else this.hasSelectedRows = false;
-  }
+   tableData =[]
+     fields= [
+       {
+         field: 'category',
+         label: 'category',
+         sortable: true,
+         width: '100px'
+       },
+       {
+         field: 'displayName',
+         label: 'Name',
+         sortable: true,
+         width: '150px'
+       },
+       {
+         field: 'value',
+         label: 'Value',
+         sortable: true,
+         width: '100px'
+       }
+     ]
 
-  onFiltered(filteredItems) {
-    // Trigger pagination to update the number of buttons/pages due to filtering
-    this.totalRows = filteredItems.length;
-    this.currentPage = 1;
-  }
+    @Watch('search')
+     onSearchChanged(val, oldVal) {
+       console.log('search val ' + val)
+     }
 
-  get datatypes() {
-    data = [];
-    try {
-      var data = [];
-      this.$store.state.AppSettings.dataTypes.forEach((element) => {
-        data.push({ text: element["key"], value: element["value"] });
-      });
-    } catch {
-      console.log("error while loading data types from store. ");
+    get appPrefrences() {
+      return this.$store.getters.ApplicationPrefrences
     }
-    return data;
-  }
-  mounted() {
-    axios
-      .get("http://52.152.148.181:3000/api/getApplicationPreferences")
-      .then((response) => {
-        this.data = response.data;
+
+    get propertyDataTypes() {
+      return this.$store.getters.FlexApplicationPreferences.propertyDataTypes
+    }
+
+    mounted() {
+      this.getGroupedData()
+    }
+
+    onSearchTypeChanged(data) {
+      alert('on search type changed ' + data)
+    }
+
+    getGroupedData() {
+      let index = 1
+      this.appPrefrences.forEach((row) => {
+        row.indexId = index
+
+        index++
       })
-      .catch((error) => {
-        this.errored = true;
-        console.log(error);
+      const result = this.appPrefrences.reduce(function(r, a) {
+        r[a.category] = r[a.category] || []
+        r[a.category].push(a)
+        return r
+      }, Object.create(null))
+
+      Object.entries(result).forEach((e) => {
+        this.tableData.push({
+          category: e[0],
+          children: e[1]
+
+        })
       })
-      .finally(() => (this.loading = false));
-  }
+
+      console.log(JSON.stringify(this.tableData))
+      return this.tableData
+    }
 }
 </script>

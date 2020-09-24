@@ -1,69 +1,78 @@
 <template>
-  <div>
-    <div class="mid-sec forms-doc-sec mt-3">
-      <label for="log">Log:</label>
-      <input type="text" id="log" class="log_body" />
-    </div>
-    <div class="mid-sec forms-doc-sec mt-3">
-      <label for="export">Export Location</label>
-      <input type="text" id="export" class="export_body" />
-      <div>
-        <input  id="exportCheck"
-          type="checkbox"
-         
-          value="exportCheck"
-          v-model="checkedNames"
-          style="margin-left:12%"
-        />
-        <label for="exportCheck">Export enviroment application preference(recommended)</label>
-      </div>
-    </div>
-    <div class="mid-sec forms-doc-sec mt-3">
-      <label for="import">Import Location</label>
-      <input type="text" id="import" class="export_body" />
-      <div>
-        <input
-          type="checkbox"
-          id="importCheck"
-          value="importcheck"
-          v-model="checkedNames"
-          style="margin-left:12%"
-        />
-        <label for="importCheck">Import enviroment application preference</label>
-      </div>
-      <div>
-        <input
-          type="checkbox"
-          id="importCheck"
-          value="importcheck"
-          v-model="checkedNames"
-          style="margin-left:12%"
-        />
-        <label for="importCheck">Backup solution configuration before importing (recommended)</label>
-      </div>
-      <div>
-        <label
-          for="exportlocation"
-          style="margin-left:12%;"
-        >It will be created under Export Location.</label>
-      </div>
-    </div>
-    <hr style="width:50%;text-align:left;margin-left:0" />
-    <div class="mid-sec forms-doc-sec mt-3" style>
-      <div class="column">Step 1- Import DB Schema</div>
-      <div class="column">Step 2 Import soluiton Configur..</div>
-      <div class="column">Step 3 Reload settings</div>
-      <div class="column">Export</div>
-    </div>
-    <br />
-    <div class="mid-sec forms-doc-sec mt-3">
-      <div class>Step 1 imports entities and SQL objects(views, stored procedures and fucntions).</div>
-      <div class>Step 2 imports solution objects such as workflows, forms and dashboard tabs.</div>
-      <div
-        class
-      >Step 3 applis the new solution to the web site and refereshes the Solution Designer.</div>
-    </div>
+ <el-card class="box-card">
+  <div slot="header" class="clearfix">
+    <span>Import Export</span>
+    <el-button style="float: right; padding: 3px 0" type="text">Operation button</el-button>
   </div>
+    <el-form
+      ref="form"
+      :model="form"
+      label-width="120px"
+    >
+      <el-form-item label="Log">
+        <el-input
+          v-model="form.log"
+          type="textarea"
+        />
+      </el-form-item>
+
+      <el-form-item label="Export Location">
+        <el-input
+          id="export"
+          v-model="form.exportLocation"
+          type="text"
+        />
+        <el-checkbox :checked="form.exportenvperf">
+          Export enviroment application preference(recommended)
+        </el-checkbox>
+      </el-form-item>
+      <el-form-item>
+        <el-form-item label="Import Location">
+          <el-input
+            id="export"
+            v-model="form.importLocation"
+            type="text"
+          />
+          <el-checkbox :checked="form.importEnvAppPref">
+            Import enviroment application preference
+          </el-checkbox>
+          <el-checkbox :checked="form.importBkpSol">
+            Backup solution configuration before importing (recommended)
+          </el-checkbox>
+          <pre>It will be created under Export Location.</pre>
+        </el-form-item>
+        <el-divider />
+        <el-form-item>
+          <el-button type="primary">
+            Step 1- Import DB Schema
+          </el-button>
+
+          <el-button type="primary">
+            Step 2 Import soluiton Configur..
+          </el-button>
+
+          <el-button type="primary">
+            Step 3 Reload settings
+          </el-button>
+          <el-button type="primary">
+            Export
+          </el-button>
+        </el-form-item>
+        <el-divider />
+        <div class="mid-sec forms-doc-sec mt-3">
+          <div>
+            Step 1 imports entities and SQL objects(views, stored procedures and fucntions).
+          </div>
+          <div>
+            Step 2 imports solution objects such as workflows, forms and dashboard tabs.
+          </div>
+          <div>
+            Step 3 applis the new solution to the web site and refereshes the Solution Designer.
+          </div>
+        </div>
+      </el-form-item>
+    </el-form>
+ </el-card>
 </template>
 
 <script lang="ts">
@@ -72,5 +81,15 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
   name: 'import-export',
   components: {}
 })
-export default class extends Vue {}
+export default class extends Vue {
+  form={
+    log: '',
+    exportLocation: '',
+    exportenvperf: true,
+    importLocation: '',
+    importEnvAppPref: true,
+
+    importBkpSol: false
+  }
+}
 </script>
