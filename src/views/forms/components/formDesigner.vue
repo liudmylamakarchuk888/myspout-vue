@@ -1,6 +1,6 @@
 <template>
-  <el-container style="height: 100%; border: 1px solid #eee" size="mini">
-    <!--  <el-aside width="275px">
+  <el-container class="elcontainer" size="mini">
+    <el-aside class="elaside">
        <el-collapse accordion>
         <el-collapse-item title="Properties" name="1">
           <propertyselector></propertyselector>
@@ -81,8 +81,8 @@
         </el-collapse-item>
         <el-collapse-item title="Development" name="4"></el-collapse-item>
       </el-collapse>
-    </el-aside>-->
-    <el-main>
+    </el-aside>
+    <el-main class="elmain">
       <div>form designer view here. {{ formId }}</div>
 
       <!-- <miniTable></miniTable> -->
