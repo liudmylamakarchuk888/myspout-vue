@@ -1,0 +1,175 @@
+<template>
+  <el-container>
+    <el-row class="app-container">
+      <el-col>
+        <p>{{ title }}</p>
+      </el-col>
+      <el-col>
+        <el-row
+          type="flex"
+          justify="start"
+        >
+          <el-col :span="5">
+            <el-input
+              v-model="description"
+              style="border-bottom: solid #dfe4ed 1px"
+              class="description"
+              placeholder="Type description here"
+            />
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col style="padding-top: 20px">
+        <el-tabs
+          type="card"
+          class="tab-container"
+          @tab-click="handleClick"
+        >
+          <!-- <el-tab-pane :label="`Properies List (${data.properties.length})`"> -->
+          <el-tab-pane :label="`Properies List`">
+            <el-row style="padding-top: 10px">
+              <el-col>
+                <el-row type="flex">
+                  <el-col
+                    style="padding-left: 30px"
+                    :span="18"
+                  >
+                    <el-button
+                      type="text"
+                      style="text-decoration: underline"
+                    >
+                      New
+                    </el-button>
+                    |
+                    <el-button
+                      type="text"
+                      style="text-decoration: underline; margin: 0"
+                    >
+                      New Formula
+                    </el-button>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-row>
+                      <el-col :span="12">
+                        <el-input
+                          v-model="propertyQuery.text"
+                          size="mini"
+                          placeholder="Find property"
+                        />
+                      </el-col>
+                      <el-col :span="12">
+                        <el-select
+                          v-model="propertyQuery.type"
+                          size="mini"
+                          placeholder="Find by data type"
+                          style="padding-left: 10px"
+                          clearable
+                        >
+                          <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </el-col>
+              <el-col style="padding-top: 20px">
+                <mini-list
+                  :list-items="listData"
+                  :loading="loading"
+                />
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+          <el-tab-pane label="Status List">
+            Role
+          </el-tab-pane>
+          <el-tab-pane label="Settins">
+            Task
+          </el-tab-pane>
+        </el-tabs>
+      </el-col>
+    </el-row>
+  </el-container>
+</template>
+<script lang='ts'>
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import MiniList from './miniList.vue'
+
+@Component({
+  name: 'RightSide',
+  components: {
+    MiniList
+  }
+})
+export default class extends Vue {
+  @Prop({ default: () => 'no title' }) private title!: string;
+  @Prop({ default: () => [] }) private tabLabels!: any;
+  @Prop({ default: () => '' }) private selectedEntity!: string;
+  @Prop({ default: () => [] }) private data!: any;
+  @Prop({ default: () => true }) private loading!: boolean;
+
+  private listData = this.data
+  private _loading = this.loading
+
+  private description = '';
+  private options = [
+    {
+      value: 'Option1',
+      label: 'Option1'
+    },
+    {
+      value: 'Option2',
+      label: 'Option2'
+    },
+    {
+      value: 'Option3',
+      label: 'Option3'
+    },
+    {
+      value: 'Option4',
+      label: 'Option4'
+    },
+    {
+      value: 'Option5',
+      label: 'Option5'
+    }
+  ];
+
+  private propertyQuery = {
+    text: '',
+    type: ''
+  };
+
+  handleClick(tab: any) {
+    console.log(tab.label)
+    // console.log(tab, event);
+  }
+}
+</script>
+
+<style lang='scss'>
+.el-container {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  .description {
+    input {
+      border: none;
+    }
+  }
+  .app-container {
+    .el-tabs__header {
+      margin: 0px;
+    }
+    .el-tabs__content {
+      border: 1px solid #dfe4ed;
+      border-top: none;
+    }
+  }
+}
+</style>
