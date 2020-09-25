@@ -34,6 +34,8 @@ import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
 import RightPanel from '@/components/RightPanel/index.vue'
 import ResizeMixin from './mixin/resize'
 import { AppDataModule } from '@/store/modules/appData'
+import { EntitiesModule } from '@/store/modules/entities'
+
 @Component({
   name: 'Layout',
   components: {
@@ -43,7 +45,8 @@ import { AppDataModule } from '@/store/modules/appData'
     Settings,
     Sidebar,
     TagsView,
-    AppDataModule
+    AppDataModule,
+    EntitiesModule
   }
 })
 export default class extends mixins(ResizeMixin) {

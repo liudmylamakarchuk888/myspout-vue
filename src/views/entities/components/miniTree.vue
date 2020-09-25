@@ -37,7 +37,7 @@
         node-key="id"
         :filter-node-method="filterNode"
         class="tree-content"
-        @node-click="handleNodeClick"
+        @node-click="handleNodeDbclick"
       >
         <span
           slot-scope="{node, data}"
@@ -45,7 +45,10 @@
         >
           <span>
             <b v-if="!node.isLeaf">{{ data.name }}</b>
-            <div v-else>
+            <div
+              v-else
+              class="node-content"
+            >
               <img
                 v-if="data.icons.length"
                 :src="data.icons[0].source"
@@ -54,7 +57,7 @@
                 v-else
                 class="el-icon-document"
               />
-              {{ data.name }}
+              <span style="padding-left: 3px;">{{ data.name }}</span>
             </div>
           </span>
         </span>
@@ -77,7 +80,7 @@ export default class extends Vue {
     value: string
   }[];
 
-  @Prop({ required: true }) private handleNodeClick!: any;
+  @Prop({ required: true }) private handleNodeDbclick!: any;
 
   private query = {
     text: '',
@@ -166,6 +169,11 @@ export default class extends Vue {
     height: calc(100% - 38px);
     .tree-content {
       position: relative;
+    }
+    .node-content {
+      display: flex;
+      align-items: center;
+      align-self: center;
     }
   }
 }
