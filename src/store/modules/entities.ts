@@ -31,7 +31,7 @@ class Entities extends VuexModule implements IEntitiesState {
   }
 
   @Mutation
-  setCurrentEntity(payload: any[]) {
+  SET_CURRENT_ENTITIY(payload: any[]) {
     this.currentEntity = payload;
   }
 
