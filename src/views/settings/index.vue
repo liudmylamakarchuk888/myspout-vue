@@ -4,47 +4,41 @@
       slot="header"
       class="clearfix"
     >
-      <span>Settings</span>
+      <span>Settings </span>
     </div>
 
     <el-collapse
-      v-model="ativeName"
+      v-model="activeTab"
       accordion
     >
       <el-collapse-item
         title="Application Prefrences"
-        name="1"
       >
         <ApplicationPerfrences />
       </el-collapse-item>
-      <el-collapse-item title="Display languages">
-        <!-- <app-languages></app-languages> -->
+      <el-collapse-item
+        title="Display languages"
+      >
+        <AppLanguages></AppLanguages> 
       </el-collapse-item>
-      <el-collapse-item title="Orchestrators">
-        <div class="mid-sec forms-doc-sec mt-3">
-          <el-container fluid>
-            <el-row>
-              <el-col>
-                Orchestrators are the components responsible for running integration operations. After installing new orchestrators, add them to this list.</b-col>
-              </el-col>
-            </el-row>
-            <!-- <app-orchestrators></app-orchestrators> -->
-          </el-container>
-        </div>
+      <el-collapse-item
+        title="Orchestrators"
+      >
+        <el-row>
+          <el-col>
+            Orchestrators are the components responsible for running integration operations. After installing new orchestrators, add them to this list.</b-col>
+          </el-col>
+        </el-row>
+        <!-- <app-orchestrators></app-orchestrators> -->
       </el-collapse-item>
-      <el-collapse-item title="Server Health">
-        <div class="mid-sec forms-doc-sec mt-1">
-          <el-form inline>
-            <el-container fluid>
-              <el-row class="my-1">
-                <el-col lg="8">
-                  Long running operations
-                </el-col>
-              </el-row>
-              <!-- <app-server-health></app-server-health> -->
-            </el-container>
-          </el-form>
-        </div>
+      <el-collapse-item
+        title="Server Health"
+      >
+        <el-row class="my-1">
+          <el-col lg="8">
+            Long running operations
+          </el-col>
+        </el-row>
       </el-collapse-item>
     </el-collapse>
   </el-card>
@@ -53,15 +47,16 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import ApplicationPerfrences from './components/AppPrefrences.vue'
+import AppLanguages from './components/AppLanguages.vue'
 @Component({
   name: 'settings',
-  components: { ApplicationPerfrences }
+  components: { ApplicationPerfrences, AppLanguages }
 })
 export default class extends Vue {
   prefTable: any;
 
   selectMode = 'single';
-
+activeTab:any=''
   langTable: any = {
     data: [],
     fields: [
@@ -91,10 +86,6 @@ export default class extends Vue {
     // Trigger pagination to update the number of buttons/pages due to filtering
     this.totalRows = filteredItems.length
     this.currentPage = 1
-  }
-
-  mounted() {
-   
   }
 }
 </script>

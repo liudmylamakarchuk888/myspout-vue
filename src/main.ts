@@ -20,12 +20,12 @@ import * as directives from '@/directives'
 import * as filters from '@/filters'
 import { Store } from 'vuex'
 
-import VueGoodTablePlugin from 'vue-good-table';
+// import VueGoodTablePlugin from 'vue-good-table';
 
-// import the styles
-import 'vue-good-table/dist/vue-good-table.css'
+// // import the styles
+// import 'vue-good-table/dist/vue-good-table.css'
 
-Vue.use(VueGoodTablePlugin);
+// Vue.use(VueGoodTablePlugin);
 
 
 

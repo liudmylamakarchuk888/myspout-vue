@@ -6,7 +6,7 @@ import { FlexApplicationPreferences } from '@/models/FlexApplicationPreferences'
 import { Node } from '@/models/Node'
 import { Entity } from '@/models/Entity';
 import { ApplicationPreference } from '@/models/ApplicationPreference';
-import local from '@/views/i18n-demo/local';
+
 export interface IAppData {
     Cache: any[]
     RecentItems: ItemInstance[]
@@ -39,7 +39,7 @@ class AppData extends VuexModule implements IAppData {
     }
 
     get FlexApplicationPreferences() {
-        return JSON.parse(localStorage.getItem(ApiEndpoints.FLEXAPPLICATIONPREFERENCES)) as FlexApplicationPreferences[];
+        return JSON.parse(localStorage.getItem(ApiEndpoints.FLEXAPPLICATIONPREFERENCES)) as FlexApplicationPreferences;
     }
 
 
@@ -79,11 +79,8 @@ class AppData extends VuexModule implements IAppData {
 
     @Mutation
     setAppState(isbusy: boolean) {
-        //const {key} = isbusy;
-        if (Object.prototype.hasOwnProperty.call(this, isbusy)) {
-            (this as any)['ApplicationBusy'] = isbusy;
-        }
-        // this.ApplicationBusy = isbusy;
+        const state = isbusy;
+        this.CHANGE_SETTING({ 'ApplicationBusy': state })
     }
     @Mutation
     SetCache(key: string, value: any) {
@@ -92,13 +89,14 @@ class AppData extends VuexModule implements IAppData {
 
     @Mutation
     public getApiData(payload: string) {
-        const cacheName: string = payload.replace('get', '');
-        //const cacheName: string = payload.trim();
-
+        //const cacheName: string = payload.replace('get', '');
+        const cacheName: string = payload.trim();
+        //this.setAppState(true)
         if (localStorage[cacheName]) {
             console.log(`${cacheName} reading from cache `);
             const cache = localStorage.getItem(cacheName);
             this.Cache[cacheName] = JSON.parse(cache);
+            //this.setAppState(false)
             return this.Cache[cacheName];
         }
 
@@ -106,12 +104,15 @@ class AppData extends VuexModule implements IAppData {
         axios.get('api/' + payload)
             .then((result: { data: any }) => {
 
-            localStorage.setItem(cacheName, JSON.stringify(result.data));            
-            this.SetCache(cacheName, result.data);
-        }).catch((error: any) => {
-            //throw new Error(`API ERROR ${payload} =>${error}`);
-            console.error(`API ERROR ${payload} =>${error}`);
-        }); 
+                localStorage.setItem(cacheName, JSON.stringify(result.data));
+                this.SetCache(cacheName, result.data);
+            }).catch((error: any) => {
+                //throw new Error(`API ERROR ${payload} =>${error}`);
+                //this.setAppState(false)
+                console.error(`API ERROR ${payload} =>${error}`);
+            }).finally(() => {
+                 //this.setAppState(false) 
+                });
     }
 
     @Action
@@ -128,7 +129,7 @@ class AppData extends VuexModule implements IAppData {
     getAppCache() {
         console.log('getting app cache')
 
-        this.setAppState(true);
+       // this.setAppState(true);
 
 
         this.getApiData(ApiEndpoints.APPLICATIONPREFERENCES)
@@ -168,7 +169,7 @@ class AppData extends VuexModule implements IAppData {
         // this.getApiData('getEntities');
         // this.getApiData('getForms');
         // this.getApiData('getAuthorizableEntities');
-        this.setAppState(false);
+       // this.setAppState(false);
 
         console.log('app cache loaded.')
     }
@@ -176,10 +177,6 @@ class AppData extends VuexModule implements IAppData {
     setAppBusy(value: boolean) {
         this.setAppState(value)
     }
-
-
-
-
 }
 
 
