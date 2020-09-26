@@ -1,8 +1,14 @@
 <template>
   <el-container>
-    <el-row class="app-container">
+    <div v-show="loading">
+      Loading...
+    </div>
+    <el-row
+      v-show="!loading"
+      class="app-container"
+    >
       <el-col>
-        <p>{{ selectedEntity.name }}</p>
+        <p>{{ currentEntity.name }}</p>
       </el-col>
       <el-col>
         <el-row
@@ -78,14 +84,17 @@
                 </el-row>
               </el-col>
               <el-col class="list-body">
-                <mini-list :entity-id="selectedEntity" />
+                <mini-list
+                  :set-loading="setLoading"
+                  :tab-label="`properies`"
+                />
               </el-col>
             </el-row>
           </el-tab-pane>
           <el-tab-pane label="Status List">
             Role
           </el-tab-pane>
-          <el-tab-pane label="Settins">
+          <el-tab-pane label="Settings">
             Task
           </el-tab-pane>
         </el-tabs>
@@ -93,9 +102,11 @@
     </el-row>
   </el-container>
 </template>
+
 <script lang='ts'>
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import MiniList from './miniList.vue'
+import { EntitiesModule } from '@/store/modules/entities.ts'
 
 @Component({
   name: 'RightSide',
@@ -104,9 +115,13 @@ import MiniList from './miniList.vue'
   }
 })
 export default class extends Vue {
-  @Prop({ default: () => '' }) private selectedEntity!: string;
-
   private description = '';
+  private loading = false
+  // private loadingList = {
+  //   properties: false
+  //   // status: false,
+  //   // settings: false
+  // }
   private options = [
     {
       value: 'Option1',
@@ -134,6 +149,20 @@ export default class extends Vue {
     text: '',
     type: ''
   };
+
+  get currentEntity() {
+    return EntitiesModule.getCurrentEntity
+  }
+
+  // get loading() {
+  //   const status = [...new Set(Object.values(this.loadingList))];
+  //   console.log(status)
+  //   return status.length !== 1 ? true: status[0]
+  // }
+
+  setLoading(componentId:string, status: boolean) {
+    this.loading = status
+  }
 
   handleClick(tab: any) {
     console.log(tab.label)

@@ -17,14 +17,14 @@ Vue.use(Vuex)
 
 
 export interface IRootState {
+  entities: IEntitiesState
   app: IAppState
-  user: IUserState
-  tagsView: ITagsViewState
-  errorLog: IErrorLogState
-  permission: IPermissionState
-  settings: ISettingsState
-  AppData:IAppData,
-  Entities: IEntitiesState
+  // user: IUserState
+  // tagsView: ITagsViewState
+  // errorLog: IErrorLogState
+  // permission: IPermissionState
+  // settings: ISettingsState
+  // AppData:IAppData
 }
 
 

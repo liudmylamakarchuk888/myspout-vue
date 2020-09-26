@@ -32,7 +32,7 @@
       <mini-tree
         :tree-data="entities"
         :type-options="disciplines"
-        :handle-node-click="handleEntityClick"
+        :handle-node-dbclick="handleEntityDbclick"
       />
     </div>
   </div>
@@ -48,7 +48,7 @@ import MiniTree from './miniTree.vue'
 export default class extends Vue {
   @Prop({ required: true }) private entities!: any;
   @Prop({ required: true }) private disciplines!: any;
-  @Prop({ required: true }) private handleEntityClick!: any;
+  @Prop({ required: true }) private handleEntityDbclick!: any;
 
   private entityKey = '';
   private selectedDiscip: any = '';

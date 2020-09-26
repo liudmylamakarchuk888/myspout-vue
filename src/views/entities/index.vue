@@ -17,14 +17,14 @@
         <left-side
           :entities="allEntities.children"
           :disciplines="allDisciplines.disciplines"
-          :handle-entity-click="handleEntityClick"
+          :handle-entity-dbclick="handleEntityDbClick"
         />
       </el-col>
       <el-col
         :span="18"
         class="card-panel-right"
       >
-        <right-side :selected-entity="selectedEntity" />
+        <right-side />
         <!-- <left-side
           :entities="allEntities.children"
           :disciplines="allDisciplines.disciplines"
@@ -38,7 +38,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import LeftSide from './components/leftSide.vue'
 import RightSide from './components/rightSide.vue'
-import axios from 'axios'
 import { _allEntities, _allDisciplines, _riskProperties } from './data.js'
 
 @Component({
@@ -47,7 +46,6 @@ import { _allEntities, _allDisciplines, _riskProperties } from './data.js'
 })
 export default class extends Vue {
   private leftLoading = false;
-  private rightLoading = false;
   private allEntities: any = _allEntities;
   private allDisciplines: any = _allDisciplines;
   private propertyData = _riskProperties;
@@ -55,6 +53,12 @@ export default class extends Vue {
     id: '',
     name: ''
   };
+
+  /** *********** tree node double click variables */
+  private entitiyClicks = 0
+  private dbClickTimer:any = null
+  private dbClickDelay = 700
+  private selectedEntityId = -1
 
   private async fetchEntities() {
     this.leftLoading = true
@@ -70,13 +74,24 @@ export default class extends Vue {
     this.leftLoading = false
   }
 
-  handleEntityClick(data: any, node: any) {
-    if (node.isLeaf) {
-      this.selectedEntity = {
-        id: data.id,
-        name: data.name
+  handleEntityDbClick(data: any, node: any) {
+    this.entitiyClicks++
+    if (this.entitiyClicks === 1) {
+      this.dbClickTimer = setTimeout(() => {
+        this.entitiyClicks = 0
+      }, this.dbClickDelay)
+    } else {
+      clearTimeout(this.dbClickTimer)
+      if (this.selectedEntityId === data.id && node.isLeaf) {
+        this.$store.commit('SET_CURRENT_ENTITIY', data)
+        this.selectedEntity = {
+          id: data.id,
+          name: data.name
+        }
       }
+      this.entitiyClicks = 0
     }
+    this.selectedEntityId = data.id
   }
 }
 </script>
