@@ -24,11 +24,8 @@
         :span="18"
         class="card-panel-right"
       >
-        <right-side />
-        <!-- <left-side
-          :entities="allEntities.children"
-          :disciplines="allDisciplines.disciplines"
-        ></left-side> -->
+        <new-entity />
+        <!-- <right-side /> -->
       </el-col>
     </el-row>
   </el-container>
@@ -38,11 +35,12 @@
 import { Component, Vue } from 'vue-property-decorator'
 import LeftSide from './components/leftSide.vue'
 import RightSide from './components/rightSide.vue'
+import NewEntity from './components/newEntity.vue'
 import { _allEntities, _allDisciplines, _riskProperties } from './data.js'
 
 @Component({
   name: 'Entities',
-  components: { LeftSide, RightSide }
+  components: { LeftSide, RightSide, NewEntity }
 })
 export default class extends Vue {
   private leftLoading = false;
