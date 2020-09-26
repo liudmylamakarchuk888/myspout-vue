@@ -37,7 +37,9 @@ import RightPanel from '@/components/RightPanel/index.vue'
 import ResizeMixin from './mixin/resize'
 import { AppDataModule } from '@/store/modules/appData'
 import { EntitiesModule } from '@/store/modules/entities'
-
+import { FlexPrefrencesModule } from '@/store/modules/AppFlexPrefrencesMod'
+import { AppPrefrencesModule } from '@/store/modules/AppPrefrencesMod'
+import { AppCacheModule } from '@/store/modules/appCache'
 @Component({
   name: 'Layout',
   components: {
@@ -48,7 +50,9 @@ import { EntitiesModule } from '@/store/modules/entities'
     Sidebar,
     TagsView,
     AppDataModule,
-    EntitiesModule
+    EntitiesModule,
+    FlexPrefrencesModule,
+    AppPrefrencesModule
   }
 })
 export default class extends mixins(ResizeMixin) {
@@ -77,14 +81,27 @@ export default class extends mixins(ResizeMixin) {
     AppModule.CloseSideBar(false)
   }
 
-  get isAppBusy() {
-    return this.$store.getters.IsAppBusy
+  private loadingConfig={
+    lock: true,
+    text: 'Loading',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.7)'
+  };
+
+  created() {
+    // console.log('loading Application Cache.')
+    // AppDataModule.IS_APP_BUSY(true)
+    // AppDataModule.getAppCache()
+    // setTimeout(() => {
+    //   AppDataModule.IS_APP_BUSY(false)
+    // }, 5000)
   }
 
-  mounted() {
-    console.log('loading Application Cache.')
-
-    this.$store.dispatch('getAppCache')
+  async mounted() {
+    // const rs = await AppPrefrencesModule.getPrefrences()
+    // await FlexPrefrencesModule.getFlexPrefrences()
+    const rs = await AppCacheModule.getCache()
+    // this.$store.dispatch('getAppCache')
   }
 }
 </script>
@@ -184,5 +201,19 @@ export default class extends mixins(ResizeMixin) {
   .sidebar-container {
     transition: none;
   }
+}
+.el-collapse-item__header {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    line-height: 48px;
+    background-color: #f6f6f6;
+    color: #303133;
+    cursor: pointer;
+    border-bottom: 1px solid #EBEEF5;
+    font-size: 13px;
+    font-weight: 500;
+    transition: border-bottom-color .3s;
+    outline: none;
 }
 </style>

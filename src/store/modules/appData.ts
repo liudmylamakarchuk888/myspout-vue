@@ -6,7 +6,7 @@ import { FlexApplicationPreferences } from '@/models/FlexApplicationPreferences'
 import { Node } from '@/models/Node'
 import { Entity } from '@/models/Entity';
 import { ApplicationPreference } from '@/models/ApplicationPreference';
-
+import { Loading } from 'element-ui'
 export interface IAppData {
     Cache: any[]
     RecentItems: ItemInstance[]
@@ -30,18 +30,15 @@ class AppData extends VuexModule implements IAppData {
 
 
     get RecentItems() {
-
         return JSON.parse(localStorage.getItem(ApiEndpoints.RECENTITEMS)) as ItemInstance[]
     }
     get Entities() {
-
         return JSON.parse(localStorage.getItem(ApiEndpoints.ENTITIES)) as Entity[];
     }
 
     get FlexApplicationPreferences() {
         return JSON.parse(localStorage.getItem(ApiEndpoints.FLEXAPPLICATIONPREFERENCES)) as FlexApplicationPreferences;
     }
-
 
     get Forms() {
         return JSON.parse(localStorage.getItem(ApiEndpoints.FORMS)) as ItemInstancep[]
@@ -54,21 +51,18 @@ class AppData extends VuexModule implements IAppData {
         return JSON.parse(localStorage.getItem(ApiEndpoints.APPLICATIONPREFERENCES)) as ApplicationPreference[]
     }
 
-
     public tryGetData<T>(key: string): T {
         if (window.localStorage[key]) {
             const dataStr = localStorage.getItem(key);
-
             return JSON.parse(dataStr) as T
         }
-
         return this.context.commit('getApiData', key)
     }
 
     get IsAppBusy() {
         return this.ApplicationBusy;
     }
-    public ApplicationBusy: boolean = false;
+
     @Mutation
     private CHANGE_SETTING(payload: { key: string, value: any }) {
         const { key, value } = payload
@@ -76,43 +70,65 @@ class AppData extends VuexModule implements IAppData {
             (this as any)[key] = value
         }
     }
+    private ApplicationBusy = null;
+    private loadingConfig = {
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+    };
 
     @Mutation
-    setAppState(isbusy: boolean) {
+    IS_APP_BUSY(isbusy: boolean) {
         const state = isbusy;
-        this.CHANGE_SETTING({ 'ApplicationBusy': state })
+        //this.CHANGE_SETTING({ 'ApplicationBusy': state })
+        console.log('applicaton State ' + state)
+        if (state) {
+            this.ApplicationBusy = Loading.service(this.loadingConfig)
+        }
+        if (!state) {
+            this.ApplicationBusy.close()
+        }
     }
+
+
     @Mutation
     SetCache(key: string, value: any) {
         this.Cache[key] = value;
     }
 
     @Mutation
-    public getApiData(payload: string) {
+    public async getApiData(payload: string) {
         //const cacheName: string = payload.replace('get', '');
+        debugger
         const cacheName: string = payload.trim();
-        //this.setAppState(true)
+
         if (localStorage[cacheName]) {
             console.log(`${cacheName} reading from cache `);
             const cache = localStorage.getItem(cacheName);
             this.Cache[cacheName] = JSON.parse(cache);
-            //this.setAppState(false)
+
             return this.Cache[cacheName];
         }
+        //this.IS_APP_BUSY(true)
+        //this.ApplicationBusy = Loading.service(this.loadingConfig)
+        const data = await axios.get('api/' + payload);
+        localStorage.setItem(cacheName, JSON.stringify(data.data));
 
+        // this.ApplicationBusy.close();
+        //  axios.get('api/' + payload)
+        //         .then((result: { data: any }) => {
 
-        axios.get('api/' + payload)
-            .then((result: { data: any }) => {
+        //             localStorage.setItem(cacheName, JSON.stringify(result.data));
+        //             //this.SetCache(cacheName, result.data);
+        //         }).catch((error: any) => {
+        //             //throw new Error(`API ERROR ${payload} =>${error}`);
 
-                localStorage.setItem(cacheName, JSON.stringify(result.data));
-                this.SetCache(cacheName, result.data);
-            }).catch((error: any) => {
-                //throw new Error(`API ERROR ${payload} =>${error}`);
-                //this.setAppState(false)
-                console.error(`API ERROR ${payload} =>${error}`);
-            }).finally(() => {
-                 //this.setAppState(false) 
-                });
+        //             console.error(`API ERROR ${payload} =>${error}`);
+        //         }).finally(() => {
+
+        //         });
+
     }
 
     @Action
@@ -128,55 +144,57 @@ class AppData extends VuexModule implements IAppData {
     @Action
     getAppCache() {
         console.log('getting app cache')
+        debugger;
+        //this.IS_APP_BUSY(true);
+        try {
+            this.getApiData(ApiEndpoints.APPLICATIONPREFERENCES)
+            this.getApiData(ApiEndpoints.FORMSAPPLICATIONPREFERENCES)
+            this.getApiData(ApiEndpoints.FLEXAPPLICATIONPREFERENCES)
+            this.getApiData(ApiEndpoints.ICONSINFOLDER)
 
-       // this.setAppState(true);
+            this.getApiData(ApiEndpoints.RECENTITEMS)
+            this.getApiData(ApiEndpoints.MYWORKPOLICIES)
+            this.getApiData(ApiEndpoints.ENTITIES)
 
+            this.getApiData(ApiEndpoints.AUTHORIZABLEENTITIES)
+            this.getApiData(ApiEndpoints.WORKFLOWS)
 
-        this.getApiData(ApiEndpoints.APPLICATIONPREFERENCES)
-        this.getApiData(ApiEndpoints.FORMSAPPLICATIONPREFERENCES)
-
-        this.getApiData(ApiEndpoints.FLEXAPPLICATIONPREFERENCES)
-        this.getApiData(ApiEndpoints.ICONSINFOLDER)
-
-        this.getApiData(ApiEndpoints.RECENTITEMS)
-        this.getApiData(ApiEndpoints.MYWORKPOLICIES)
-        this.getApiData(ApiEndpoints.ENTITIES)
-
-        this.getApiData(ApiEndpoints.AUTHORIZABLEENTITIES)
-        this.getApiData(ApiEndpoints.WORKFLOWS)
-
-        this.getApiData(ApiEndpoints.FORMS)
-        this.getApiData(ApiEndpoints.MYWORKCALENDARS)
-        this.getApiData(ApiEndpoints.ENTITYRELATIONSHIPICONS)
+            this.getApiData(ApiEndpoints.FORMS)
+            this.getApiData(ApiEndpoints.MYWORKCALENDARS)
+            this.getApiData(ApiEndpoints.ENTITYRELATIONSHIPICONS)
 
 
-        this.getApiData(ApiEndpoints.DIALOGROLES)
-        this.getApiData(ApiEndpoints.PRODUCTS)
+            this.getApiData(ApiEndpoints.DIALOGROLES)
+            this.getApiData(ApiEndpoints.PRODUCTS)
 
-        this.getApiData(ApiEndpoints.ORCHESTRATORS)
-        this.getApiData(ApiEndpoints.AVAILABLEORCHESTRATORILIOS)
-        this.getApiData(ApiEndpoints.AVAILABLEORCHESTRATOROLIOS)
-
-
-        // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.MyWorkPoliciesAssignmentOrderRequest')
-        // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.EntityReportOrderApplicationInformationRequest')
-        // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.ApplicationPreferenceCategoriesRequest')
-        // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.DisplayLanguagesRequest')
+            this.getApiData(ApiEndpoints.ORCHESTRATORS)
+            this.getApiData(ApiEndpoints.AVAILABLEORCHESTRATORILIOS)
+            this.getApiData(ApiEndpoints.AVAILABLEORCHESTRATOROLIOS)
 
 
-        // this.getApiData('getFlexApplicationPreferences');
-        // this.getApiData('recentItems');
-        // this.getApiData('getEntities');
-        // this.getApiData('getForms');
-        // this.getApiData('getAuthorizableEntities');
-       // this.setAppState(false);
+            // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.MyWorkPoliciesAssignmentOrderRequest')
+            // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.EntityReportOrderApplicationInformationRequest')
+            // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.ApplicationPreferenceCategoriesRequest')
+            // this.getApiData('getGeneralApplicationInformation','com.msp.flex.view.gai.DisplayLanguagesRequest')
 
+
+            // this.getApiData('getFlexApplicationPreferences');
+            // this.getApiData('recentItems');
+            // this.getApiData('getEntities');
+            // this.getApiData('getForms');
+            // this.getApiData('getAuthorizableEntities');
+
+        }
+        catch (err) {
+
+        }
+        finally {
+
+            // this.IS_APP_BUSY(false);
+        }
         console.log('app cache loaded.')
     }
-    @Mutation
-    setAppBusy(value: boolean) {
-        this.setAppState(value)
-    }
+
 }
 
 

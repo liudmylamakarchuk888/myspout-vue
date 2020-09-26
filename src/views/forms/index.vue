@@ -130,6 +130,7 @@
 </template>
 <script lang="ts">
 import { constantRoutes } from '@/router'
+import { AppCacheModule } from '@/store/modules/appCache'
 // import { RSA_PKCS1_PADDING } from "constants"
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import NewForm from './components/newForm'
@@ -154,7 +155,7 @@ export default class extends Vue {
   selectedRow = null
 
   get formsData() {
-    return this.$store.getters.Forms
+    return AppCacheModule.Forms
   }
 
   onSubmit() {
@@ -199,7 +200,7 @@ export default class extends Vue {
  @Watch('search', { deep: true })
   onSearchChanged(value) {
     // console.log('watch search triggered' + value)
-     
+
     if (value === undefined) { return this.tableGropuedData }
     debugger
 

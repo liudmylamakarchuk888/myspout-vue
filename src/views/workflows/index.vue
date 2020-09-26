@@ -14,8 +14,8 @@ export default class extends Vue {
   workflows: any[]=[]
   async mounted() {
     this.workflows = []
-    var data = await AppDataModule.getApiData(ApiEndpoints.WORKFLOWS)
-    alert('got data ' + data.length)
+    // var data = await AppDataModule.getApiData(ApiEndpoints.WORKFLOWS)
+    //alert('got data ' + data.length)
   }
 }
 </script>

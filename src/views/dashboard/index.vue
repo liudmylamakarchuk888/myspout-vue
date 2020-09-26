@@ -45,13 +45,14 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { AppDataModule } from '@/store/modules/appData'
+import { AppCacheModule } from '@/store/modules/appCache'
 @Component({
   name: 'Recent',
   components: {}
 })
 export default class extends Vue {
   get RecentItems() {
-    return this.$store.getters.RecentItems
+    return AppCacheModule.RecentItems;
   }
 }
 </script>

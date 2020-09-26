@@ -13,7 +13,7 @@ service.interceptors.request.use(
   (config) => {
     // Add X-Access-Token header to every request, you can add other custom headers here
     if (UserModule.token) {
-      config.headers['X-Access-Token'] = UserModule.token
+      //config.headers['X-Access-Token'] = UserModule.token
     }
     return config
   },
@@ -26,21 +26,25 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     // Some example codes here:
-    // code == 20000: success
-    // code == 50001: invalid access token
-    // code == 50002: already login in other place
-    // code == 50003: access token expired
-    // code == 50004: invalid user (user not exist)
-    // code == 50005: username or password is incorrect
+    // code == 200: success
+    // code == 501: invalid access token
+    // code == 502: already login in other place
+    // code == 503: access token expired
+    // code == 504: invalid user (user not exist)
+    // code == 505: username or password is incorrect
     // You can change this part for your own usage.
+
     const res = response.data
-    if (res.code !== 20000) {
+
+    return res;
+    //avoid temprary as json api does n't have stautus code . in response.
+    if (res.code !== 200) {
       Message({
         message: res.message || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+      if (res.code === 508 || res.code === 512 || res.code === 514) {
         MessageBox.confirm(
           'Server Side Error',
           'Error',

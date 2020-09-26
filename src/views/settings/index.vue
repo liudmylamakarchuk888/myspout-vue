@@ -1,56 +1,67 @@
 <template>
-  <el-card class="box-card">
-    <div
-      slot="header"
-      class="clearfix"
+  <el-container
+    class="elcontainer"
+    size="mini"
+  >
+    <el-main
+      class="elmain"
+      style="padding:10px"
     >
-      <span>Settings </span>
-    </div>
+      <div
+        slot="header"
+        class="clearfix"
+      >
+        <span>Settings </span>
+      </div>
 
-    <el-collapse
-      v-model="activeTab"
-      accordion
-    >
-      <el-collapse-item
-        title="Application Prefrences"
+      <el-collapse
+        v-model="activeTab"
+        style="padding:10px"
+
+        accordion
       >
-        <ApplicationPerfrences />
-      </el-collapse-item>
-      <el-collapse-item
-        title="Display languages"
-      >
-        <AppLanguages></AppLanguages> 
-      </el-collapse-item>
-      <el-collapse-item
-        title="Orchestrators"
-      >
-        <el-row>
-          <el-col>
-            Orchestrators are the components responsible for running integration operations. After installing new orchestrators, add them to this list.</b-col>
-          </el-col>
-        </el-row>
-        <!-- <app-orchestrators></app-orchestrators> -->
-      </el-collapse-item>
-      <el-collapse-item
-        title="Server Health"
-      >
-        <el-row class="my-1">
-          <el-col lg="8">
-            Long running operations
-          </el-col>
-        </el-row>
-      </el-collapse-item>
-    </el-collapse>
-  </el-card>
+        <el-collapse-item
+          title="Application Prefrences"
+        >
+          <Prefrences />
+        </el-collapse-item>
+        <el-collapse-item
+          title="Display languages"
+        >
+          <AppLanguages />
+        </el-collapse-item>
+        <el-collapse-item
+          title="Orchestrators"
+        >
+          <el-row>
+            <el-col>
+              Orchestrators are the components responsible for running integration operations. After installing new orchestrators, add them to this list.</b-col>
+            </el-col>
+          </el-row>
+          <Orchestrators />
+        </el-collapse-item>
+        <el-collapse-item
+          title="Server Health"
+        >
+          <el-row>
+            <el-col>
+              Long running operations
+            </el-col>
+          </el-row>
+        </el-collapse-item>
+      </el-collapse>
+    </el-main>
+  </el-container>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import ApplicationPerfrences from './components/AppPrefrences.vue'
+import Prefrences from '@/components/Prefrences/Prefrences.vue'
 import AppLanguages from './components/AppLanguages.vue'
+import Orchestrators from '@/components/Orchestrators/Orchestrator.vue'
 @Component({
   name: 'settings',
-  components: { ApplicationPerfrences, AppLanguages }
+  components: { AppLanguages, Prefrences, Orchestrators }
 })
 export default class extends Vue {
   prefTable: any;
@@ -91,7 +102,19 @@ activeTab:any=''
 </script>
 
 <style scoped>
-.container-fluid {
-  padding-left: 0 !important;
+
+.el-collapse-item__header {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    line-height: 48px;
+    background-color: #f6f6f6;
+    color: #303133;
+    cursor: pointer;
+    border-bottom: 1px solid #EBEEF5;
+    font-size: 13px;
+    font-weight: 500;
+    transition: border-bottom-color .3s;
+    outline: none;
 }
 </style>

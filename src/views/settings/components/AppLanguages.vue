@@ -13,63 +13,68 @@
           row-key="dateModified"
           @current-change="onSelectedRow"
           @row-dblclick="onRowDoubleClick"
+          @selection-change="handleSelectionChange"
         >
           <el-table-column
-            type="index"
-            :index="indexMethod"
+            type="selection"
+            width="55"
           />
           <!-- <el-table-column prop="name" label="Name" sortable width="180"></el-table-column> -->
           <el-table-column
-            prop="displayName"
-            label="Display name"
+            prop="key"
+            label="Display Language"
             sortable
-          />
+          >
+            <template slot-scope="scope">
+              {{ scope.row.key }}
+            </template>
+          </el-table-column>
         </el-table>
-        <b-form inline>
-          <b-container fluid>
-            <b-row class="my-1">
-              <b-col lg="8">
-                <b-button
+        <el-form inline>
+          <el-container fluid>
+            <el-row>
+              <el-col>
+                <el-button
                   variant="default"
                   class="mr-xs"
                   size="sm"
                 >
                   Set As Default
-                </b-button>
-              </b-col>
-            </b-row>
-            <b-row class="my-1">
-              <b-col lg="6">
+                </el-button>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col>
                 <p>Translate solution objects (such as forms and workflows) to selected languages:</p>
-              </b-col>
-              <b-col lg="2">
-                <b-button
+              </el-col>
+              <el-col>
+                <el-button
                   variant="default"
                   class="mr-xs"
                   size="sm"
                 >
                   Translate Solution
-                </b-button>
-              </b-col>
-            </b-row>
-            <b-row class="my-1">
-              <b-col lg="6">
-                <b-button
+                </el-button>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col>
+                <el-button
                   variant="link"
                   @click="showMSPForm = !showMSPForm"
                 >
                   MSP translation (advanced)
-                </b-button>
-              </b-col>
-            </b-row>
-          </b-container>
-        </b-form>
-        <b-modal
+                </el-button>
+              </el-col>
+            </el-row>
+          </el-container>
+        </el-form>
+        <el-dialog
           v-model="showMSPForm"
           title="MSP Translation"
         >
-          <msp-form />
-        </b-modal>
+        <span>model data.</span>
+        </el-dialog>
         </div>
       </el-col>
     </el-row>
@@ -77,6 +82,7 @@
 </template>
 
 <script>
+import { AppCacheModule } from '@/store/modules/appCache'
 // import MspForm from "../../Forms/components/MspForm";
 import { Component, Vue, Watch } from 'vue-property-decorator'
 @Component({
@@ -92,7 +98,7 @@ export default class extends Vue {
       fields= [
         {
           key: 'key',
-          label: 'Languages',
+          label: 'Language',
           sortable: false
         }
       ]
@@ -100,7 +106,8 @@ export default class extends Vue {
       showMSPForm= false
 
       get languages() {
-        return this.$store.state.AppSettings.languages
+        const rs = AppCacheModule.FlexSettings
+        return rs.languages
       }
 
       onSelectedRow(row) {
@@ -123,7 +130,9 @@ export default class extends Vue {
         this.currentPage = 1
       }
 
-      mounted() {}
+      handleSelectionChange(value) {
+        console.log('selected ' + value)
+      }
 }
 </script>
 <style scoped>

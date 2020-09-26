@@ -33,27 +33,7 @@
               icon="el-icon-plus"
               @click="showNewForm = !showNewForm"
             />
-            <el-dialog
-              ref="newFormModel"
-              :visible.sync="showNewForm"
-              width="30%"
-              center
-              title="New Form"
-              :before-close="onNewDialogClose"
-            >
-              ApplicationPerfrences
-              <LangInput />
-              <span
-                slot="footer"
-                class="dialog-footer"
-              >
-                <el-button @click="showNewForm = false">Cancel</el-button>
-                <el-button
-                  type="primary"
-                  @click="showNewForm = false"
-                >Confirm</el-button>
-              </span>
-            </el-dialog>
+            <NewPrefrences :openDialog="showNewForm" />
             <el-button
               :disabled="!selectedRow"
               icon="el-icon-document-copy"
@@ -81,7 +61,7 @@
       <el-col>
         <vue-good-table
           :columns="fields"
-          max-height="300px"
+
           :fixed-header="true"
           style-class="vgt-table striped bordered condensed"
           :rows="tableData"
@@ -95,11 +75,15 @@
             externalQuery: search.text
           }"
         >
-          <!-- <template slot="table-header-row" slot-scope="props">
-    <span >
-      {{ props.row.category }}
-    </span>
-  </template> -->
+          <!-- <template
+            slot="table-header-row"
+            slot-scope="props"
+          >
+            <tr>
+               {{ props.row.category }}
+
+            </tr>
+          </template> -->
         </vue-good-table>
       </el-col>
     </el-row>
@@ -110,9 +94,13 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import 'vue-good-table/dist/vue-good-table.css'
 import { VueGoodTable } from 'vue-good-table'
+import NewPrefrences from './components/NewPrefrences.vue'
+import { AppPrefrencesModule } from '@/store/modules/AppPrefrencesMod'
+import { FlexPrefrencesModule } from '@/store/modules/AppFlexPrefrencesMod'
+import { AppCacheModule } from '@/store/modules/appCache'
 @Component({
-  name: 'ApplicationPerfrences',
-  components: { VueGoodTable }
+  name: 'Perfrences',
+  components: { VueGoodTable, NewPrefrences }
 })
 export default class extends Vue {
    search={
@@ -121,8 +109,8 @@ export default class extends Vue {
    }
 
    searchby ='';
-selectedRow=null;
-showNewForm=false;
+  selectedRow=null;
+  showNewForm=false;
   selectedPropertyType=null;
 
    tableData =[]
@@ -152,17 +140,24 @@ showNewForm=false;
        }
      ]
 
-    @Watch('search')
+    @Watch('search', { deep: true })
      onSearchChanged(val, oldVal) {
        console.log('search val ' + val)
      }
 
     get appPrefrences() {
-      return this.$store.getters.ApplicationPrefrences
+      // return this.$store.getters.ApplicationPrefrences
+      // debugger
+      const pref = AppCacheModule.Prefrences
+      return pref
     }
 
     get propertyDataTypes() {
-      return this.$store.getters.FlexApplicationPreferences.propertyDataTypes
+      // return this.$store.getters.FlexApplicationPreferences.propertyDataTypes
+      debugger
+      const rs = AppCacheModule.FlexSettings
+      const types = rs.propertyDataTypes
+      return types
     }
 
     mounted() {
@@ -171,10 +166,6 @@ showNewForm=false;
 
     onOpenClick() {
       alert('open clicked')
-    }
-
-    onNewDialogClose() {
-      alert('before dialog close')
     }
 
     onSearchTypeChanged(data) {
@@ -207,3 +198,29 @@ showNewForm=false;
     }
 }
 </script>
+
+<style >
+table.vgt-table{
+  font-size: smaller;
+  border-collapse: collapse;
+  background-color: white;
+  width: 100%;
+  max-width: 100%;
+  max-height: 70%;
+  overflow: auto;
+  table-layout: auto;
+  border: 1px solid $border-color;
+  & td {
+    padding: .75em .75em .75em .75em;
+    vertical-align: top;
+    border-bottom:  1px solid $border-color;
+    color: $text-color;
+  }
+  & tr.clickable {
+    cursor: pointer;
+    &:hover{
+      background-color: $highlight-color;
+    }
+  }
+}
+</style>
