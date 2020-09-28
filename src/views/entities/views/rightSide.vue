@@ -105,7 +105,7 @@
 
 <script lang='ts'>
 import { Component, Vue } from 'vue-property-decorator'
-import MiniList from './miniList.vue'
+import MiniList from '../components/miniList.vue'
 import { EntitiesModule } from '@/store/modules/entities.ts'
 
 @Component({
