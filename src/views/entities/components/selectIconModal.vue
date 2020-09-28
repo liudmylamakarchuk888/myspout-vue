@@ -66,6 +66,7 @@
         Ok
       </el-button>
       <el-button
+        style="text-decoration: underline"
         type="text"
         @click="outDialogCancel()"
       >
@@ -81,7 +82,7 @@ import { MessageBox } from 'element-ui'
 
 @Component({
   name: 'selectIconModal',
-  components: {MessageBox}
+  components: {}
 })
 export default class extends Vue {
   @Prop({ required: true }) private value!: boolean;
@@ -145,7 +146,7 @@ export default class extends Vue {
     width: 50px;
     height: 50px;
     margin: 0 10px;
-    border: 1px solid gray;
+    border: 1px solid $borderGray;
     padding: 2px;
   }
   .innerDialog {
@@ -158,7 +159,7 @@ export default class extends Vue {
       }
       .innerDialog-content {
         padding: 20px;
-        border: 1px solid gray;
+        border: 1px solid $borderGray;
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr;
         column-gap: 2px;

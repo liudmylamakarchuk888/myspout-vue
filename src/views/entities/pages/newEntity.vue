@@ -195,6 +195,7 @@
                       plain
                       :disabled="admin.manageMethod !== 'rootTree' || usages.createMethod !== 'adminPage'"
                       size="mini"
+                      @click="popUpIconModal(`root`)"
                     >
                       Define...
                     </el-button>
@@ -606,9 +607,14 @@
         </el-row>
       </el-col>
     </el-row>
-    <select-icon-modal
+    <!-- <select-icon-modal
       v-model="iconModal.show"
       :icon-url="iconModal.iconUrl"
+      :set-icon-url="setIconUrl"
+    /> -->
+    <hierarchical-modal 
+      v-model="iconModal.show"
+      :data="hierarchy.data"
       :set-icon-url="setIconUrl"
     />
   </el-container>
@@ -616,10 +622,11 @@
 <script lang='ts'>
 import { Component, Vue } from 'vue-property-decorator'
 import SelectIconModal from '../components/selectIconModal.vue'
+import HierarchicalModal from '../components/hierarchicalModal.vue'
 
 @Component({
   name: 'NewEntity',
-  components: { SelectIconModal }
+  components: { SelectIconModal, HierarchicalModal }
 })
 export default class extends Vue {
   // @Prop({ required: true }) private setLoading: any;
@@ -630,6 +637,9 @@ export default class extends Vue {
     show: false,
     kind: '',
     iconUrl: ''
+  }
+  private hierarchy = {
+    data: new Array(2).fill({entity:"js admin prop", property: "Option 1"})
   }
 
   private hebrew = {
@@ -734,7 +744,7 @@ export default class extends Vue {
     font-weight: 500;
     font-size: 15px;
     padding-left: 5px;
-    border-bottom: solid #a1a5ad 1px;
+    border-bottom: solid $borderGray 1px;
   }
   .input-container {
     align-items: center;
@@ -759,7 +769,7 @@ export default class extends Vue {
     }
   }
   .require-content {
-    color: #c3bfbf;
+    color: $placeholderText;
   }
 }
 </style>
@@ -786,13 +796,13 @@ export default class extends Vue {
 .el-collapse {
   border: none;
   .el-collapse-item__header {
-    border-bottom: 1px solid #a1a5ad;
+    border-bottom: 1px solid $borderGray;
     position: relative;
     margin-left: 20px;
     background: #f9fbfd;
     font-size: 15px;
     &.is-active {
-      border-bottom: 1px solid #a1a5ad;
+      border-bottom: 1px solid $borderGray;
     }
   }
   .el-collapse-item__content {
