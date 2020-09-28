@@ -100,7 +100,7 @@ class AppData extends VuexModule implements IAppData {
     @Mutation
     public async getApiData(payload: string) {
         //const cacheName: string = payload.replace('get', '');
-        debugger
+        
         const cacheName: string = payload.trim();
 
         if (localStorage[cacheName]) {
@@ -144,7 +144,7 @@ class AppData extends VuexModule implements IAppData {
     @Action
     getAppCache() {
         console.log('getting app cache')
-        debugger;
+    
         //this.IS_APP_BUSY(true);
         try {
             this.getApiData(ApiEndpoints.APPLICATIONPREFERENCES)

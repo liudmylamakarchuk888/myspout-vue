@@ -1,6 +1,10 @@
-import { BaseContent } from './BaseContent';
-
-export interface ApplicationPreference extends BaseContent {
+import { UserModule } from '@/store/modules/user';
+import { UserInfo } from 'os';
+import { utils } from 'xlsx/types';
+import { BaseContent,IBaseContent } from './BaseContent';
+import { LanguageTranslation } from './LanguageTranslation';
+import { newUuid } from './Utils/index'
+export interface IApplicationPreference extends IBaseContent {
     category?: string;
     clientId?: string;
     createdBy?: string;
@@ -23,4 +27,24 @@ export interface ApplicationPreference extends BaseContent {
     value?: string;
 }
 
+export class ApplicationPrefrence extends BaseContent implements IApplicationPreference {
+    category?: string = 'ADDED_APPLICATION_PREFERENCES';
+    clientId?: string = newUuid();
+    createdBy?: string = UserModule.name;
+    dataType?: string = '';
+    dateCreated?: number = Number(new Date());
+    dateModified?: number = Number(new Date());
+    deleted: boolean = false;
+    entityName?: string = '';
+    environmentApplicationPreference: boolean = false;
+    id?: string = '';
+    itemType?: number = 0;
+    lookupEntityId?: string = '';
+    lookupValueName?: string = '';
+    modifiedBy?: string = UserModule.name;
+    newInstance: boolean = true;
+    outOfTheBox: boolean = false;
+    value?: string = '';
 
+
+}

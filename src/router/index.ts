@@ -4,11 +4,6 @@ import Router, { RouteConfig } from 'vue-router'
 /* Layout */
 import Layout from '@/layout/index.vue'
 
-/* Router modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
 
 Vue.use(Router)
 
@@ -69,23 +64,23 @@ export const asyncRoutes: RouteConfig[] = [
     children: [
       {
         path: 'index',
-        component: () => import(  '@/views/forms/index.vue'),
+        component: () => import('@/views/forms/index.vue'),
         name: 'Forms',
         meta: {
           title: 'forms',
           icon: 'form'
         },
-        
+
       }
       ,
       {
         path: 'designer/:formid?',
-        component: () => import(  '@/views/forms/components/formDesigner.vue'),
+        component: () => import('@/views/forms/components/formDesigner.vue'),
         name: 'formdesigner',
         meta: {
           title: 'formdesigner',
           icon: 'form',
-          hidden:true
+          hidden: true
         }
       }
     ]
@@ -235,7 +230,8 @@ const createRouter = () => new Router({
     }
   },
   base: process.env.BASE_URL,
-  routes: constantRoutes
+  routes: constantRoutes,
+  mode: 'history'
 })
 
 const router = createRouter()

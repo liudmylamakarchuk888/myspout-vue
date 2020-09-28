@@ -14,21 +14,21 @@
           <el-form>
             <el-form-item>
               <el-button
-              round
+                round
                 icon="el-icon-plus"
-                @click="onNew"
+                @click="showNew =true"
               >
                 New
               </el-button>
               <el-button
-               round
+                round
                 @click="showRoles =true"
               >
                 Roles
               </el-button>
               <el-button
                 round
-                @click="onNewProduct"
+                @click="showProducts=true"
               >
                 Products
               </el-button>
@@ -38,8 +38,22 @@
       </miniTree>
     </el-aside>
     <el-dialog
-      title="Outer Dialog"
+      title="New Authorization tree "
+      :visible.sync="showNew"
+      center
+    >
+      <RolesView />
+    </el-dialog>
+    <el-dialog
+      title="Roles "
       :visible.sync="showRoles"
+      center
+    >
+      <RolesView />
+    </el-dialog>
+    <el-dialog
+      title="Products "
+      :visible.sync="showProducts"
       center
     >
       <RolesView />
@@ -56,25 +70,26 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import miniTree from '@/components/Tables/miniTree'
 import authMainView from './components/mainView'
 import RolesView from './components/RolesView'
+import { AppCacheModule } from '@/store/modules/appCache'
 @Component({
   name: 'authorization',
   components: { miniTree, authMainView, RolesView }
 })
 export default class extends Vue {
   nodelist = [];
-  typeOptions: [] | undefined;
+  typeOptions= []
 
-  onNew() {
-    alert('on New ')
-  }
+showNew =false
+showRoles =false
+showProducts=false
 
-  mounted() {
-    this.nodelist = this.$store.getters.AuthorizableEntities.children
-    this.typeOptions = [
-      { key: 'Release', value: 'com.msp.dao.entities.Release' },
-      { key: 'Team', value: 'com.msp.dao.entities.Team' }
-    ]
-  }
+mounted() {
+  this.nodelist = AppCacheModule.AuthorizableEntities.children
+  this.typeOptions = [
+    { key: 'Release', value: 'com.msp.dao.entities.Release' },
+    { key: 'Team', value: 'com.msp.dao.entities.Team' }
+  ]
+}
 }
 </script>
 

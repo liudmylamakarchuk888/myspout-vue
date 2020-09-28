@@ -1,14 +1,14 @@
 {
-  "name": "vue-typescript-admin-template",
+  "name": "solution-designer",
   "version": "1.0.0",
   "private": true,
   "author": "",
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "concurrently \"npm:mock\" \"vue-cli-service serve\"",
     "build:prod": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",
     "lint": "vue-cli-service lint",
-    "mock": "cd mock && ts-node-dev mock-server.ts",
+    "mock": "cd mock && npm start",
     "svg": "vsvg -s ./src/icons/svg -t ./src/icons/components --ext ts --es6",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "jest --clearCache && vue-cli-service test:unit"
@@ -20,6 +20,7 @@
     "codemirror": "^5.57.0",
     "core-js": "^3.6.5",
     "cors": "^2.8.5",
+    "debounce": "^1.2.0",
     "driver.js": "^0.9.8",
     "echarts": "^4.8.0",
     "element-ui": "^2.13.2",
@@ -118,9 +119,7 @@
     "vue-template-compiler": "^2.6.12",
     "webpack": "^4.44.1"
   },
-  "bugs": {
-    "url": "https://github.com/armour/vue-typescript-admin-template/issues"
-  },
+  
   "gitHooks": {
     "pre-commit": "lint-staged"
   },
@@ -135,9 +134,6 @@
     "*.{js,vue}": [
       "vue-cli-service lint"
     ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/armour/vue-typescript-admin-template.git"
   }
+   
 }

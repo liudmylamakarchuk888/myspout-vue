@@ -1,21 +1,23 @@
 <template>
-  <div>
-    <el-form
-      v-for="l in languages"
-      :key="l.key"
-      label-position="Top"
-      :model="translation"
-    >
-      <span>{{ l.key }}</span>
-      <el-divider />
-      <el-form-item label="display Name">
-        <el-input v-model="l.displayName" />
-      </el-form-item>
-      <el-form-item label="Description">
-        <el-input v-model="l.description" />
-      </el-form-item>
-    </el-form>
-  </div>
+  <el-container>
+    <el-main>
+      <el-form
+        v-for="l in languages"
+        :key="l.key"
+        label-position="Top"
+        :model="translation"
+      >
+        <span>{{ l.key }}</span>
+        <el-divider />
+        <el-form-item label="display Name">
+          <el-input v-model="l.displayName" />
+        </el-form-item>
+        <el-form-item label="Description">
+          <el-input v-model="l.description" />
+        </el-form-item>
+      </el-form>
+    </el-main>
+  </el-container>
 </template>
 
 <script lang="ts">
@@ -23,6 +25,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { AppModule } from '@/store/modules/app'
 import { AppDataModule } from '@/store/modules/appData'
 import { LanguageTranslation } from '@/models/LanguageTranslation'
+import { AppCacheModule } from '@/store/modules/appCache'
 @Component({
   name: 'LangInput'
 })
@@ -30,11 +33,11 @@ export default class extends Vue {
  translation:LanguageTranslation={};
 
  get languages() {
-   return AppDataModule.FlexApplicationPreferences.languages
+   return AppCacheModule.FlexSettings.languages
  }
 
  get language_x() {
-   return AppModule.language
+   return AppCacheModule.FlexSettings.language
  }
 
  private handleSetLanguage(lang: string) {

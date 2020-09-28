@@ -31,9 +31,9 @@
               variant="outline-primary"
               title="create New Form"
               icon="el-icon-plus"
-              @click="showNewForm = !showNewForm"
+              @click="showNewForm = true"
             />
-            <NewPrefrences :openDialog="showNewForm" />
+            <NewPrefrences :open-dialog="showNewForm" />
             <el-button
               :disabled="!selectedRow"
               icon="el-icon-document-copy"
@@ -61,30 +61,19 @@
       <el-col>
         <vue-good-table
           :columns="fields"
-
+          :line-numbers="true"
           :fixed-header="true"
+          max-height="300px"
+          :select-options="{enabled: true, selectAllByGroup: false}"
           style-class="vgt-table striped bordered condensed"
           :rows="tableData"
           :group-options="{
             enabled: true,
-            rowKey: 'indexId',
-            collapsable: true
+            rowKey: 'uuid',
+            collapsable: false
           }"
-          :search-options="{
-            enabled: true,
-            externalQuery: search.text
-          }"
-        >
-          <!-- <template
-            slot="table-header-row"
-            slot-scope="props"
-          >
-            <tr>
-               {{ props.row.category }}
-
-            </tr>
-          </template> -->
-        </vue-good-table>
+          :search-options="{enabled: true, externalQuery: search.text}"
+        />
       </el-col>
     </el-row>
   </el-card>
@@ -118,7 +107,7 @@ export default class extends Vue {
        {
          field: 'category',
          label: 'category',
-         sortable: true
+         sortable: false
 
        },
        {
@@ -154,7 +143,7 @@ export default class extends Vue {
 
     get propertyDataTypes() {
       // return this.$store.getters.FlexApplicationPreferences.propertyDataTypes
-      debugger
+
       const rs = AppCacheModule.FlexSettings
       const types = rs.propertyDataTypes
       return types
@@ -175,7 +164,7 @@ export default class extends Vue {
     getGroupedData() {
       let index = 1
       this.appPrefrences.forEach((row) => {
-        row.indexId = index
+        row.uuid = index
 
         index = index + 1
       })
@@ -193,7 +182,6 @@ export default class extends Vue {
         })
       })
 
-      console.log(JSON.stringify(this.tableData))
       return this.tableData
     }
 }

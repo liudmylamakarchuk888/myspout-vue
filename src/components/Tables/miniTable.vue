@@ -97,7 +97,7 @@ export default class extends Vue {
   private searchData() {
     /// console.log('search by ' + query)
 
-    if (this.search.type === undefined && this.search.type === undefined) { return this.items }
+    if (this.search.text === undefined && this.search.type === undefined) { return this.items }
 
     const rs = this.items.filter(data => !this.search ||
      data.displayName.toLowerCase().includes(this.search.text.toLowerCase()) ||

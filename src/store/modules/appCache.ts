@@ -2,7 +2,7 @@ import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-dec
 import store from '@/store'
 
 import { Loading } from 'element-ui'
-import { getApplicationPreferences, getEntities, getFlexApplicationPreferences, getForms } from '@/api/appCache';
+import { getApplicationPreferences, getAuthorizableEntities, getEntities, getFlexApplicationPreferences, getForms } from '@/api/appCache';
 
 import { Entity } from '@/models/Entity';
 import { getRecentItems } from '@/api/data';
@@ -16,18 +16,19 @@ export interface IAppCache {
     Entities: Entity[]
     RecentItems: ItemInstance[]
     Forms: ItemInstance[]
+    AuthorizableEntities: []
 }
 
 
 @Module({ dynamic: true, store, name: 'appCache' })
 class AppCacheMod extends VuexModule implements IAppCache {
     public Prefrences: ApplicationPreference[] = [];
-    public FlexSettings: FlexApplicationPreferences ={};
+    public FlexSettings: FlexApplicationPreferences = {};
     public Entities: Entity[] = [];
     public RecentItems: ItemInstance[] = [];
     public Forms: ItemInstance[] = [];
 
-
+    public AuthorizableEntities = []
 
     @Mutation
     private SET_DATA(pref: ApplicationPreference[] | any[]) {
@@ -60,7 +61,7 @@ class AppCacheMod extends VuexModule implements IAppCache {
     @Action
     public async getPrefrences() {
         const rs = await getApplicationPreferences();
-      
+
         this.SET_DATA(rs)
     }
 
@@ -78,7 +79,7 @@ class AppCacheMod extends VuexModule implements IAppCache {
 
     @Mutation
     private SET_RECENT(rs: ItemInstance[]) {
-        
+
         this.RecentItems = rs;
     }
     @Action
@@ -95,19 +96,32 @@ class AppCacheMod extends VuexModule implements IAppCache {
     }
     @Mutation
     SET_FORMS(rs: ItemInstance[]) {
-     
+
         this.Forms = rs;
+    }
+    @Mutation
+    private SET_AUTH_ENTITIES(rs: any) {
+        this.AuthorizableEntities = rs;
+    }
+    @Action
+    public async getAuthorizableEntities() {
+        const rs = await getAuthorizableEntities();
+        this.SET_AUTH_ENTITIES(rs)
     }
 
     @Action
     public async getCache() {
-        await this.getFlexSettings();
-        await this.getPrefrences();
-        await this.getEntities()
-        await this.getForms();
-        await this.getRecentItems();
+ 
+            await this.getFlexSettings();
+            await this.getPrefrences();
+            await this.getEntities()
+            await this.getForms();
+            await this.getRecentItems();
+            await this.getAuthorizableEntities();
 
     }
+
+   
 }
 
 export const AppCacheModule = getModule(AppCacheMod)

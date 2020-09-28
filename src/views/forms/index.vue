@@ -197,85 +197,78 @@ export default class extends Vue {
       })
   }
 
- @Watch('search', { deep: true })
+  @Watch('search', { deep: true })
   onSearchChanged(value) {
     // console.log('watch search triggered' + value)
-
-    if (value === undefined) { return this.tableGropuedData }
     debugger
+    if (value === undefined) { return this.tableGropuedData }
 
-    if (value.text === undefined) {
-      value.text = ''
-    }
-    if (value.type === undefined) {
-      value.type = ''
-    }
     // this.$refs.elTable.filter(data => !value ||
     //     data.displayName.toLowerCase().includes(value.text.toLowerCase()) ||
     //     data.entityName.toLowerCase() === value.type.toLowerCase())
 
     const rs = this.tableGropuedData.filter((p) => {
-      p.children.filter((c) => {
-        return c.entityName == value.type ||
+      return p.children.filter((c) => {
+        return c.entityName === value.type ||
          c.displayName.toLowerCase().includes(value.text.toLowerCase())
       })
     })
-    debugger
+
     return rs
   }
 
- onEntityTypeChanged(value: string) {
-   console.log('selected value is ' + value)
-   this.search.type = value
-   this.tableGropuedData.filter((x) => {
-     x.children.filter((c) => {
-       const val = new String(this.search.type)
+  onEntityTypeChanged(value: string) {
+    console.log('selected value is ' + value)
+    this.search.type = value
+    this.tableGropuedData.filter((x) => {
+      x.children.filter((c) => {
+        const val = new String(this.search.type)
 
-       return c.entityName.toLowerCase() === val.toLowerCase()
-     })
-   })
- }
+        return c.entityName.toLowerCase() === val.toLowerCase()
+      })
+    })
+  }
 
- getEntityTypeList() {
-   const rs: any[] = []
+  getEntityTypeList() {
+    const rs: any[] = []
 
-   this.formsData.filter((thing, i, arr) =>
-     arr.findIndex(t => t.entityName === thing.entityName) === i
-   ).forEach((x) => {
-     console.log('data:' + x.entityName)
-     rs.push({ key: x.entityName, value: x.entityName })
-   })
+    this.formsData.filter((thing, i, arr) =>
+      arr.findIndex(t => t.entityName === thing.entityName) === i
+    ).forEach((x) => {
+      console.log('data:' + x.entityName)
+      rs.push({ key: x.entityName, value: x.entityName })
+    })
 
-   return rs
- }
+    return rs
+  }
 
- get tableGropuedData() {
-   let index = 1
-   this.formsData.forEach((row) => {
-     row.rowId = index
-     index = index + 1
-   })
-   const outofbox = this.formsData.filter((x) => {
-     return x.outOfTheBox === true
-   })
+  get tableGropuedData() {
+    let index = 1
+    this.formsData.forEach((row) => {
+      row.rowId = index
+      index = index + 1
+    })
+    const outofbox = this.formsData.filter((x) => {
+      return x.outOfTheBox === true
+    })
 
-   const nonoutofbox = this.formsData.filter((x) => {
-     return x.outOfTheBox === false
-   })
+    const nonoutofbox = this.formsData.filter((x) => {
+      return x.outOfTheBox === false
+    })
 
-   this.tableData.push({
-     displayName: 'Added Forms',
-     children: nonoutofbox,
-     itemType: ''
-   })
-   this.tableData.push({
-     displayName: 'Out-of-the-box Forms',
-     children: outofbox,
-     itemType: ''
-   })
+    this.tableData.push({
+      displayName: 'Added Forms',
+      children: nonoutofbox,
+      itemType: ''
+    })
+    this.tableData.push({
+      displayName: 'Out-of-the-box Forms',
+      children: outofbox,
+      itemType: ''
+    })
 
-   return this.tableData
- }
+    return this.tableData
+  }
 
 entityTypeList =[]
 mounted() {

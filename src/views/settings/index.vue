@@ -16,11 +16,13 @@
 
       <el-collapse
         v-model="activeTab"
-        style="padding:10px"
+
+        class="el-collapse"
 
         accordion
       >
         <el-collapse-item
+
           title="Application Prefrences"
         >
           <Prefrences />
@@ -38,7 +40,8 @@
               Orchestrators are the components responsible for running integration operations. After installing new orchestrators, add them to this list.</b-col>
             </el-col>
           </el-row>
-          <Orchestrators />
+          <!-- <Orchestrators /> -->
+          <SearchExample />
         </el-collapse-item>
         <el-collapse-item
           title="Server Health"
@@ -59,9 +62,10 @@ import { Component, Vue } from 'vue-property-decorator'
 import Prefrences from '@/components/Prefrences/Prefrences.vue'
 import AppLanguages from './components/AppLanguages.vue'
 import Orchestrators from '@/components/Orchestrators/Orchestrator.vue'
+import SearchExample from '@/components/Orchestrators/SearchExample.vue'
 @Component({
   name: 'settings',
-  components: { AppLanguages, Prefrences, Orchestrators }
+  components: { AppLanguages, Prefrences, Orchestrators, SearchExample }
 })
 export default class extends Vue {
   prefTable: any;
@@ -101,20 +105,79 @@ activeTab:any=''
 }
 </script>
 
-<style scoped>
+<style >
+
+
+//OTHER Styles
+
+.el-collapse {
+	border-top: 1px solid #EBEEF5;
+  border-bottom: 1px solid #EBEEF5;
+
+}
 
 .el-collapse-item__header {
-    display: flex;
-    align-items: center;
-    height: 48px;
-    line-height: 48px;
-    background-color: #f6f6f6;
-    color: #303133;
-    cursor: pointer;
-    border-bottom: 1px solid #EBEEF5;
-    font-size: 13px;
-    font-weight: 500;
-    transition: border-bottom-color .3s;
-    outline: none;
+	display: -webkit-box;
+	display: -ms-flexbox;
+  display: flex;
+  padding-left:20px;
+  margin: 5px;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	height: 30px;
+	line-height: 30px;
+	background-color:rgb(233 235 239);
+	color: black;
+	cursor: pointer;
+	border-bottom: 1px solid #EBEEF5;
+	font-size: 13px;
+	font-weight: 500;
+	-webkit-transition: border-bottom-color .3s;
+	transition: border-bottom-color .3s;
+	outline: 0
+}
+
+.el-collapse-item__arrow {
+  margin: 0 8px 0 auto;
+
+	-webkit-transition: -webkit-transform .3s;
+	transition: -webkit-transform .3s;
+	transition: transform .3s;
+	transition: transform .3s, -webkit-transform .3s;
+	font-weight: 300
+}
+
+.el-collapse-item__arrow.is-active {
+	-webkit-transform: rotate(90deg);
+	transform: rotate(90deg)
+}
+
+.el-collapse-item__header.focusing:focus:not(:hover) {
+	color: #409EFF
+}
+
+.el-collapse-item__header.is-active {
+	border-bottom-color: transparent
+}
+
+.el-collapse-item__wrap {
+	will-change: height;
+	background-color: #EBEEF5;
+	overflow: hidden;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	border-bottom: 1px solid #EBEEF5
+}
+
+.el-collapse-item__content {
+	padding-bottom: 25px;
+	font-size: 13px;
+	color: #303133;
+	line-height: 1.769230769230769
+}
+
+.el-collapse-item:last-child {
+	margin-bottom: -1px
 }
 </style>

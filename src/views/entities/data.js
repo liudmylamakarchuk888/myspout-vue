@@ -10317,7 +10317,7 @@ export const _allDisciplines = {
         },
         {
           key: 'SOLUTION_DESIGNER',
-          value: 'Solution Designer'
+          value: 'solution-designer'
         },
         {
           key: 'BACKUP_SOLUTION_CONFIGURATION',
@@ -10432,7 +10432,7 @@ export const _allDisciplines = {
         {
           key: 'TO_RUN_THIS_OPERATION_CLICK_SETTINGS',
           value:
-            "To run this operation on a specific Orchestrator, click Settings from the Solution Designer home page, <br/>open the Orchestrators section, and then open the Orchestrator's settings window."
+            "To run this operation on a specific Orchestrator, click Settings from the solution-designer home page, <br/>open the Orchestrators section, and then open the Orchestrator's settings window."
         },
         {
           key: 'OF',
@@ -12704,7 +12704,7 @@ export const _allDisciplines = {
         {
           key: 'STEP_THREE_DESCRIPTION',
           value:
-            'Step 3 applies the new solution to the web site and refreshes the Solution Designer.'
+            'Step 3 applies the new solution to the web site and refreshes the solution-designer.'
         },
         {
           key: 'OPEN_ATTENDANCE_LINES',
@@ -13416,7 +13416,7 @@ export const _allDisciplines = {
         },
         {
           key: 'SOLUTION_DESIGNER_LICENSE_ROLE',
-          value: 'Solution Designer'
+          value: 'solution-designer'
         },
         {
           key: 'CREATED_BY',

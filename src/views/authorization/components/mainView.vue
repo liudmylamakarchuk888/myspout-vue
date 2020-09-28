@@ -2,10 +2,10 @@
   <div class="mid-sec forms-doc-sec mt-3">
     <div class="container">
       <!-- <div class="row">
-              <el-form-input class="w-50" placeholder="Type Description Here"></el-form-input>
+              <el-form-item class="w-50" placeholder="Type Description Here"></el-form-item>
             </div>-->
       <div class="row">
-        <el-form-input
+        <el-form-item
           class="no-border"
           placeholder="type description here"
         />
@@ -25,7 +25,7 @@
                 <el-card-text>
                   <div class="row">
                     <div class="col">
-                      <el-form-input
+                      <el-form-item
                         class="w-100"
                         placeholder="find in Tree"
                       />

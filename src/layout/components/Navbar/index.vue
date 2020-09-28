@@ -27,7 +27,8 @@
         </el-tooltip>
         <lang-select class="right-menu-item hover-effect" />-->
         <el-button
-          class="button right-menu-item hover-effect"
+          class="button right-menu-item"
+          style="color:gray"
           type="text"
         >
           {{ userName }}
@@ -59,6 +60,7 @@
           class="right-menu-item hover-effect"
 
           icon="el-icon-upload"
+          :disabled="hasUnsavedChagnes"
         >
           Save
         </el-button>
@@ -129,6 +131,10 @@ export default class extends Vue {
     AppModule.ToggleSideBar(false)
   }
 
+  get hasUnsavedChagnes() {
+    return true
+  }
+
   private async logout() {
     await UserModule.LogOut()
     this.$router.push(`/login?redirect=${this.$route.fullPath}`)
@@ -138,6 +144,7 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 .navbar {
+
   height: 50px;
   overflow: hidden;
   position: relative;
@@ -169,9 +176,10 @@ export default class extends Vue {
 
   .right-menu {
     float: right;
+
     height: 100%;
-    line-height: 45px;
-    padding-top: 10px ;
+    line-height: 50px;
+    padding-top: 5px ;
     padding-right: 20px;
     &:focus {
       outline: none;
@@ -181,8 +189,8 @@ export default class extends Vue {
       display: inline-block;
       padding: 0 8px;
       height: 80%;
-      font-size: 18px;
-      color: #5a5e66;
+      font-size: small;
+
       vertical-align: text-bottom;
 
       &.hover-effect {

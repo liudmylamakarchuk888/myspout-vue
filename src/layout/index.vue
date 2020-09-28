@@ -35,11 +35,9 @@ import { SettingsModule } from '@/store/modules/settings'
 import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
 import RightPanel from '@/components/RightPanel/index.vue'
 import ResizeMixin from './mixin/resize'
-import { AppDataModule } from '@/store/modules/appData'
 import { EntitiesModule } from '@/store/modules/entities'
-import { FlexPrefrencesModule } from '@/store/modules/AppFlexPrefrencesMod'
-import { AppPrefrencesModule } from '@/store/modules/AppPrefrencesMod'
 import { AppCacheModule } from '@/store/modules/appCache'
+import { Loading } from 'element-ui'
 @Component({
   name: 'Layout',
   components: {
@@ -49,10 +47,8 @@ import { AppCacheModule } from '@/store/modules/appCache'
     Settings,
     Sidebar,
     TagsView,
-    AppDataModule,
     EntitiesModule,
-    FlexPrefrencesModule,
-    AppPrefrencesModule
+    AppCacheModule
   }
 })
 export default class extends mixins(ResizeMixin) {
@@ -83,26 +79,21 @@ export default class extends mixins(ResizeMixin) {
 
   private loadingConfig={
     lock: true,
-    text: 'Loading',
+    text: 'Loading Application Cache...',
     spinner: 'el-icon-loading',
     background: 'rgba(0, 0, 0, 0.7)'
   };
 
-  created() {
-    // console.log('loading Application Cache.')
-    // AppDataModule.IS_APP_BUSY(true)
-    // AppDataModule.getAppCache()
-    // setTimeout(() => {
-    //   AppDataModule.IS_APP_BUSY(false)
-    // }, 5000)
-  }
+indicator ={}
+created() {
+  this.indicator = Loading.service(this.loadingConfig)
 
-  async mounted() {
-    // const rs = await AppPrefrencesModule.getPrefrences()
-    // await FlexPrefrencesModule.getFlexPrefrences()
-    const rs = await AppCacheModule.getCache()
-    // this.$store.dispatch('getAppCache')
-  }
+  AppCacheModule.getCache().then((rs) => {
+    console.log('Loading Cache Compelted.')
+  }).finally(() => {
+    this.indicator.close()
+  })
+}
 }
 </script>
 

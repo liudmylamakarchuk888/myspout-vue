@@ -75,7 +75,7 @@
           Step 2 imports solution objects such as workflows, forms and dashboard tabs.
         </div>
         <div>
-          Step 3 applis the new solution to the web site and refereshes the Solution Designer.
+          Step 3 applis the new solution to the web site and refereshes the solution-designer.
         </div>
       </div>
     </el-form>

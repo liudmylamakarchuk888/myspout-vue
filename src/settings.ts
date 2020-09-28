@@ -15,7 +15,7 @@ interface ISettings {
 
 // You can customize below settings :)
 const settings: ISettings = {
-  title: 'Solution Designer',
+  title: 'solution-designer',
   showSettings: true,
   showTagsView: false,
   fixedHeader: false,
