@@ -181,7 +181,7 @@
                     <el-button
                       plain
                       size="mini"
-                      :disabled="admin.manageMethod !== 'rootTree'"
+                      :disabled="admin.manageMethod !== 'rootTree' || usages.createMethod !== 'adminPage'"
                       @click="popUpIconModal(`root`)"
                     >
                       Icon...
@@ -193,7 +193,7 @@
                   >
                     <el-button
                       plain
-                      :disabled="admin.manageMethod !== 'rootTree'"
+                      :disabled="admin.manageMethod !== 'rootTree' || usages.createMethod !== 'adminPage'"
                       size="mini"
                     >
                       Define...
@@ -608,8 +608,8 @@
     </el-row>
     <select-icon-modal
       v-model="iconModal.show"
-      :iconUrl="iconModal.iconUrl"
-      :setIconUrl="setIconUrl"
+      :icon-url="iconModal.iconUrl"
+      :set-icon-url="setIconUrl"
     />
   </el-container>
 </template>
@@ -631,6 +631,7 @@ export default class extends Vue {
     kind: '',
     iconUrl: ''
   }
+
   private hebrew = {
     name: '',
     discription: ''
@@ -703,15 +704,14 @@ export default class extends Vue {
 
   popUpIconModal(kind: string) {
     this.iconModal.show = true
-    this.iconModal.kind = kind;
-    if (kind === 'root')
-      this.iconModal.iconUrl = this.admin.rootIconUrl
+    this.iconModal.kind = kind
+    if (kind === 'root') { this.iconModal.iconUrl = this.admin.rootIconUrl }
   }
 
   setIconUrl(val:string) {
     if (this.iconModal.kind === 'root') {
       this.admin.rootIconUrl = val
-    } 
+    }
   }
 
   mounted() {
