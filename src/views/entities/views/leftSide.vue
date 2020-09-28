@@ -16,6 +16,7 @@
         <el-button
           type="text"
           style="text-decoration: underline"
+          @click="setRightSideViewId('newEntity')"
         >
           New
         </el-button>
@@ -39,7 +40,7 @@
 </template>
 <script lang='ts'>
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import MiniTree from './miniTree.vue'
+import MiniTree from '../components/miniTree.vue'
 
 @Component({
   name: 'LeftSide',
@@ -49,6 +50,7 @@ export default class extends Vue {
   @Prop({ required: true }) private entities!: any;
   @Prop({ required: true }) private disciplines!: any;
   @Prop({ required: true }) private handleEntityDbclick!: any;
+  @Prop({ required: true }) private setRightSideViewId: any;
 
   private entityKey = '';
   private selectedDiscip: any = '';

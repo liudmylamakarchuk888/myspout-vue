@@ -18,14 +18,15 @@
           :entities="allEntities.children"
           :disciplines="allDisciplines.disciplines"
           :handle-entity-dbclick="handleEntityDbClick"
+          :setRightSideViewId="setRightSideViewId"
         />
       </el-col>
       <el-col
         :span="18"
         class="card-panel-right"
       >
-        <new-entity />
-        <!-- <right-side /> -->
+        <new-entity v-show="rightSideViewId === 'newEntity'" />
+        <right-side v-show="rightSideViewId === 'leftSide'" />
       </el-col>
     </el-row>
   </el-container>
@@ -33,9 +34,9 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import LeftSide from './components/leftSide.vue'
-import RightSide from './components/rightSide.vue'
-import NewEntity from './components/newEntity.vue'
+import LeftSide from './views/leftSide.vue'
+import RightSide from './views/rightSide.vue'
+import NewEntity from './views/newEntity.vue'
 import { _allEntities, _allDisciplines, _riskProperties } from './data.js'
 
 @Component({
@@ -51,8 +52,9 @@ export default class extends Vue {
     id: '',
     name: ''
   };
+  private rightSideViewId='leftSide'
 
-  /** *********** tree node double click variables */
+  /** tree node double click variables */
   private entitiyClicks = 0
   private dbClickTimer:any = null
   private dbClickDelay = 700
@@ -86,10 +88,15 @@ export default class extends Vue {
           id: data.id,
           name: data.name
         }
+        this.setRightSideViewId('leftSide');
       }
       this.entitiyClicks = 0
     }
     this.selectedEntityId = data.id
+  }
+
+  setRightSideViewId(id: string) {
+    this.rightSideViewId = id;
   }
 }
 </script>

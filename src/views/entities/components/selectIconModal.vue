@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     title="Select Icon"
-    :visible.sync="outerVisible"
+    :visible.sync="showIconModal"
     width="25%"
   >
     <el-row
@@ -11,7 +11,7 @@
       <span>Icon:</span>
       <el-image
         class="preview-icon"
-        :src="iconUrl"
+        :src="syncIconUrl"
         fit="fill"
       />
       <el-button @click="innerVisible = true">
@@ -19,31 +19,21 @@
       </el-button>
     </el-row>
     <el-dialog
+      class="innerDialog"
       width="20%"
-      style="margin: 10px 0 0 20px"
       title="Select Icon"
       :visible.sync="innerVisible"
       append-to-body
     >
-      <div style="text-align: center; font-weight: bold">
-        <div style="margin-bottom: 10px">
+      <div class="innerDialog-container">
+        <div class="innerDialog-title">
           Select an Icon for the button:
         </div>
-        <div
-          style="
-            padding: 20px;
-            border: 1px solid gray;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            column-gap: 10px;
-            row-gap: 15px;
-            justify-items: center;
-            align-items: center;
-          "
-        >
+        <div class="innerDialog-content">
           <el-button
             v-for="(icon, index) in iconsAry"
             :key="index"
+            @click="tempIconUrl=icon"
           >
             <el-image
               :src="icon"
@@ -56,13 +46,13 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="innerVisible = false">
+        <el-button @click="innerDialogOk()">
           Ok
         </el-button>
         <el-button
           style="text-decoration: underline"
           type="text"
-          @click="innerVisible = false"
+          @click="innerDialogCancel()"
         >
           cancel
         </el-button>
@@ -72,13 +62,12 @@
       slot="footer"
       class="dialog-footer"
     >
-      <el-button @click="outerVisible = false">
+      <el-button @click="outDialogOk()">
         Ok
       </el-button>
       <el-button
-        style="text-decoration: underline"
         type="text"
-        @click="outerVisible = false"
+        @click="outDialogCancel()"
       >
         cancel
       </el-button>
@@ -92,32 +81,98 @@ import { MessageBox } from 'element-ui'
 
 @Component({
   name: 'selectIconModal',
-  components: { MessageBox }
+  components: {MessageBox}
 })
 export default class extends Vue {
-  @Prop({ required: true }) private isShow!: boolean;
-  @Prop({ required: true }) private iconUrl!: string;
+  @Prop({ required: true }) private value!: boolean;
+  @Prop({ required: true }) private iconUrl  !: string;
+  @Prop({ required: true }) private setIconUrl  !: any;
 
-  private outerVisible = this.isShow;
   private innerVisible = false;
+  private tempIconUrl = ""
   private iconsAry = [
     './MSP/resources/images/flex/entity.png',
     './MSP/resources/images/flex/entity.png',
     './MSP/resources/images/flex/entity.png',
     './MSP/resources/images/flex/entity.png',
-    './MSP/resources/images/flex/entity.png',
-    './MSP/resources/images/flex/entity.png',
-    './MSP/resources/images/flex/entity.png',
-    './MSP/resources/images/flex/entity.png',
-    './MSP/resources/images/flex/entity.png',
-    './MSP/resources/images/flex/entity.png',
-    './MSP/resources/images/flex/entity.png',
-    './MSP/resources/images/flex/entity.png',
-    './MSP/resources/images/flex/entity.png',
-    './MSP/resources/images/flex/entity.png',
-    './MSP/resources/images/flex/entity.png'
+    './MSP/resources/images/flex/notes.png',
+    './MSP/resources/images/flex/notes.png',
+    './MSP/resources/images/flex/notes.png',
+    './MSP/resources/images/flex/notes.png',
+    './MSP/resources/images/flex/virtual_entity.png',
+    './MSP/resources/images/flex/virtual_entity.png',
+    './MSP/resources/images/flex/virtual_entity.png',
+    './MSP/resources/images/flex/virtual_entity.png',
+    './MSP/resources/images/flex/authorization-tree-document-16x16.png',
+    './MSP/resources/images/flex/authorization-tree-document-16x16.png',
+    './MSP/resources/images/flex/authorization-tree-document-16x16.png'
   ];
+
+  get showIconModal():boolean {
+    return this.value;
+  }
+  get syncIconUrl() {
+    return this.tempIconUrl?this.tempIconUrl:this.iconUrl;
+  }
+
+  set showIconModal(value:boolean) {
+    this.$emit('input', value);
+  }
+
+  innerDialogCancel() {
+    this.innerVisible = false;
+    this.tempIconUrl = this.syncIconUrl;
+  }
+  innerDialogOk() {
+    this.innerVisible = false;
+  }
+
+  outDialogOk() {
+    this.setIconUrl(this.tempIconUrl)
+    this.showIconModal = false;
+    setTimeout(() => {
+      this.tempIconUrl = ""
+    }, 1000)
+  }
+  outDialogCancel() {
+    this.showIconModal = false;
+    this.tempIconUrl = "";
+  }
 }
 </script>
 <style lang="scss" scoped>
+  .preview-icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 10px;
+    border: 1px solid gray;
+    padding: 2px;
+  }
+  .innerDialog {
+    margin: 10px 0 0 0;
+    .innerDialog-container {
+      text-align: center; 
+      font-weight: bold;
+      .innerDialog-title {
+        margin-bottom: 10px;
+      }
+      .innerDialog-content {
+        padding: 20px;
+        border: 1px solid gray;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        column-gap: 2px;
+        row-gap: 15px;
+        justify-items: center;
+        align-items: center;
+      }
+    }
+    .el-button + .el-button {
+      margin: 0px;
+    }
+    .el-button--text {
+      text-decoration: underline; 
+      padding-left: 10px;
+    }
+  }
 </style>

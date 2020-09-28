@@ -100,13 +100,13 @@
                 v-model="usages.createMethod"
                 class="radio-group"
               >
-                <el-radio :label="3">
+                <el-radio :label="`dialog`">
                   Create New Item dialog box
                 </el-radio>
-                <el-radio :label="6">
+                <el-radio :label="`table`">
                   Adding rows to a table
                 </el-radio>
-                <el-radio :label="9">
+                <el-radio :label="`adminPage`">
                   Administration Pages
                 </el-radio>
               </el-radio-group>
@@ -151,9 +151,10 @@
               <el-radio-group
                 v-model="admin.manageMethod"
                 class="radio-group"
+                :disabled="usages.createMethod !== 'adminPage'"
               >
                 <el-radio
-                  :label="3"
+                  :label="`list`"
                   style="padding-bottom: 20px; padding-top: 20px"
                 >
                   List
@@ -168,7 +169,7 @@
                     style="min-width: 205px"
                   >
                     <el-radio
-                      :label="6"
+                      :label="`rootTree`"
                     >
                       Tree (This entity as root)
                     </el-radio>
@@ -180,7 +181,8 @@
                     <el-button
                       plain
                       size="mini"
-                      @click="showIconModal = true"
+                      :disabled="admin.manageMethod !== 'rootTree'"
+                      @click="popUpIconModal(`root`)"
                     >
                       Icon...
                     </el-button>
@@ -191,6 +193,7 @@
                   >
                     <el-button
                       plain
+                      :disabled="admin.manageMethod !== 'rootTree'"
                       size="mini"
                     >
                       Define...
@@ -207,7 +210,7 @@
                     style="min-width: 240px"
                   >
                     <el-radio
-                      :label="9"
+                      :label="`tree`"
                     >
                       Tree (Another entity is the root)
                     </el-radio>
@@ -218,6 +221,7 @@
                   >
                     <el-button
                       plain
+                      :disabled="admin.manageMethod !== 'tree'"
                       size="mini"
                     >
                       Icon...
@@ -233,7 +237,7 @@
                     :span="4"
                     style="min-width: 240px"
                   >
-                    <el-radio :label="10">
+                    <el-radio :label="`custom`">
                       Custom (Input URL)
                     </el-radio>
                   </el-col>
@@ -243,13 +247,14 @@
                   >
                     <el-input
                       v-model="admin.customUrl"
+                      :disabled="admin.manageMethod !== 'custom'"
                       plain
                       size="mini"
                       style="min-width: 150px"
                     />
                   </el-col>
                 </el-row>
-                <el-radio :label="11">
+                <el-radio :label="`setItems`">
                   Configuration Items
                 </el-radio>
               </el-radio-group>
@@ -268,6 +273,7 @@
                 <el-col
                   :span="2"
                   style="min-width: 150px; font-size; 15px;"
+                  :class="usages.createMethod !== 'adminPage'?'require-content': ''"
                 >
                   Unique Name property
                 </el-col>
@@ -276,6 +282,7 @@
                     v-model="admin.selectUniqueName"
                     placeholder="Select"
                     size="mini"
+                    :disabled="admin.manageMethod !== 'setItems'"
                   >
                     <el-option
                       v-for="item in options"
@@ -600,14 +607,15 @@
       </el-col>
     </el-row>
     <select-icon-modal
-      :is-show="showIconModal"
-      :icon-url="admin.rootIconUrl"
+      v-model="iconModal.show"
+      :iconUrl="iconModal.iconUrl"
+      :setIconUrl="setIconUrl"
     />
   </el-container>
 </template>
 <script lang='ts'>
 import { Component, Vue } from 'vue-property-decorator'
-import SelectIconModal from './selectIconModal.vue'
+import SelectIconModal from '../components/selectIconModal.vue'
 
 @Component({
   name: 'NewEntity',
@@ -618,19 +626,23 @@ export default class extends Vue {
   private entityName = '';
   private description = '';
   private activeCollapseName = '';
-  private showIconModal = false;
+  private iconModal = {
+    show: false,
+    kind: '',
+    iconUrl: ''
+  }
   private hebrew = {
     name: '',
     discription: ''
   };
 
   private usages = {
-    createMethod: 3,
+    createMethod: 'dialog',
     checkList: []
   };
 
   private admin = {
-    manageMethod: 3,
+    manageMethod: 'list',
     customUrl: '',
     selectUniqueName: '',
     rootIconUrl:
@@ -689,8 +701,17 @@ export default class extends Vue {
     console.log(value)
   }
 
-  openIconModal(kind: string) {
-    console.log(kind)
+  popUpIconModal(kind: string) {
+    this.iconModal.show = true
+    this.iconModal.kind = kind;
+    if (kind === 'root')
+      this.iconModal.iconUrl = this.admin.rootIconUrl
+  }
+
+  setIconUrl(val:string) {
+    if (this.iconModal.kind === 'root') {
+      this.admin.rootIconUrl = val
+    } 
   }
 
   mounted() {
@@ -739,13 +760,6 @@ export default class extends Vue {
   }
   .require-content {
     color: #c3bfbf;
-  }
-  .preview-icon {
-    width: 50px;
-    height: 50px;
-    margin: 0 10px;
-    border: 1px solid gray;
-    padding: 2px;
   }
 }
 </style>
