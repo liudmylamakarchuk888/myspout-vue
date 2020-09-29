@@ -4,37 +4,56 @@
     :visible.sync="showIconModal"
     width="30%"
   >
-    <el-row type="flex" justify="start" class="header">
-      <el-button type="text" class="img-button" @click="newHandler()">
+    <el-row
+      type="flex"
+      justify="start"
+      class="header"
+    >
+      <el-button
+        type="text"
+        class="img-button"
+        @click="newHandler()"
+      >
         <el-image
           src="./MSP/resources/images/flex/entity.png"
-        />New...</el-button
+        />New...
+      </el-button>
+      <el-button
+        type="text"
+        class="img-button"
+        :disabled="selectListItem.index<0"
+        @click="editHandler()"
       >
-      <el-button type="text" class="img-button" @click="editHandler()"
-        :disabled="selectListItem.index<0"><el-image
+        <el-image
           src="./MSP/resources/images/flex/entity.png"
-        />Edit...</el-button
-      >
+        />Edit...
+      </el-button>
       <el-button
         type="text"
         class="img-button delete-button"
         @click="deleteHandler()"
-        ><el-image
-          src="./MSP/resources/images/flex/entity.png"
-        />Delete...</el-button
       >
+        <el-image
+          src="./MSP/resources/images/flex/entity.png"
+        />Delete...
+      </el-button>
     </el-row>
     <div class="list-container">
-      <div v-for="(d, index) in listData" :key="index" class="list-item">
+      <div
+        v-for="(d, index) in listData"
+        :key="index"
+        class="list-item"
+      >
         <el-button
-          class="list-button img-button"
+          class="img-button list-button"
           style="padding-left: 40px"
           @click="listItemClick(d, index)"
-          ><el-image
+        >
+          <el-image
             :src="require('@/assets/action-16x16.png')"
             style="padding-right: 2px"
-          />{{ d.entity }}</el-button
-        >
+          />{{ d.entity }}
+        </el-button>
       </div>
     </div>
     <el-dialog
@@ -45,12 +64,24 @@
       append-to-body
     >
       <div class="innerDialog-container">
-        <el-row type="flex" class="innerDialog-item">
-          <el-col :span="8">Entity</el-col>
-          <el-col :span="10"><el-input v-model="selectListItem.entity"/></el-col>
+        <el-row
+          type="flex"
+          class="innerDialog-item"
+        >
+          <el-col :span="8">
+            Entity
+          </el-col>
+          <el-col :span="10">
+            <el-input v-model="selectListItem.entity" />
+          </el-col>
         </el-row>
-        <el-row type="flex" class="innerDialog-item">
-          <el-col :span="8">Relationship Property</el-col>
+        <el-row
+          type="flex"
+          class="innerDialog-item"
+        >
+          <el-col :span="8">
+            Relationship Property
+          </el-col>
           <el-col :span="16">
             <el-select
               v-model="selectListItem.property"
@@ -63,13 +94,18 @@
                 :label="item.label"
                 :value="item.value"
                 size="mini"
-              >
-              </el-option> </el-select
-          ></el-col>
+              />
+            </el-select>
+          </el-col>
         </el-row>
       </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="innerDialogOk()"> Ok </el-button>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="innerDialogOk()">
+          Ok
+        </el-button>
         <el-button
           style="text-decoration: underline"
           type="text"
@@ -79,8 +115,13 @@
         </el-button>
       </div>
     </el-dialog>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="outDialogOk()"> Ok </el-button>
+    <div
+      slot="footer"
+      class="dialog-footer"
+    >
+      <el-button @click="outDialogOk()">
+        Ok
+      </el-button>
       <el-button
         type="text"
         style="text-decoration: underline"
@@ -93,12 +134,12 @@
 </template>
 
 <script lang='ts'>
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { MessageBox } from "element-ui";
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import { MessageBox } from 'element-ui'
 
 @Component({
-  name: "RelationshipModal",
-  components: {},
+  name: 'RelationshipModal',
+  components: {}
 })
 export default class extends Vue {
   @Prop({ required: true }) private value!: boolean;
@@ -112,111 +153,111 @@ export default class extends Vue {
     property: '',
     index: -1
   };
+
   private options = [
     {
-      value: "Option1",
-      label: "Option1",
+      value: 'Option1',
+      label: 'Option1'
     },
     {
-      value: "Option2",
-      label: "Option2",
+      value: 'Option2',
+      label: 'Option2'
     },
     {
-      value: "Option3",
-      label: "Option3",
+      value: 'Option3',
+      label: 'Option3'
     },
     {
-      value: "Option4",
-      label: "Option4",
+      value: 'Option4',
+      label: 'Option4'
     },
     {
-      value: "Option5",
-      label: "Option5",
-    },
+      value: 'Option5',
+      label: 'Option5'
+    }
   ];
-  private relationProperty = "";
+
+  private relationProperty = '';
 
   get showIconModal(): boolean {
-    return this.value;
+    return this.value
   }
+
   set showIconModal(value: boolean) {
-    this.$emit("input", value);
+    this.$emit('input', value)
   }
+
   get listData() {
-    return this.tempListData.length?this.tempListData:this.data;
+    return this.tempListData.length ? this.tempListData : this.data
   }
 
   listItemClick(item:any, index: number) {
-    this.selectListItem = {...item, index}
+    this.selectListItem = { ...item, index }
   }
 
   newHandler() {
-    if (!this.tempListData.length)
-      this.tempListData = [...this.data]
-    this.innerVisible = true;
+    if (!this.tempListData.length) { this.tempListData = [...this.data] }
+    this.innerVisible = true
     this.selectListItem = {
       index: -1,
       entity: '',
-      property: '',
+      property: ''
     }
   }
+
   editHandler() {
-    if (!this.tempListData.length)
-      this.tempListData = [...this.data]
-    this.innerVisible = true;
+    if (!this.tempListData.length) { this.tempListData = [...this.data] }
+    this.innerVisible = true
   }
+
   deleteHandler() {
-    if (!this.tempListData.length)
-      this.tempListData = [...this.data]
-    if (this.selectListItem.index !== -1)
-    {
-      if (window.confirm("Are you sure to delete this?")) {
-        this.tempListData.splice(this.selectListItem.index, 1);
+    if (!this.tempListData.length) { this.tempListData = [...this.data] }
+    if (this.selectListItem.index !== -1) {
+      if (window.confirm('Are you sure to delete this?')) {
+        this.tempListData.splice(this.selectListItem.index, 1)
       }
       this.selectListItem = {
         index: -1,
         entity: '',
-        property: '',
+        property: ''
       }
-    }
-    else window.alert("Select a Entity!");
+    } else window.alert('Select a Entity!')
   }
 
   innerDialogCancel() {
-    this.innerVisible = false;
+    this.innerVisible = false
     this.tempListData = [...this.data]
     this.selectListItem = {
       index: -1,
       entity: '',
-      property: '',
+      property: ''
     }
   }
+
   innerDialogOk() {
-    this.innerVisible = false;
-    const {index, ...data} = this.selectListItem;
-    if (index < 0) 
-      this.tempListData.push(data);
-    else 
-      this.tempListData[index] = data
+    this.innerVisible = false
+    const { index, ...data } = this.selectListItem
+    if (index < 0) { this.tempListData.push(data) } else { this.tempListData[index] = data }
     this.selectListItem = {
       index: -1,
       entity: '',
-      property: '',
+      property: ''
     }
   }
 
   outDialogOk() {
-    this.modalOkHandler(this.tempListData);
-    this.outDialogCancel();
+    this.modalOkHandler(this.tempListData)
+    this.outDialogCancel()
   }
+
   outDialogCancel() {
-    this.showIconModal = false;
+    this.showIconModal = false
     setTimeout(() => {
       this.tempListData = []
       this.selectListItem = {
         index: -1,
         entity: '',
-        property: '',
+        property: ''
       }
     }, 500)
   }
@@ -229,30 +270,34 @@ export default class extends Vue {
     min-height: 250px;
     overflow: auto;
   }
+  .header {
+    padding: 10px 20px;
+    border-bottom: 1px solid $borderGray;
+    margin: 0px !important;
+  }
+  .dialog-footer {
+    border-top: 1px solid $borderGray;
+    padding-top: 10px;
+  }
 </style>
 <style lang="scss">
 .el-dialog__body {
   padding-top: 0px;
   padding-bottom: 0px;
 }
-.header {
-  padding: 10px 20px;
-  border-bottom: 1px solid $borderGray;
-  margin: 0px !important;
-  .img-button {
-    & > span {
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-      img {
-        width: 20px;
-        height: 20px;
-        padding-right: 5px;
-      }
+.img-button {
+  & > span {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    img {
+      width: 20px;
+      height: 20px;
+      padding-right: 5px;
     }
-    &.delete-button {
-      color: $pink;
-    }
+  }
+  &.delete-button {
+    color: $pink;
   }
 }
 .innerDialog {
@@ -280,9 +325,5 @@ export default class extends Vue {
     text-decoration: underline;
     padding-left: 10px;
   }
-}
-.dialog-footer {
-  border-top: 1px solid $borderGray;
-  padding-top: 10px;
 }
 </style>
