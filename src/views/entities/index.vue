@@ -34,9 +34,9 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import LeftSide from './views/leftSide.vue'
-import RightSide from './views/rightSide.vue'
-import NewEntity from './views/newEntity.vue'
+import LeftSide from './pages/leftSide.vue'
+import RightSide from './pages/rightSide.vue'
+import NewEntity from './pages/newEntity.vue'
 import { _allEntities, _allDisciplines, _riskProperties } from './data.js'
 
 @Component({
