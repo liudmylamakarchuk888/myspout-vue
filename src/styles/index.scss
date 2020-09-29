@@ -155,3 +155,17 @@ aside {
 .no-padding {
   padding: 0px !important;
 }
+
+.list-button {
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-radius: 0;
+  padding-left: 50px;
+  &:active,
+  &:focus,
+  &:hover {
+    color: #1f2d3d;
+    border: none;
+  }
+}

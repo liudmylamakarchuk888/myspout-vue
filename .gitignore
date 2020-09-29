@@ -26,3 +26,9 @@ yarn-error.log*
 *.sln
 *.sw*
 src/models/Form.ts_0000
+src/components/Orchestrators/search.ts
+src/components/Orchestrators/SearchExample.vue
+src/components/Orchestrators/SearchInput.vue
+src/components/Orchestrators/SearchLeaf.vue
+src/components/Orchestrators/SearchNode.vue
+src/components/Orchestrators/SearchNodeBase.vue

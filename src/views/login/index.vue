@@ -81,16 +81,16 @@
           <span>{{ $t('login.password') }} : {{ $t('login.any') }} </span>
         </div>
 
-        <el-button
+        <!-- <el-button
           class="thirdparty-button"
           type="primary"
           @click="showDialog=true"
         >
           {{ $t('login.thirdparty') }}
-        </el-button>
+        </el-button> -->
       </div>
     </el-form>
-
+    <!--
     <el-dialog
       :title="$t('login.thirdparty')"
       :visible.sync="showDialog"
@@ -100,7 +100,7 @@
       <br>
       <br>
       <social-sign />
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 

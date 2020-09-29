@@ -18,9 +18,11 @@
         <tags-view v-if="showTagsView" />
       </div>
       <app-main />
-      <right-panel v-if="showSettings">
+      <!--
+        useful for Theme selection and customization for client specific settings.
+        <right-panel v-if="showSettings">
         <settings />
-      </right-panel>
+      </right-panel> -->
     </div>
   </div>
 </template>
@@ -33,7 +35,9 @@ import { SettingsModule } from '@/store/modules/settings'
 import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
 import RightPanel from '@/components/RightPanel/index.vue'
 import ResizeMixin from './mixin/resize'
-import { AppDataModule } from '@/store/modules/appData'
+import { EntitiesModule } from '@/store/modules/entities'
+import { AppCacheModule } from '@/store/modules/appCache'
+import { Loading } from 'element-ui'
 @Component({
   name: 'Layout',
   components: {
@@ -43,7 +47,8 @@ import { AppDataModule } from '@/store/modules/appData'
     Settings,
     Sidebar,
     TagsView,
-    AppDataModule
+    EntitiesModule,
+    AppCacheModule
   }
 })
 export default class extends mixins(ResizeMixin) {
@@ -72,15 +77,23 @@ export default class extends mixins(ResizeMixin) {
     AppModule.CloseSideBar(false)
   }
 
-  get isAppBusy() {
-    return this.$store.getters.IsAppBusy
-  }
+  private loadingConfig={
+    lock: true,
+    text: 'Loading Application Cache...',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.7)'
+  };
 
-  mounted() {
-    console.log('loading Application Cache.')
+indicator ={}
+created() {
+  this.indicator = Loading.service(this.loadingConfig)
 
-    this.$store.dispatch('getAppCache')
-  }
+  AppCacheModule.getCache().then((rs) => {
+    console.log('Loading Cache Compelted.')
+  }).finally(() => {
+    this.indicator.close()
+  })
+}
 }
 </script>
 
@@ -179,5 +192,19 @@ export default class extends mixins(ResizeMixin) {
   .sidebar-container {
     transition: none;
   }
+}
+.el-collapse-item__header {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    line-height: 48px;
+    background-color: #f6f6f6;
+    color: #303133;
+    cursor: pointer;
+    border-bottom: 1px solid #EBEEF5;
+    font-size: 13px;
+    font-weight: 500;
+    transition: border-bottom-color .3s;
+    outline: none;
 }
 </style>

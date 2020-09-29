@@ -17,18 +17,16 @@
         <left-side
           :entities="allEntities.children"
           :disciplines="allDisciplines.disciplines"
-          :handle-entity-click="handleEntityClick"
+          :handle-entity-dbclick="handleEntityDbClick"
+          :setRightSideViewId="setRightSideViewId"
         />
       </el-col>
       <el-col
         :span="18"
         class="card-panel-right"
       >
-        <right-side :selected-entity="selectedEntity" />
-        <!-- <left-side
-          :entities="allEntities.children"
-          :disciplines="allDisciplines.disciplines"
-        ></left-side> -->
+        <new-entity v-show="rightSideViewId === 'newEntity'" />
+        <right-side v-show="rightSideViewId === 'leftSide'" />
       </el-col>
     </el-row>
   </el-container>
@@ -36,18 +34,17 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import LeftSide from './components/leftSide.vue'
-import RightSide from './components/rightSide.vue'
-import axios from 'axios'
+import LeftSide from './pages/leftSide.vue'
+import RightSide from './pages/rightSide.vue'
+import NewEntity from './pages/newEntity.vue'
 import { _allEntities, _allDisciplines, _riskProperties } from './data.js'
 
 @Component({
   name: 'Entities',
-  components: { LeftSide, RightSide }
+  components: { LeftSide, RightSide, NewEntity }
 })
 export default class extends Vue {
   private leftLoading = false;
-  private rightLoading = false;
   private allEntities: any = _allEntities;
   private allDisciplines: any = _allDisciplines;
   private propertyData = _riskProperties;
@@ -55,6 +52,13 @@ export default class extends Vue {
     id: '',
     name: ''
   };
+  private rightSideViewId='leftSide'
+
+  /** tree node double click variables */
+  private entitiyClicks = 0
+  private dbClickTimer:any = null
+  private dbClickDelay = 700
+  private selectedEntityId = -1
 
   private async fetchEntities() {
     this.leftLoading = true
@@ -70,13 +74,29 @@ export default class extends Vue {
     this.leftLoading = false
   }
 
-  handleEntityClick(data: any, node: any) {
-    if (node.isLeaf) {
-      this.selectedEntity = {
-        id: data.id,
-        name: data.name
+  handleEntityDbClick(data: any, node: any) {
+    this.entitiyClicks++
+    if (this.entitiyClicks === 1) {
+      this.dbClickTimer = setTimeout(() => {
+        this.entitiyClicks = 0
+      }, this.dbClickDelay)
+    } else {
+      clearTimeout(this.dbClickTimer)
+      if (this.selectedEntityId === data.id && node.isLeaf) {
+        this.$store.commit('SET_CURRENT_ENTITIY', data)
+        this.selectedEntity = {
+          id: data.id,
+          name: data.name
+        }
+        this.setRightSideViewId('leftSide');
       }
+      this.entitiyClicks = 0
     }
+    this.selectedEntityId = data.id
+  }
+
+  setRightSideViewId(id: string) {
+    this.rightSideViewId = id;
   }
 }
 </script>

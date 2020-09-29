@@ -8,10 +8,10 @@
         v-if="collapse"
         key="collapse"
         class="sidebar-logo-link"
-        to="/"
+        to="/index"
       >
         <img
-          src="logo.svg"
+          src="/logo.png"
           class="sidebar-logo"
         >
       </router-link>
@@ -19,10 +19,10 @@
         v-else
         key="expand"
         class="sidebar-logo-link"
-        to="/"
+        to="/index"
       >
         <img
-          src="logo.svg"
+          src="/logo.png"
           class="sidebar-logo"
         >
         <h1 class="sidebar-title">

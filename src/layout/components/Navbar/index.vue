@@ -6,9 +6,15 @@
       class="hamburger-container"
       @toggleClick="toggleSideBar"
     />
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
+    <breadcrumb
+      id="breadcrumb-container"
+      class="breadcrumb-container"
+    />
     <div class="right-menu">
-      <template v-if="device!=='mobile'" size="mini">
+      <template
+        v-if="device!=='mobile'"
+        size="mini"
+      >
         <!--   <header-search class="right-menu-item" />
         <error-log class="errLog-container right-menu-item hover-effect" />
         <screenfull class="right-menu-item hover-effect" />
@@ -20,24 +26,48 @@
           <size-select class="right-menu-item hover-effect" />
         </el-tooltip>
         <lang-select class="right-menu-item hover-effect" />-->
-        <span class="right-menu-links">{{ userName }}</span>
-        <el-link class="right-menu-links" href="#" type="primary">Advanced</el-link>
-        <el-link class="right-menu-links" href="#" type="primary">Web Site</el-link>
+        <el-button
+          class="button right-menu-item"
+          style="color:gray"
+          type="text"
+        >
+          {{ userName }}
+        </el-button>
+        <el-button
+          class="button right-menu-item hover-effect"
+
+          type="text"
+        >
+          <a href="#">    Advanced</a>
+        </el-button>
+        <el-button
+          class="button right-menu-item hover-effect"
+
+          type="text"
+        >
+          Web Site
+        </el-button>
         <el-button
           type="Text"
           class="button right-menu-item hover-effect"
-          size="mini"
+
           icon="el-icon-refresh"
-        >Reload Settings</el-button>
+        >
+          Reload Settings
+        </el-button>
         <el-button
           type="Text"
           class="right-menu-item hover-effect"
-          size="mini"
+
           icon="el-icon-upload"
-        >Save</el-button>
+          :disabled="hasUnsavedChagnes"
+        >
+          Save
+        </el-button>
+        </el-button>
       </template>
 
-      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
+      <!-- <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar" />
           <i class="el-icon-caret-bottom" />
@@ -51,25 +81,25 @@
             <span style="display:block;">{{ $t('navbar.logOut') }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
-      </el-dropdown>
+      </el-dropdown> -->
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { AppModule } from "@/store/modules/app";
-import { UserModule } from "@/store/modules/user";
-import Breadcrumb from "@/components/Breadcrumb/index.vue";
-import ErrorLog from "@/components/ErrorLog/index.vue";
-import Hamburger from "@/components/Hamburger/index.vue";
-import HeaderSearch from "@/components/HeaderSearch/index.vue";
-import LangSelect from "@/components/LangSelect/index.vue";
-import Screenfull from "@/components/Screenfull/index.vue";
-import SizeSelect from "@/components/SizeSelect/index.vue";
+import { Component, Vue } from 'vue-property-decorator'
+import { AppModule } from '@/store/modules/app'
+import { UserModule } from '@/store/modules/user'
+import Breadcrumb from '@/components/Breadcrumb/index.vue'
+import ErrorLog from '@/components/ErrorLog/index.vue'
+import Hamburger from '@/components/Hamburger/index.vue'
+import HeaderSearch from '@/components/HeaderSearch/index.vue'
+import LangSelect from '@/components/LangSelect/index.vue'
+import Screenfull from '@/components/Screenfull/index.vue'
+import SizeSelect from '@/components/SizeSelect/index.vue'
 
 @Component({
-  name: "Navbar",
+  name: 'Navbar',
   components: {
     Breadcrumb,
     ErrorLog,
@@ -77,39 +107,44 @@ import SizeSelect from "@/components/SizeSelect/index.vue";
     HeaderSearch,
     LangSelect,
     Screenfull,
-    SizeSelect,
-  },
+    SizeSelect
+  }
 })
 export default class extends Vue {
   get sidebar() {
-    return AppModule.sidebar;
+    return AppModule.sidebar
   }
 
   get device() {
-    return AppModule.device.toString();
+    return AppModule.device.toString()
   }
 
   get avatar() {
-    return UserModule.avatar;
+    return UserModule.avatar
   }
 
   get userName() {
-    return "Administrator";
+    return 'Administrator'
   }
 
   private toggleSideBar() {
-    AppModule.ToggleSideBar(false);
+    AppModule.ToggleSideBar(false)
+  }
+
+  get hasUnsavedChagnes() {
+    return true
   }
 
   private async logout() {
-    await UserModule.LogOut();
-    this.$router.push(`/login?redirect=${this.$route.fullPath}`);
+    await UserModule.LogOut()
+    this.$router.push(`/login?redirect=${this.$route.fullPath}`)
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .navbar {
+
   height: 50px;
   overflow: hidden;
   position: relative;
@@ -141,9 +176,11 @@ export default class extends Vue {
 
   .right-menu {
     float: right;
+
     height: 100%;
     line-height: 50px;
-
+    padding-top: 5px ;
+    padding-right: 20px;
     &:focus {
       outline: none;
     }
@@ -152,8 +189,8 @@ export default class extends Vue {
       display: inline-block;
       padding: 0 8px;
       height: 80%;
-      font-size: 18px;
-      color: #5a5e66;
+      font-size: small;
+
       vertical-align: text-bottom;
 
       &.hover-effect {

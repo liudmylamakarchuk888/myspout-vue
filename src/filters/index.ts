@@ -15,3 +15,5 @@ export const articleStatusFilter = (status: string) => {
 export const uppercaseFirstChar = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
+
+

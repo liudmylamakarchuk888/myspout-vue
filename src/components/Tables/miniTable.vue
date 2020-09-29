@@ -2,36 +2,35 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input
-        v-model="listQuery.title"
+        v-model="search.text"
         size="mini"
-        :placeholder="$t('table.title')"
+        placeholder="Search item"
         style="width: 200px;"
         class="filter-item"
-        @keyup.enter.native="handleFilter"
+        @keyup.enter.native="searchData"
       />
 
       <el-select
-        v-model="listQuery.type"
+        v-model="search.type"
         size="mini"
-        :placeholder="$t('table.type')"
+        placeholder="Filter by Type"
         clearable
         class="filter-item"
         style="width: 130px"
-        @change="handleFilter"
       >
         <el-option
           v-for="item in typeOptions"
           :key="item.key"
-          :label="item.displayName+'('+item.key+')'"
-          :value="item.key"
+          :label="item.key"
+          :value="item.value"
         />
       </el-select>
     </div>
-
+    <!-- :key="tableKey" -->
     <el-table
-      :key="tableKey"
+
       v-loading="listLoading"
-      :data="list"
+      :data="searchData( )"
       border
       fit
       height="300px"
@@ -40,116 +39,71 @@
       style="width: 100%;"
     >
       <el-table-column
-        :label="$t('table.title')"
-        min-width="150px"
-      >
-        <template slot-scope="{row}">
-          <span
-            class="link-type"
-            @click="handleUpdate(row)"
-          >{{ row.title }}</span>
-          <el-tag>{{ row.type | typeFilter }}</el-tag>
-        </template>
-      </el-table-column>
+        v-for="col in columns"
+        :key="col.field"
+        :label="col.label"
+        :prop="col.field"
+        :min-width="col.width"
+      />
     </el-table>
-    <!-- <hr/>
-      <el-tree
-               :data="list"
-
-               node-key="id"
-               :expand-on-click-node="false"
-               ref="markupTree"
-               >
-        <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span >
-            <i class="el-icon-edit"></i>  {{data.title}}
-          </span>
-        </span>
-      </el-tree> -->
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import {
-  getArticles,
-  defaultArticleData
-} from '@/api/articles'
-import { IArticleData } from '@/api/types'
-
-const typeOptions = [
-  { key: 'CN', displayName: 'China' },
-  { key: 'US', displayName: 'USA' },
-  { key: 'JP', displayName: 'Japan' },
-  { key: 'EU', displayName: 'Eurozone' }
-]
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = typeOptions.reduce(
-  (acc: { [key: string]: string }, cur) => {
-    acc[cur.key] = cur.displayName
-    return acc
-  },
-  {}
-) as { [key: string]: string }
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 
 @Component({
   name: 'miniTable',
-  components: {},
-  filters: {
-    typeFilter: (type: string) => {
-      return calendarTypeKeyValue[type]
-    }
-  }
+  components: {}
+
 })
 export default class extends Vue {
-  private tableKey = 0;
-  private list: IArticleData[] = [];
-  private total = 0;
-  private listLoading = true;
-  private listQuery = {
-    page: 1,
-    limit: 20,
+  @Prop({ required: true }) private items!: any[];
+  @Prop({ required: false }) private typeOptions!: { key: string, value: string }[];
+  @Prop({ required: true }) private columns!:{label:string, field:string, width:string}[];
+  // @Prop({ default: true, required: false }) private showSearch:boolean
+  // @Prop({ default: 'Available List', required: false }) private title:string;
+  // @Prop({ default: false, required: false }) private dragable:boolean
 
-    title: undefined,
-    type: undefined
+  private listLoading = false;
+  private searchBy=''
+  private search = {
+    text: '',
+    type: ''
   };
 
-  private typeOptions = typeOptions;
+  get list() {
+    return this.items
+  }
 
-  private rules = {
-    type: [{ required: true, message: 'type is required', trigger: 'change' }],
-    timestamp: [
-      { required: true, message: 'timestamp is required', trigger: 'change' }
-    ],
-    title: [{ required: true, message: 'title is required', trigger: 'blur' }]
-  };
-
-  private tempArticleData = defaultArticleData;
-
-  created() {
-    this.getList()
+  getData(filter) {
+    return this.items.filter((f) => {
+      return f.entityName.toLowerCase().includes(filter.text.toLowerCase())
+    })
   }
 
   private async getList() {
-    this.listLoading = true
-    const { data } = await getArticles(this.listQuery)
-    this.list = data.items
-    this.total = data.total
+    // this.listLoading = true
+    const { data } = await this.getData(this.search)
+    this.list = data
+
     // Just to simulate the time of the request
-    setTimeout(() => {
-      this.listLoading = false
-    }, 0.5 * 1000)
+    // setTimeout(() => {
+    //  this.listLoading = false
+    // }, 0.5 * 1000)
   }
 
-  private handleFilter() {
-    this.listQuery.page = 1
-    this.getList()
-  }
+@Watch('search', { deep: true })
+  private searchData() {
+    /// console.log('search by ' + query)
 
-  private getSortClass(key: string) {
-    const sort = this.listQuery.sort
-    return sort === `+${key}` ? 'ascending' : 'descending'
+    if (this.search.text === undefined && this.search.type === undefined) { return this.items }
+
+    const rs = this.items.filter(data => !this.search ||
+     data.displayName.toLowerCase().includes(this.search.text.toLowerCase()) ||
+    data.itemType == this.search.type)
+
+    return rs
   }
 }
 </script>

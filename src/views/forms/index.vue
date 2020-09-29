@@ -11,20 +11,20 @@
       :inline="true"
       style="float:right"
     >
-      <el-form-item itemref>
+      <el-form-item>
         <el-input
-          v-model="search"
+          v-model="search.text"
           placeholder="Find form"
         />
       </el-form-item>
       <el-form-item>
         <el-select
-          v-model="selectedEntityType"
+          v-model="search.type"
+          clearable
           placeholder="find form by entity"
-          @change="onEntityTypeChanged"
         >
           <el-option
-            v-for="item in getEntityTypeList"
+            v-for="item in entityTypeList"
             :key="item.key"
             :label="item.key"
             :value="item.value"
@@ -81,13 +81,14 @@
     </el-form>
 
     <el-table
-      :data="tableGropuedData"
+      ref="elTable"
+      :data="onSearchChanged()"
       border
       stripe
       size="mini"
       highlight-current-row
       default-expand-all
-      row-key="dateModified"
+      row-key="rowId"
       @current-change="onSelectedRow"
       @row-dblclick="onRowDoubleClick"
     >
@@ -99,7 +100,6 @@
       <el-table-column
         prop="displayName"
         label="Display name"
-        sortable
       />
 
       <el-table-column
@@ -129,8 +129,10 @@
   </el-card>
 </template>
 <script lang="ts">
+import { constantRoutes } from '@/router'
+import { AppCacheModule } from '@/store/modules/appCache'
 // import { RSA_PKCS1_PADDING } from "constants"
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import NewForm from './components/newForm'
 @Component({
   name: 'forms',
@@ -142,7 +144,10 @@ export default class extends Vue {
     region: ''
   }
 
-  search = ''
+  search:{text:string, type:any} ={
+    text: '',
+    type: ''
+  }
 
   showNewForm = false
   tableData = []
@@ -150,7 +155,7 @@ export default class extends Vue {
   selectedRow = null
 
   get formsData() {
-    return this.$store.getters.Forms
+    return AppCacheModule.Forms
   }
 
   onSubmit() {
@@ -192,20 +197,39 @@ export default class extends Vue {
       })
   }
 
+  @Watch('search', { deep: true })
+  onSearchChanged(value) {
+    // console.log('watch search triggered' + value)
+    debugger
+    if (value === undefined) { return this.tableGropuedData }
+
+    // this.$refs.elTable.filter(data => !value ||
+    //     data.displayName.toLowerCase().includes(value.text.toLowerCase()) ||
+    //     data.entityName.toLowerCase() === value.type.toLowerCase())
+
+    const rs = this.tableGropuedData.filter((p) => {
+      return p.children.filter((c) => {
+        return c.entityName === value.type ||
+         c.displayName.toLowerCase().includes(value.text.toLowerCase())
+      })
+    })
+
+    return rs
+  }
+
   onEntityTypeChanged(value: string) {
     console.log('selected value is ' + value)
-    const search = value
+    this.search.type = value
     this.tableGropuedData.filter((x) => {
-      debugger
       x.children.filter((c) => {
-        const val = new String(value)
-        debugger
+        const val = new String(this.search.type)
+
         return c.entityName.toLowerCase() === val.toLowerCase()
       })
     })
   }
 
-  get getEntityTypeList() {
+  getEntityTypeList() {
     const rs: any[] = []
 
     this.formsData.filter((thing, i, arr) =>
@@ -219,6 +243,11 @@ export default class extends Vue {
   }
 
   get tableGropuedData() {
+    let index = 1
+    this.formsData.forEach((row) => {
+      row.rowId = index
+      index = index + 1
+    })
     const outofbox = this.formsData.filter((x) => {
       return x.outOfTheBox === true
     })
@@ -238,12 +267,12 @@ export default class extends Vue {
       itemType: ''
     })
 
-    let index = 1
-    this.tableData.forEach((row) => {
-      row.id = index
-      index++
-    })
     return this.tableData
   }
+
+entityTypeList =[]
+mounted() {
+  this.entityTypeList = this.getEntityTypeList()
+}
 }
 </script>
