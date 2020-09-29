@@ -5,7 +5,7 @@
         v-for="(item, index) in items.properties"
         :key="index"
       >
-        <el-button @click="handleClick(item)">
+        <el-button @click="handleClick(item)" class="list-button">
           <span class="item-content">
             <img
               v-if="iconUrl(item.dataType.value)"
@@ -82,17 +82,6 @@ export default class extends Vue {
 
 <style lang='scss' scoped>
 .list-container {
-  button {
-    width: 100%;
-    text-align: left;
-    border: none;
-    padding-left: 50px;
-    &:active,
-    &:focus,
-    &:hover {
-      color: #1f2d3d;
-    }
-  }
   .text-center {
     padding: 20px;
     text-align: center;
