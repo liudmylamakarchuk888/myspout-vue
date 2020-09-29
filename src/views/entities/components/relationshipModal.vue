@@ -11,7 +11,7 @@
         />New...</el-button
       >
       <el-button type="text" class="img-button" @click="editHandler()"
-        ><el-image
+        :disabled="selectListItem.index<0"><el-image
           src="./MSP/resources/images/flex/entity.png"
         />Edit...</el-button
       >
@@ -97,13 +97,13 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { MessageBox } from "element-ui";
 
 @Component({
-  name: "hierarchicalModal",
+  name: "RelationshipModal",
   components: {},
 })
 export default class extends Vue {
   @Prop({ required: true }) private value!: boolean;
   @Prop({ required: true }) private data!: any;
-  @Prop({ required: true }) private setIconUrl!: any;
+  @Prop({ required: true }) private modalOkHandler!: any;
 
   private innerVisible = false;
   private tempListData = [];
@@ -142,10 +142,8 @@ export default class extends Vue {
   set showIconModal(value: boolean) {
     this.$emit("input", value);
   }
-
   get listData() {
-    this.tempListData = this.data;
-    return this.tempListData;
+    return this.tempListData.length?this.tempListData:this.data;
   }
 
   listItemClick(item:any, index: number) {
@@ -153,6 +151,8 @@ export default class extends Vue {
   }
 
   newHandler() {
+    if (!this.tempListData.length)
+      this.tempListData = [...this.data]
     this.innerVisible = true;
     this.selectListItem = {
       index: -1,
@@ -161,14 +161,35 @@ export default class extends Vue {
     }
   }
   editHandler() {
+    if (!this.tempListData.length)
+      this.tempListData = [...this.data]
     this.innerVisible = true;
   }
   deleteHandler() {
-    this.tempListData.splice(this.selectListItem.index, 1);
+    if (!this.tempListData.length)
+      this.tempListData = [...this.data]
+    if (this.selectListItem.index !== -1)
+    {
+      if (window.confirm("Are you sure to delete this?")) {
+        this.tempListData.splice(this.selectListItem.index, 1);
+      }
+      this.selectListItem = {
+        index: -1,
+        entity: '',
+        property: '',
+      }
+    }
+    else window.alert("Select a Entity!");
   }
 
   innerDialogCancel() {
     this.innerVisible = false;
+    this.tempListData = [...this.data]
+    this.selectListItem = {
+      index: -1,
+      entity: '',
+      property: '',
+    }
   }
   innerDialogOk() {
     this.innerVisible = false;
@@ -177,18 +198,38 @@ export default class extends Vue {
       this.tempListData.push(data);
     else 
       this.tempListData[index] = data
+    this.selectListItem = {
+      index: -1,
+      entity: '',
+      property: '',
+    }
   }
 
   outDialogOk() {
-    this.setIconUrl(this.tempListData);
+    this.modalOkHandler(this.tempListData);
     this.outDialogCancel();
   }
   outDialogCancel() {
     this.showIconModal = false;
-    this.tempListData = []
+    setTimeout(() => {
+      this.tempListData = []
+      this.selectListItem = {
+        index: -1,
+        entity: '',
+        property: '',
+      }
+    }, 500)
   }
 }
 </script>
+<style lang="scss" scoped>
+  .list-container {
+    padding-top: 10px;
+    max-height: 250px;
+    min-height: 250px;
+    overflow: auto;
+  }
+</style>
 <style lang="scss">
 .el-dialog__body {
   padding-top: 0px;
@@ -210,15 +251,9 @@ export default class extends Vue {
       }
     }
     &.delete-button {
-      color: $placeholderText;
+      color: $pink;
     }
   }
-}
-.list-container {
-  padding-top: 10px;
-  max-height: 250px;
-  min-height: 250px;
-  overflow: auto;
 }
 .innerDialog {
   margin: 10px 0 0 0;

@@ -81,16 +81,16 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { MessageBox } from 'element-ui'
 
 @Component({
-  name: 'selectIconModal',
+  name: 'SelectIconModal',
   components: {}
 })
 export default class extends Vue {
   @Prop({ required: true }) private value!: boolean;
-  @Prop({ required: true }) private iconUrl  !: string;
-  @Prop({ required: true }) private setIconUrl  !: any;
+  @Prop({ required: true }) private iconUrl !: string;
+  @Prop({ required: true }) private modalOkHandler !: any;
 
   private innerVisible = false;
-  private tempIconUrl = ""
+  private tempIconUrl = ''
   private iconsAry = [
     './MSP/resources/images/flex/entity.png',
     './MSP/resources/images/flex/entity.png',
@@ -110,34 +110,37 @@ export default class extends Vue {
   ];
 
   get showIconModal():boolean {
-    return this.value;
+    return this.value
   }
+
   get syncIconUrl() {
-    return this.tempIconUrl?this.tempIconUrl:this.iconUrl;
+    return this.tempIconUrl ? this.tempIconUrl : this.iconUrl
   }
 
   set showIconModal(value:boolean) {
-    this.$emit('input', value);
+    this.$emit('input', value)
   }
 
   innerDialogCancel() {
-    this.innerVisible = false;
-    this.tempIconUrl = this.syncIconUrl;
+    this.innerVisible = false
+    this.tempIconUrl = this.iconUrl
   }
   innerDialogOk() {
-    this.innerVisible = false;
+    this.innerVisible = false
   }
 
   outDialogOk() {
-    this.setIconUrl(this.tempIconUrl)
-    this.showIconModal = false;
+    this.modalOkHandler(this.tempIconUrl)
+    this.showIconModal = false
     setTimeout(() => {
-      this.tempIconUrl = ""
-    }, 1000)
+      this.tempIconUrl = ''
+    }, 500)
   }
   outDialogCancel() {
-    this.showIconModal = false;
-    this.tempIconUrl = "";
+    this.showIconModal = false
+    setTimeout(() => {
+      this.tempIconUrl = ''
+    }, 500)
   }
 }
 </script>
@@ -152,7 +155,7 @@ export default class extends Vue {
   .innerDialog {
     margin: 10px 0 0 0;
     .innerDialog-container {
-      text-align: center; 
+      text-align: center;
       font-weight: bold;
       .innerDialog-title {
         margin-bottom: 10px;
@@ -172,7 +175,7 @@ export default class extends Vue {
       margin: 0px;
     }
     .el-button--text {
-      text-decoration: underline; 
+      text-decoration: underline;
       padding-left: 10px;
     }
   }

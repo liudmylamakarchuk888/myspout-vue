@@ -1,14 +1,8 @@
 <template>
   <el-container class="container">
-    <el-row
-      type="flex"
-      style="flex-direction: column"
-    >
+    <el-row type="flex" style="flex-direction: column">
       <el-col style="padding: 20px">
-        <el-row
-          type="flex"
-          justify="start"
-        >
+        <el-row type="flex" justify="start">
           <el-col :span="12">
             <el-input
               v-model="entityName"
@@ -17,10 +11,7 @@
             />
           </el-col>
         </el-row>
-        <el-row
-          type="flex"
-          justify="start"
-        >
+        <el-row type="flex" justify="start">
           <el-col :span="5">
             <el-input
               v-model="description"
@@ -33,23 +24,15 @@
       </el-col>
       <el-col style="height: 100%; overflow: auto">
         <el-row style="padding: 0 40px; padding-left: 60px">
-          <el-col class="hebrew-title">
-            Hebrew
-          </el-col>
+          <el-col class="hebrew-title"> Hebrew </el-col>
         </el-row>
         <el-row
           class="hebrew-content"
           style="font-weight: 500; padding-left: 80px"
         >
           <el-col>
-            <el-row
-              class="input-container"
-              type="flex"
-            >
-              <el-col
-                :span="2"
-                style="min-width: 113px; font-size; 15px;"
-              >
+            <el-row class="input-container" type="flex">
+              <el-col :span="2" style="min-width: 113px; font-size; 15px;">
                 Display name
               </el-col>
               <el-col :span="9">
@@ -61,14 +44,8 @@
                 />
               </el-col>
             </el-row>
-            <el-row
-              class="input-container"
-              type="flex"
-            >
-              <el-col
-                :span="2"
-                style="min-width: 113px; font-size: 15px"
-              >
+            <el-row class="input-container" type="flex">
+              <el-col :span="2" style="min-width: 113px; font-size: 15px">
                 Description
               </el-col>
               <el-col :span="9">
@@ -88,27 +65,17 @@
           style="padding: 40px; padding-top: 20px"
           @change="handleChange"
         >
-          <el-collapse-item
-            title="Usages"
-            name="1"
-          >
+          <el-collapse-item title="Usages" name="1">
             <div class="collapse-content">
               <div style="font-size: 14px; padding-bottom: 5px">
                 Users can create items by:
               </div>
-              <el-radio-group
-                v-model="usages.createMethod"
-                class="radio-group"
-              >
-                <el-radio :label="`dialog`">
+              <el-radio-group v-model="usages.createMethod" class="radio-group">
+                <el-radio :label="'dialog'">
                   Create New Item dialog box
                 </el-radio>
-                <el-radio :label="`table`">
-                  Adding rows to a table
-                </el-radio>
-                <el-radio :label="`adminPage`">
-                  Administration Pages
-                </el-radio>
+                <el-radio :label="'table'"> Adding rows to a table </el-radio>
+                <el-radio :label="'adminPage'"> Administration Pages </el-radio>
               </el-radio-group>
               <el-checkbox-group
                 v-model="usages.checkList"
@@ -137,14 +104,8 @@
               </el-checkbox-group>
             </div>
           </el-collapse-item>
-          <el-collapse-item
-            title="Administration Pages Settings"
-            name="2"
-          >
-            <div
-              class="collapse-content"
-              style="font-size: 14px"
-            >
+          <el-collapse-item title="Administration Pages Settings" name="2">
+            <div class="collapse-content" style="font-size: 14px">
               <div style="font-size: 15px">
                 Administrators can manage items by:
               </div>
@@ -154,98 +115,66 @@
                 :disabled="usages.createMethod !== 'adminPage'"
               >
                 <el-radio
-                  :label="`list`"
+                  :label="'list'"
                   style="padding-bottom: 20px; padding-top: 20px"
                 >
                   List
                 </el-radio>
-                <el-row
-                  type="flex"
-                  :gutter="30"
-                  class="input-container"
-                >
-                  <el-col
-                    :span="4"
-                    style="min-width: 205px"
-                  >
-                    <el-radio
-                      :label="`rootTree`"
-                    >
+                <el-row type="flex" :gutter="30" class="input-container">
+                  <el-col :span="4" style="min-width: 205px">
+                    <el-radio :label="'rootTree'">
                       Tree (This entity as root)
                     </el-radio>
                   </el-col>
-                  <el-col
-                    :span="2"
-                    style="min-width: 100px"
-                  >
+                  <el-col :span="2" style="min-width: 100px">
                     <el-button
                       plain
                       size="mini"
-                      :disabled="admin.manageMethod !== 'rootTree' || usages.createMethod !== 'adminPage'"
-                      @click="popUpIconModal(`root`)"
+                      :disabled="
+                        admin.manageMethod !== 'rootTree' ||
+                        usages.createMethod !== 'adminPage'
+                      "
+                      @click="popupModal('rootIcon')"
                     >
                       Icon...
                     </el-button>
                   </el-col>
-                  <el-col
-                    :span="2"
-                    style="min-width: 100px"
-                  >
+                  <el-col :span="2" style="min-width: 100px">
                     <el-button
                       plain
-                      :disabled="admin.manageMethod !== 'rootTree' || usages.createMethod !== 'adminPage'"
+                      :disabled="
+                        admin.manageMethod !== 'rootTree' ||
+                        usages.createMethod !== 'adminPage'
+                      "
                       size="mini"
-                      @click="popUpIconModal(`root`)"
+                      @click="popupModal('relationship')"
                     >
                       Define...
                     </el-button>
                   </el-col>
                 </el-row>
-                <el-row
-                  type="flex"
-                  :gutter="30"
-                  class="input-container"
-                >
-                  <el-col
-                    :span="4"
-                    style="min-width: 240px"
-                  >
-                    <el-radio
-                      :label="`tree`"
-                    >
+                <el-row type="flex" :gutter="30" class="input-container">
+                  <el-col :span="4" style="min-width: 240px">
+                    <el-radio :label="'tree'">
                       Tree (Another entity is the root)
                     </el-radio>
                   </el-col>
-                  <el-col
-                    :span="2"
-                    style="min-width: 100px"
-                  >
+                  <el-col :span="2" style="min-width: 100px">
                     <el-button
                       plain
                       :disabled="admin.manageMethod !== 'tree'"
                       size="mini"
+                      @click="popupModal('tree')"
                     >
                       Icon...
                     </el-button>
                   </el-col>
                 </el-row>
-                <el-row
-                  type="flex"
-                  :gutter="30"
-                  class="input-container"
-                >
-                  <el-col
-                    :span="4"
-                    style="min-width: 240px"
-                  >
-                    <el-radio :label="`custom`">
-                      Custom (Input URL)
-                    </el-radio>
+                <el-row type="flex" :gutter="30" class="input-container">
+                  <el-col :span="4" style="min-width: 240px">
+                    <el-radio :label="'custom'"> Custom (Input URL) </el-radio>
                   </el-col>
-                  <el-col
-                    :span="4"
-                    style="min-width: 100px"
-                  >
+                  <el-col :span="4" style="min-width: 100px">
                     <el-input
                       v-model="admin.customUrl"
                       :disabled="admin.manageMethod !== 'custom'"
@@ -255,14 +184,9 @@
                     />
                   </el-col>
                 </el-row>
-                <el-radio :label="`setItems`">
-                  Configuration Items
-                </el-radio>
+                <el-radio :label="'setItems'"> Configuration Items </el-radio>
               </el-radio-group>
-              <div
-                class="require-content"
-                style="padding-left: 25px"
-              >
+              <div class="require-content" style="padding-left: 25px">
                 The entity will be displayed in Configuration Items section and
                 not in the discipline section
               </div>
@@ -274,7 +198,9 @@
                 <el-col
                   :span="2"
                   style="min-width: 150px; font-size; 15px;"
-                  :class="usages.createMethod !== 'adminPage'?'require-content': ''"
+                  :class="
+                    usages.createMethod !== 'adminPage' ? 'require-content' : ''
+                  "
                 >
                   Unique Name property
                 </el-col>
@@ -296,19 +222,10 @@
               </el-row>
             </div>
           </el-collapse-item>
-          <el-collapse-item
-            title="Execution Center Integration"
-            name="3"
-          >
+          <el-collapse-item title="Execution Center Integration" name="3">
             <div class="collapse-content">
-              <el-row
-                class="input-container"
-                type="flex"
-              >
-                <el-col
-                  :span="5"
-                  style="min-width: 113px"
-                />
+              <el-row class="input-container" type="flex">
+                <el-col :span="5" style="min-width: 113px" />
                 <el-col :span="9">
                   <el-checkbox
                     v-model="execution.enabled"
@@ -316,131 +233,65 @@
                   />
                 </el-col>
               </el-row>
-              <el-row
-                class="input-container"
-                type="flex"
-              >
-                <el-col
-                  :span="5"
-                  style="min-width: 113px; font-weight: 500"
-                >
+              <el-row class="input-container" type="flex">
+                <el-col :span="5" style="min-width: 113px; font-weight: 500">
                   MileStones Table Property
                 </el-col>
                 <el-col :span="9">
-                  <el-input
-                    v-model="execution.table"
-                    size="mini"
-                  />
+                  <el-input v-model="execution.table" size="mini" />
                 </el-col>
               </el-row>
-              <el-row
-                class="input-container"
-                type="flex"
-              >
-                <el-col
-                  :span="5"
-                  style="min-width: 113px; font-weight: 500"
-                >
+              <el-row class="input-container" type="flex">
+                <el-col :span="5" style="min-width: 113px; font-weight: 500">
                   Milestones Table DueDate Date Property
                 </el-col>
                 <el-col :span="9">
-                  <el-input
-                    v-model="execution.tableData"
-                    size="mini"
-                  />
+                  <el-input v-model="execution.tableData" size="mini" />
                 </el-col>
               </el-row>
-              <el-row
-                class="input-container"
-                type="flex"
-              >
-                <el-col
-                  :span="5"
-                  style="min-width: 113px; font-weight: 500"
-                >
+              <el-row class="input-container" type="flex">
+                <el-col :span="5" style="min-width: 113px; font-weight: 500">
                   Milestone Table Status Property
                 </el-col>
                 <el-col :span="9">
-                  <el-input
-                    v-model="execution.tableStatus"
-                    size="mini"
-                  />
+                  <el-input v-model="execution.tableStatus" size="mini" />
                 </el-col>
               </el-row>
-              <el-row
-                class="input-container"
-                type="flex"
-              >
-                <el-col
-                  :span="5"
-                  style="min-width: 113px; font-weight: 500"
-                >
+              <el-row class="input-container" type="flex">
+                <el-col :span="5" style="min-width: 113px; font-weight: 500">
                   Milestones Table Description Textarea Property
                 </el-col>
                 <el-col :span="9">
-                  <el-input
-                    v-model="execution.tableDiscription"
-                    size="mini"
-                  />
+                  <el-input v-model="execution.tableDiscription" size="mini" />
                 </el-col>
               </el-row>
-              <el-row
-                class="input-container"
-                type="flex"
-              >
-                <el-col
-                  :span="5"
-                  style="min-width: 113px; font-weight: 500"
-                >
+              <el-row class="input-container" type="flex">
+                <el-col :span="5" style="min-width: 113px; font-weight: 500">
                   Milestones Table Owner User Property
                 </el-col>
                 <el-col :span="9">
-                  <el-input
-                    v-model="execution.tableOwner"
-                    size="mini"
-                  />
+                  <el-input v-model="execution.tableOwner" size="mini" />
                 </el-col>
               </el-row>
-              <el-row
-                class="input-container"
-                type="flex"
-              >
-                <el-col
-                  :span="5"
-                  style="min-width: 113px; font-weight: 500"
-                >
+              <el-row class="input-container" type="flex">
+                <el-col :span="5" style="min-width: 113px; font-weight: 500">
                   Activity Owner User Property
                 </el-col>
                 <el-col :span="9">
-                  <el-input
-                    v-model="execution.activityOwner"
-                    size="mini"
-                  />
+                  <el-input v-model="execution.activityOwner" size="mini" />
                 </el-col>
               </el-row>
-              <el-row
-                class="input-container"
-                type="flex"
-              >
-                <el-col
-                  :span="5"
-                  style="min-width: 113px; font-weight: 500"
-                >
+              <el-row class="input-container" type="flex">
+                <el-col :span="5" style="min-width: 113px; font-weight: 500">
                   Goals MultiLookup Property
                 </el-col>
                 <el-col :span="9">
-                  <el-input
-                    v-model="execution.multiLookup"
-                    size="mini"
-                  />
+                  <el-input v-model="execution.multiLookup" size="mini" />
                 </el-col>
               </el-row>
             </div>
           </el-collapse-item>
-          <el-collapse-item
-            title="Advanced Settings"
-            name="4"
-          >
+          <el-collapse-item title="Advanced Settings" name="4">
             <div class="collapse-content">
               <div>
                 <el-checkbox
@@ -449,14 +300,8 @@
                 />
               </div>
               <div style="padding-left: 20px; padding-top: 20px">
-                <el-row
-                  class="input-container"
-                  type="flex"
-                >
-                  <el-col
-                    :span="2"
-                    style="min-width: 113px; font-weight: 500"
-                  >
+                <el-row class="input-container" type="flex">
+                  <el-col :span="2" style="min-width: 113px; font-weight: 500">
                     Discipline
                   </el-col>
                   <el-col :span="9">
@@ -475,10 +320,7 @@
                   </el-col>
                 </el-row>
                 <el-row type="flex">
-                  <el-col
-                    :span="2"
-                    style="min-width: 113px; font-weight: 500"
-                  >
+                  <el-col :span="2" style="min-width: 113px; font-weight: 500">
                     Note
                   </el-col>
                   <el-col :span="12">
@@ -492,20 +334,11 @@
                   </el-col>
                 </el-row>
                 <el-row class="input-container">
-                  <el-col
-                    :span="2"
-                    style="min-width: 113px; font-weight: 500"
-                  >
+                  <el-col :span="2" style="min-width: 113px; font-weight: 500">
                     System name
                   </el-col>
-                  <el-col
-                    :span="9"
-                    style="min-width: 430px"
-                  >
-                    <el-input
-                      v-model="advanced.systemName"
-                      size="mini"
-                    />
+                  <el-col :span="9" style="min-width: 430px">
+                    <el-input v-model="advanced.systemName" size="mini" />
                     <div class="require-content">
                       Cannot contain spaces. Capitalize first letters.
                       Example:MyEntity
@@ -515,14 +348,8 @@
                 <div style="padding-bottom: 20px; font-weight: 500">
                   Entity Class Name
                 </div>
-                <el-row
-                  class="input-container"
-                  type="flex"
-                >
-                  <el-col
-                    :span="2"
-                    style="min-width: 113px; font-weight: 500"
-                  >
+                <el-row class="input-container" type="flex">
+                  <el-col :span="2" style="min-width: 113px; font-weight: 500">
                     SQL connection
                   </el-col>
                   <el-col :span="9">
@@ -540,21 +367,12 @@
                     </el-select>
                   </el-col>
                 </el-row>
-                <el-row
-                  class="input-container"
-                  type="flex"
-                >
-                  <el-col
-                    :span="2"
-                    style="min-width: 113px; font-weight: 500"
-                  >
+                <el-row class="input-container" type="flex">
+                  <el-col :span="2" style="min-width: 113px; font-weight: 500">
                     Database table Name
                   </el-col>
                   <el-col :span="9">
-                    <el-input
-                      v-model="advanced.tableName"
-                      size="mini"
-                    />
+                    <el-input v-model="advanced.tableName" size="mini" />
                     <div class="require-content">
                       Must begin with Cse. Cannot contain spaces. Example:
                       CseMyEntity
@@ -564,10 +382,7 @@
               </div>
             </div>
           </el-collapse-item>
-          <el-collapse-item
-            title="Time and progress tracking"
-            name="5"
-          >
+          <el-collapse-item title="Time and progress tracking" name="5">
             <div class="collapse-content">
               <el-row>
                 <el-col>
@@ -575,10 +390,7 @@
                     v-model="tracking"
                     label="Include this entity in My work policies (cannot be unselected)"
                   />
-                  <div
-                    style="padding-left: 24px"
-                    class="require-content"
-                  >
+                  <div style="padding-left: 24px" class="require-content">
                     If selected, users can track time spent on items and the
                     progress of the items via My Work
                   </div>
@@ -595,137 +407,148 @@
           style="align-items: center; padding-bottom: 10px"
         >
           <el-button>Create</el-button>
-          <div style="padding: 0 20px">
-            or
-          </div>
-          <el-button
-            type="text"
-            style="text-decoration: underline"
-          >
+          <div style="padding: 0 20px">or</div>
+          <el-button type="text" style="text-decoration: underline">
             cancel
           </el-button>
         </el-row>
       </el-col>
     </el-row>
-    <!-- <select-icon-modal
-      v-model="iconModal.show"
-      :icon-url="iconModal.iconUrl"
-      :set-icon-url="setIconUrl"
-    /> -->
-    <hierarchical-modal 
-      v-model="iconModal.show"
-      :data="hierarchy.data"
-      :set-icon-url="setIconUrl"
+    <select-icon-modal
+      v-model="modal.show"
+      :icon-url="modal.data"
+      :modalOkHandler="modalOkHandler"
+      v-if="modal.kind === 'rootIcon' || modal.kind === 'tree'"
+    />
+    <relationship-modal
+      v-model="modal.show"
+      :data="modal.data"
+      :modalOkHandler="modalOkHandler"
+      v-if="modal.kind === 'relationship'"
     />
   </el-container>
 </template>
 <script lang='ts'>
-import { Component, Vue } from 'vue-property-decorator'
-import SelectIconModal from '../components/selectIconModal.vue'
-import HierarchicalModal from '../components/hierarchicalModal.vue'
+import { Component, Vue } from "vue-property-decorator";
+import SelectIconModal from "../components/selectIconModal.vue";
+import relationshipModal from "../components/relationshipModal.vue";
 
 @Component({
-  name: 'NewEntity',
-  components: { SelectIconModal, HierarchicalModal }
+  name: "NewEntity",
+  components: { SelectIconModal, relationshipModal },
 })
 export default class extends Vue {
   // @Prop({ required: true }) private setLoading: any;
-  private entityName = '';
-  private description = '';
-  private activeCollapseName = '';
-  private iconModal = {
+  private entityName = "";
+  private description = "";
+  private activeCollapseName = "";
+  private showModal = false;
+  private modal = {
     show: false,
-    kind: '',
-    iconUrl: ''
-  }
-  private hierarchy = {
-    data: new Array(2).fill({entity:"js admin prop", property: "Option 1"})
-  }
+    data: null,
+    kind: "",
+  };
 
   private hebrew = {
-    name: '',
-    discription: ''
+    name: "",
+    discription: "",
   };
 
   private usages = {
-    createMethod: 'dialog',
-    checkList: []
+    createMethod: "dialog",
+    checkList: [],
   };
 
   private admin = {
-    manageMethod: 'list',
-    customUrl: '',
-    selectUniqueName: '',
+    manageMethod: "list",
+    customUrl: "",
+    selectUniqueName: "",
     rootIconUrl:
-      'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+      "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+    treeIconUrl:
+      "./MSP/resources/images/flex/authorization-tree-document-16x16.png",
+    relationship: [
+      { entity: "js admin prop", property: "Option 1" },
+      { entity: "js admin prop--1", property: "Option 2" },
+    ],
   };
 
   private execution = {
     enabled: false,
-    table: '',
-    tableData: '',
-    tableStatus: '',
-    tableDiscription: '',
-    tableOwner: '',
-    activityOwner: '',
-    multiLookup: ''
+    table: "",
+    tableData: "",
+    tableStatus: "",
+    tableDiscription: "",
+    tableOwner: "",
+    activityOwner: "",
+    multiLookup: "",
   };
 
   private advanced = {
     checkTreeLooks: false,
-    discipline: '',
-    note: '',
-    systemName: '',
-    sqlConnection: '',
-    tableName: ''
+    discipline: "",
+    note: "",
+    systemName: "",
+    sqlConnection: "",
+    tableName: "",
   };
 
   private tracking = false;
   private options = [
     {
-      value: 'Option1',
-      label: 'Option1'
+      value: "Option1",
+      label: "Option1",
     },
     {
-      value: 'Option2',
-      label: 'Option2'
+      value: "Option2",
+      label: "Option2",
     },
     {
-      value: 'Option3',
-      label: 'Option3'
+      value: "Option3",
+      label: "Option3",
     },
     {
-      value: 'Option4',
-      label: 'Option4'
+      value: "Option4",
+      label: "Option4",
     },
     {
-      value: 'Option5',
-      label: 'Option5'
-    }
+      value: "Option5",
+      label: "Option5",
+    },
   ];
 
   handleChange(val: string) {
-    console.log(val)
+    console.log(val);
   }
 
   handleCheckedCitiesChange(value: string) {
-    console.log(value)
+    console.log(value);
   }
 
-  popUpIconModal(kind: string) {
-    this.iconModal.show = true
-    this.iconModal.kind = kind
-    if (kind === 'root') { this.iconModal.iconUrl = this.admin.rootIconUrl }
+  popupModal(kind: string) {
+    this.modal.show = true;
+    this.modal.kind = kind;
+    if (kind === "rootIcon") {
+      this.modal.data = this.admin.rootIconUrl;
+    } else if (kind === "relationship") {
+      this.modal.data = this.admin.relationship;
+    } else if (kind === "tree") {
+      this.modal.data = this.admin.treeIconUrl;
+    }
   }
 
-  setIconUrl(val:string) {
-    if (this.iconModal.kind === 'root') {
-      this.admin.rootIconUrl = val
+  modalOkHandler(val: any) {
+    if (this.modal.kind === "rootIcon") {
+      this.admin.rootIconUrl = val;
+    } else if (this.modal.kind === "relationship") {
+      this.admin.relationship = [...val];
+    } else if (this.modal.kind === "tree") {
+      this.admin.treeIconUrl = val;
     }
   }
 
   mounted() {
-    console.log('Here is NewEntity!')
+    console.log("Here is NewEntity!");
   }
 }
 </script>
