@@ -9,13 +9,14 @@ import { getRecentItems } from '@/api/data';
 import { ItemInstance } from '@/models/ItemInstance';
 import { FlexApplicationPreferences } from '@/models/FlexApplicationPreferences';
 import { ApplicationPreference } from '@/models/ApplicationPreference';
+import { FormsModule } from './FormsStore';
 export interface IAppCache {
 
     Prefrences: ApplicationPreference[]
     FlexSettings: FlexApplicationPreferences
     Entities: Entity[]
     RecentItems: ItemInstance[]
-    Forms: ItemInstance[]
+
     AuthorizableEntities: []
 }
 
@@ -26,7 +27,6 @@ class AppCacheMod extends VuexModule implements IAppCache {
     public FlexSettings: FlexApplicationPreferences = {};
     public Entities: Entity[] = [];
     public RecentItems: ItemInstance[] = [];
-    public Forms: ItemInstance[] = [];
 
     public AuthorizableEntities = []
 
@@ -89,16 +89,7 @@ class AppCacheMod extends VuexModule implements IAppCache {
     }
 
 
-    @Action
-    public async getForms() {
-        const rs = await getForms();
-        this.SET_FORMS(rs)
-    }
-    @Mutation
-    SET_FORMS(rs: ItemInstance[]) {
 
-        this.Forms = rs;
-    }
     @Mutation
     private SET_AUTH_ENTITIES(rs: any) {
         this.AuthorizableEntities = rs;
@@ -109,19 +100,23 @@ class AppCacheMod extends VuexModule implements IAppCache {
         this.SET_AUTH_ENTITIES(rs)
     }
 
+    @Action 
+    public async getFormsCache(){
+         const rs = await FormsModule.getForms();
+    }
     @Action
     public async getCache() {
- 
-            await this.getFlexSettings();
-            await this.getPrefrences();
-            await this.getEntities()
-            await this.getForms();
-            await this.getRecentItems();
-            await this.getAuthorizableEntities();
+
+        await this.getFlexSettings();
+        await this.getPrefrences();
+        await this.getEntities()
+        await this.getFormsCache();
+        await this.getRecentItems();
+        await this.getAuthorizableEntities();
 
     }
 
-   
+
 }
 
 export const AppCacheModule = getModule(AppCacheMod)

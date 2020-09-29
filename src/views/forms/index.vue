@@ -59,13 +59,13 @@
           </span>
         </el-dialog>
         <el-button
-          :disabled="!selectedRow"
+          :disabled="!hasSelectedRows"
           icon="el-icon-document-copy"
           title="Copy selected Form"
           variant="outline-primary"
         />
         <el-button
-          :disabled="!selectedRow"
+          :disabled="!hasSelectedRows"
           variant="outline-primary"
           icon="el-icon-view"
           title="open selected form"
@@ -75,14 +75,14 @@
           variant="outline-danger"
           title="Delete"
           icon="el-icon-delete"
-          :disabled="!selectedRow"
+          :disabled="!hasSelectedRows"
         />
       </el-form-item>
     </el-form>
 
     <el-table
       ref="elTable"
-      :data="onSearchChanged()"
+      :data="formsData"
       border
       stripe
       size="mini"
@@ -129,11 +129,13 @@
   </el-card>
 </template>
 <script lang="ts">
+import { KeyValue } from '@/models/KeyValue'
 import { constantRoutes } from '@/router'
 import { AppCacheModule } from '@/store/modules/appCache'
+import { FormsModule } from '@/store/modules/FormsStore'
 // import { RSA_PKCS1_PADDING } from "constants"
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import NewForm from './components/newForm'
+import NewForm from './components/newForm.vue'
 @Component({
   name: 'forms',
   components: { NewForm }
@@ -150,12 +152,12 @@ export default class extends Vue {
   }
 
   showNewForm = false
-  tableData = []
+  tableData = [] as any[]
   selectedEntityType = null
-  selectedRow = null
+  selectedRow = undefined
 
   get formsData() {
-    return AppCacheModule.Forms
+    return FormsModule.Forms
   }
 
   onSubmit() {
@@ -182,11 +184,11 @@ export default class extends Vue {
     return this.selectedRow != null
   }
 
-  onSelectedRow(val) {
+  onSelectedRow(val:any) {
     this.selectedRow = val
   }
 
-  onNewDialogClose(done) {
+  onNewDialogClose(done:function) {
     this.$confirm('Are you sure to close this dialog?')
       .then((_) => {
         console.log(_)
@@ -198,23 +200,23 @@ export default class extends Vue {
   }
 
   @Watch('search', { deep: true })
-  onSearchChanged(value) {
+  onSearchChanged(value:{text:string, type:string}) {
     // console.log('watch search triggered' + value)
     debugger
-    if (value === undefined) { return this.tableGropuedData }
+    if (value === undefined) { return }
 
-    // this.$refs.elTable.filter(data => !value ||
-    //     data.displayName.toLowerCase().includes(value.text.toLowerCase()) ||
-    //     data.entityName.toLowerCase() === value.type.toLowerCase())
+    this.$refs.elTable.filter(data => !value ||
+        data.displayName.toLowerCase().includes(value.text.toLowerCase()) ||
+        data.entityName.toLowerCase() === value.type.toLowerCase())
 
-    const rs = this.tableGropuedData.filter((p) => {
-      return p.children.filter((c) => {
-        return c.entityName === value.type ||
-         c.displayName.toLowerCase().includes(value.text.toLowerCase())
-      })
-    })
+    // const rs = this.tableGropuedData.filter((p) => {
+    //   return p.children.filter((c) => {
+    //     return c.entityName === value.type ||
+    //      c.displayName.toLowerCase().includes(value.text.toLowerCase())
+    //   })
+    // })
 
-    return rs
+    // return rs
   }
 
   onEntityTypeChanged(value: string) {
@@ -270,7 +272,7 @@ export default class extends Vue {
     return this.tableData
   }
 
-entityTypeList =[]
+entityTypeList:KeyValue[] =[]
 mounted() {
   this.entityTypeList = this.getEntityTypeList()
 }

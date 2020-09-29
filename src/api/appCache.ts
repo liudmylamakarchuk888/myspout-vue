@@ -60,12 +60,7 @@ export const getFlexApplicationPreferences = () =>
 
     })
 
-export const getForms = () =>
-    request({
-        url: '/getForms',
-        method: 'get',
 
-    })
 export const getMyWorkCalendars = () =>
     request({
         url: '/getMyWorkCalendars',

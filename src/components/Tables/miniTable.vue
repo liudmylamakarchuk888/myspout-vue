@@ -78,7 +78,8 @@ export default class extends Vue {
 
   getData(filter) {
     return this.items.filter((f) => {
-      return f.entityName.toLowerCase().includes(filter.text.toLowerCase())
+      return f.entityName.toLowerCase().includes(filter.text.toLowerCase()) ||
+      f.itemType == filter.type
     })
   }
 
@@ -99,9 +100,10 @@ export default class extends Vue {
 
     if (this.search.text === undefined && this.search.type === undefined) { return this.items }
 
+    const query = this.search
     const rs = this.items.filter(data => !this.search ||
-     data.displayName.toLowerCase().includes(this.search.text.toLowerCase()) ||
-    data.itemType == this.search.type)
+     data.displayName.toLowerCase().includes(query.text.toLowerCase()) ||
+    data.itemType == query.type)
 
     return rs
   }

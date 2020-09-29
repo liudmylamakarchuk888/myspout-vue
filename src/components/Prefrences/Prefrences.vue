@@ -31,9 +31,12 @@
               variant="outline-primary"
               title="create New Form"
               icon="el-icon-plus"
-              @click="showNewForm = true"
+              @click="showNewForm = !showNewForm"
             />
-            <NewPrefrences :open-dialog="showNewForm" />
+            <NewPrefrences
+              v-model="selectedPrefrence"
+              :open-dialog="showNewForm"
+            />
             <el-button
               :disabled="!selectedRow"
               icon="el-icon-document-copy"
@@ -101,7 +104,7 @@ export default class extends Vue {
   selectedRow=null;
   showNewForm=false;
   selectedPropertyType=null;
-
+selectedPrefrence={}
    tableData =[]
      fields= [
        {

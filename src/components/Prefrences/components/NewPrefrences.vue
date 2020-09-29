@@ -12,7 +12,7 @@
       status-icon
       :model="form"
       :rules="rules"
-      size="mini"
+
       inline-message
       hide-required-asterisk
       class="demo-ruleForm"
@@ -25,9 +25,10 @@
           >
             <el-input
               v-model="form.displayName"
-              size="medium"
+
               autocomplete="off"
               placeholder="Type display name here."
+              style="min-width: 245px; font-size: 16px"
               type="text"
             />
           </el-form-item>
@@ -40,7 +41,8 @@
               v-model="form.descripttion"
               type="textarea"
               autosize
-              size="mini"
+
+              style="min-width: 245px; font-size: 10px"
               placeholder="Type descripttion here"
             />
           </el-form-item>
@@ -61,10 +63,10 @@
             >
               <el-row
                 v-for="p in propertytypes"
-                :key="p"
+                :key="p.value"
               >
                 <el-col>
-                  <el-radio :label="p">
+                  <el-radio :label="p.value">
                     {{ p.key }}
                   </el-radio>
                 </el-col>
@@ -92,16 +94,12 @@
               </el-image>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col>
-              <LookupDataType :data-type="form.dataType" />
-            </el-col>
-          </el-row>
         </el-col>
       </el-row>
       <el-row>
         <el-col>
-          {{ form.dataType }}
+          <LookupDataType v-if="form.dataType==9" />
+          {{ form }}
         </el-col>
       </el-row>
       <el-row>
@@ -145,7 +143,8 @@ import LookupDataType from '@/components/InputDataTypes/LookupDataType.vue'
   components: { LangInput, LookupDataType }
 })
 export default class extends Vue {
-@Prop({ required: true, default: false }) private openDialog:boolean;
+  @Prop({ required: true, default: false })
+  private openDialog!: boolean
 
 private form = new ApplicationPrefrence();
 propertytypes=[
@@ -193,7 +192,8 @@ submitForm(refForm) {
   this.$refs[refForm].validate((valid) => {
     if (valid) {
       alert('Submit success.')
-      console.log('New Prefrence submit! ' + JSON.stringify(this.form))
+      AppCacheModule.Prefrences.push(this.form)
+      this.$refs[refForm].close()
     } else {
       console.log('error submit!!')
 
@@ -224,7 +224,8 @@ onSelectionChanged(value) {
 }
 
 getImage(type) {
-  return `/img/typPrv/${type.key}.png`
+  const property = this.propertytypes.find((x) => x.value === type)
+  return `/img/typPrv/${property.key}.png`
 }
 
 mounted() {
@@ -233,20 +234,44 @@ mounted() {
 }
 </script>
 
-<style scoped>
+<style >
+.el-row {
+    margin-bottom: 0px;
+    width: 100%;
+}
 .el-col
 {
-  border:1px solid gray;
+ /* border:1px solid gray;*/
+}
+.el-form-item--min.el-form-item
+.el-form-item--mini
+.el-form-item {
+    margin-bottom: 8px;
+}
+.el-form-item__content {
+    line-height: 30px;
+    width: 100%;
 }
 .el-divider--horizontal
 {
   margin:0 0 10px 0;
 }
 .el-dialog__header {
-    /* padding: 20px; */
-    padding-bottom: 10px;
+   padding: 0px;
+    padding-bottom: 0px;
  background-color: beige;
 
+}
+.el-dialog__headerbtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 16px;
 }
 
 </style>

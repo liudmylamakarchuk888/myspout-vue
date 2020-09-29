@@ -1,38 +1,33 @@
 <template>
-  <div>
-    <el-row>
-      <el-col>
-        <el-select
-          v-model="value"
-          multiple
-          filterable
-          remote
-          reserve-keyword
-          placeholder="Search Entity"
-          :remote-method="remoteMethod"
-          :loading="loading"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.key"
-            :value="item.value"
-          />
-        </el-select>
-      </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col>
-        <el-autocomplete
-          v-model="state"
-          :fetch-suggestions="querySearchAsync"
-          placeholder="Please input"
-          @select="handleSelect"
+  <el-form v-model="value">
+    <el-form-item>
+      <el-select
+        v-model="value"
+        multiple
+        multiple-limit="1"
+        filterable
+        remote
+        reserve-keyword
+        placeholder="Search Entity"
+        :remote-method="remoteMethod"
+        :loading="loading"
+      >
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.key"
+          :value="item.value"
         />
-      </el-col>
-    </el-row>
-  </div>
+      </el-select>
+
+      <el-autocomplete
+        v-model="state"
+        :fetch-suggestions="querySearchAsync"
+        placeholder="Please input"
+        @select="handleSelect"
+      />
+    </el-form-item>
+  </el-form>
 </template>
 
 <script lang="ts">
@@ -43,8 +38,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
   name: 'LookupDataType'
 })
 export default class extends Vue {
-  @Prop({ default: '1', required: true }) private dataType:Number;
-
   // Lookup type.
   options= []
   value= []
@@ -74,7 +67,6 @@ export default class extends Vue {
       setTimeout(() => {
         this.loading = false
         this.options = this.entitiesMap.filter(item => {
-          debugger
           return item.key.toLowerCase()
             .indexOf(query.toLowerCase()) > -1
         })
@@ -87,12 +79,11 @@ export default class extends Vue {
  entitiesMap =[];
  getNodesList(node, childrenKey) {
    if (!node) { return this.entitiesMap }
-   debugger
+
    if (node.branch === false) { this.entitiesMap.push({ key: node.name, value: node.id }) }
 
    if (node[childrenKey].length > 0) {
      node[childrenKey].forEach((n) => {
-       debugger
        this.getNodesList(n, childrenKey)
 
        //  Object.entries(  rs).forEach((x) => {
