@@ -47,10 +47,14 @@
         </el-row>
       </el-col>
       <el-col style="height: 100%; overflow: auto">
-        <div v-for="lang in languages" :key="lang.key" style="margin-bottom: 15px;">
+        <div
+          v-for="lang in languages"
+          :key="lang.key"
+          style="margin-bottom: 15px;"
+        >
           <el-row style="padding: 0 40px; padding-left: 60px">
             <el-col class="lang-title">
-              {{lang.key}}
+              {{ lang.key }}
             </el-col>
           </el-row>
           <el-row
@@ -145,22 +149,34 @@
                 >
                   <el-checkbox
                     label="supportWorkflowConfiguration"
-                  >Users can change item status using a workflow and integrate it to external systems (cannot be unselelcted)</el-checkbox>
+                  >
+                    Users can change item status using a workflow and integrate it to external systems (cannot be unselelcted)
+                  </el-checkbox>
                   <el-checkbox
                     label="supportAttachments"
-                  >Users can attach files to items (cannot be unselected)</el-checkbox>
+                  >
+                    Users can attach files to items (cannot be unselected)
+                  </el-checkbox>
                   <el-checkbox
                     label="supportFollowers"
-                  >Users can add items to follow list(cannot be unselected)</el-checkbox>
+                  >
+                    Users can add items to follow list(cannot be unselected)
+                  </el-checkbox>
                   <el-checkbox
                     label="supportIntegration"
-                  >Users can integrate this entity with third party integrations(cannot be unselected)</el-checkbox>
+                  >
+                    Users can integrate this entity with third party integrations(cannot be unselected)
+                  </el-checkbox>
                   <el-checkbox
                     label="supportIndexPosition"
-                  >Users can change items order inside tables</el-checkbox>
+                  >
+                    Users can change items order inside tables
+                  </el-checkbox>
                   <el-checkbox
                     label="appearInRecentVisit"
-                  >This entity will appear in recent visited items</el-checkbox>
+                  >
+                    This entity will appear in recent visited items
+                  </el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
             </div>
@@ -653,7 +669,7 @@
             justify="center"
             style="align-items: center; padding-bottom: 10px"
           >
-            <el-button @click.prevent="submitForm('form')">
+            <el-button @click="submitForm('form')">
               Create
             </el-button>
             <div style="padding: 0 20px">
@@ -704,7 +720,7 @@ export default class extends Vue {
       hebrew: {
         name: '',
         description: ''
-      },
+      }
     },
     usages: {
       createPolicyType: 'dialog',
@@ -791,16 +807,14 @@ export default class extends Vue {
   ];
 
   get languages() {
-    if (AppCacheModule.FlexSettings.languages)
-    {
+    if (AppCacheModule.FlexSettings.languages) {
       return AppCacheModule.FlexSettings.languages.filter(l => {
-        return l.key != "English"
+        return l.key !== 'English'
       })
-    }
-    else return []
+    } else return []
   }
-  
-  @Watch("languages")
+
+  @Watch('languages')
   private setLangs(langAry:any) {
     const currentLangs = Object.keys(this.form.lang)
     const newLangs = langAry.filter((lang:any) => {
@@ -808,16 +822,22 @@ export default class extends Vue {
     })
     if (newLangs.length) {
       newLangs.map((l:any) => {
-        this.form.lang = {...this.form.lang, [l.key]: {
-          name: '',
-          description: ''
-        }}
-        this.rules = {...this.rules, [`${l.key}Name`]:[{
+        this.form.lang = {
+          ...this.form.lang,
+          [l.key]: {
+            name: '',
+            description: ''
+          }
+        }
+        this.rules = {
+          ...this.rules,
+          [`${l.key}Name`]: [{
             required: true,
             message: `Please input ${l.key} name`,
             trigger: 'blur'
           }
-        ]}
+          ]
+        }
       })
     }
   }
