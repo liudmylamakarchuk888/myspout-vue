@@ -22,7 +22,7 @@
           >
             <el-col :span="12">
               <el-input
-                v-model="form.name"
+                v-model="form.displayName"
                 placeholder="Type display name here"
                 style="min-width: 245px; font-size: 23px"
               />
@@ -47,67 +47,69 @@
         </el-row>
       </el-col>
       <el-col style="height: 100%; overflow: auto">
-        <el-row style="padding: 0 40px; padding-left: 60px">
-          <el-col class="hebrew-title">
-            Hebrew
-          </el-col>
-        </el-row>
-        <el-row
-          class="hebrew-content"
-          style="font-weight: 500; padding-left: 80px"
-        >
-          <el-col>
-            <el-row
-              class="input-container"
-              type="flex"
-            >
-              <el-col
-                :span="2"
-                style="min-width: 113px; font-size; 15px;"
+        <div v-for="lang in languages" :key="lang.key" style="margin-bottom: 15px;">
+          <el-row style="padding: 0 40px; padding-left: 60px">
+            <el-col class="lang-title">
+              {{lang.key}}
+            </el-col>
+          </el-row>
+          <el-row
+            class="lang-content"
+            style="font-weight: 500; padding-left: 80px"
+          >
+            <el-col>
+              <el-row
+                class="input-container"
+                type="flex"
               >
-                Display name
-              </el-col>
-              <el-form-item
-                prop="hebrewName"
-                reset-field
-              >
-                <el-col :span="9">
-                  <el-input
-                    v-model="form.hebrew.name"
-                    placeholder="he name"
-                    size="mini"
-                    style="min-width: 200px"
-                  />
+                <el-col
+                  :span="2"
+                  style="min-width: 113px; font-size; 15px;"
+                >
+                  Display name
                 </el-col>
-              </el-form-item>
-            </el-row>
-            <el-row
-              class="input-container"
-              type="flex"
-            >
-              <el-col
-                :span="2"
-                style="min-width: 113px; font-size: 15px"
+                <el-form-item
+                  :prop="lang.key + 'Name'"
+                  reset-field
+                >
+                  <el-col :span="9">
+                    <el-input
+                      v-model="form.lang[lang.key].name"
+                      placeholder="he name"
+                      size="mini"
+                      style="min-width: 200px"
+                    />
+                  </el-col>
+                </el-form-item>
+              </el-row>
+              <el-row
+                class="input-container"
+                type="flex"
               >
-                Description
-              </el-col>
-              <el-form-item prop="hebrewDesc">
-                <el-col :span="9">
-                  <el-input
-                    v-model="form.hebrew.description"
-                    type="textarea"
-                    :rows="2"
-                    resize="none"
-                    style="min-width: 200px"
-                  />
+                <el-col
+                  :span="2"
+                  style="min-width: 113px; font-size: 15px"
+                >
+                  Description
                 </el-col>
-              </el-form-item>
-            </el-row>
-          </el-col>
-        </el-row>
+                <el-form-item prop="hebrewDesc">
+                  <el-col :span="9">
+                    <el-input
+                      v-model="form.lang.hebrew.description"
+                      type="textarea"
+                      :rows="2"
+                      resize="none"
+                      style="min-width: 200px"
+                    />
+                  </el-col>
+                </el-form-item>
+              </el-row>
+            </el-col>
+          </el-row>
+        </div>
         <el-collapse
           v-model="activeCollapseName"
-          style="padding: 40px; padding-top: 20px"
+          style="padding: 40px; padding-top: 10px"
           @change="handleChange"
         >
           <el-collapse-item
@@ -120,16 +122,16 @@
               </div>
               <el-form-item prop="usagesCreateMethod">
                 <el-radio-group
-                  v-model="form.usages.createMethod"
+                  v-model="form.usages.createPolicyType"
                   class="radio-group"
                 >
-                  <el-radio :label="'dialog'">
+                  <el-radio :label="1">
                     Create New Item dialog box
                   </el-radio>
-                  <el-radio :label="'table'">
+                  <el-radio :label="2">
                     Adding rows to a table
                   </el-radio>
-                  <el-radio :label="'adminPage'">
+                  <el-radio :label="3">
                     Administration Pages
                   </el-radio>
                 </el-radio-group>
@@ -142,23 +144,23 @@
                   style="margin-top: 30px"
                 >
                   <el-checkbox
-                    label="Users can change item status using a workflow and integrate it to external systems (cannot be unselelcted)"
-                  />
+                    label="supportWorkflowConfiguration"
+                  >Users can change item status using a workflow and integrate it to external systems (cannot be unselelcted)</el-checkbox>
                   <el-checkbox
-                    label="Users can attach files to items (cannot be unselected)"
-                  />
+                    label="supportAttachments"
+                  >Users can attach files to items (cannot be unselected)</el-checkbox>
                   <el-checkbox
-                    label="Users can add items to follow list(cannot be unselected)"
-                  />
+                    label="supportFollowers"
+                  >Users can add items to follow list(cannot be unselected)</el-checkbox>
                   <el-checkbox
-                    label="Users can integrate this entity with third party integrations(cannot be unselected)"
-                  />
+                    label="supportIntegration"
+                  >Users can integrate this entity with third party integrations(cannot be unselected)</el-checkbox>
                   <el-checkbox
-                    label="Users can change items order inside tables"
-                  />
+                    label="supportIndexPosition"
+                  >Users can change items order inside tables</el-checkbox>
                   <el-checkbox
-                    label="This entity will appear in recent visited items"
-                  />
+                    label="appearInRecentVisit"
+                  >This entity will appear in recent visited items</el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
             </div>
@@ -178,7 +180,7 @@
                 <el-radio-group
                   v-model="form.admin.manageMethod"
                   class="radio-group"
-                  :disabled="form.usages.createMethod !== 'adminPage'"
+                  :disabled="form.usages.createPolicyType !== 3"
                 >
                   <el-radio
                     :label="'list'"
@@ -208,7 +210,7 @@
                         size="mini"
                         :disabled="
                           form.admin.manageMethod !== 'rootTree' ||
-                            form.usages.createMethod !== 'adminPage'
+                            form.usages.createPolicyType !== 3
                         "
                         @click="popupModal('rootIcon')"
                       >
@@ -223,7 +225,7 @@
                         plain
                         :disabled="
                           form.admin.manageMethod !== 'rootTree' ||
-                            form.usages.createMethod !== 'adminPage'
+                            form.usages.createPolicyType !== 3
                         "
                         size="mini"
                         @click="popupModal('relationship')"
@@ -306,7 +308,7 @@
                   :span="2"
                   style="min-width: 150px; font-size; 15px;"
                   :class="
-                    form.usages.createMethod !== 'adminPage'
+                    form.usages.createPolicyType !== 3
                       ? 'require-content'
                       : ''
                   "
@@ -651,7 +653,7 @@
             justify="center"
             style="align-items: center; padding-bottom: 10px"
           >
-            <el-button @click="submitForm('form')">
+            <el-button @click.prevent="submitForm('form')">
               Create
             </el-button>
             <div style="padding: 0 20px">
@@ -683,10 +685,10 @@
   </el-form>
 </template>
 <script lang='ts'>
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import SelectIconModal from '../components/selectIconModal.vue'
 import relationshipModal from '../components/relationshipModal.vue'
-import { AppDataModule } from '@/store/modules/appData.ts'
+import { AppCacheModule } from '@/store/modules/appCache.ts'
 
 @Component({
   name: 'NewEntity',
@@ -696,14 +698,16 @@ export default class extends Vue {
   // @Prop({ required: true }) private setLoading: any;
   private activeCollapseName = '';
   private form = {
-    name: '',
+    displayName: '',
     description: '',
-    hebrew: {
-      name: '',
-      description: ''
+    lang: {
+      hebrew: {
+        name: '',
+        description: ''
+      },
     },
     usages: {
-      createMethod: 'dialog',
+      createPolicyType: 'dialog',
       checkList: []
     },
     admin: {
@@ -754,7 +758,7 @@ export default class extends Vue {
         trigger: 'blur'
       }
     ],
-    hebrewName: [
+    HebrewName: [
       {
         required: true,
         message: 'Please input hebrew name',
@@ -785,6 +789,38 @@ export default class extends Vue {
       label: 'Option5'
     }
   ];
+
+  get languages() {
+    if (AppCacheModule.FlexSettings.languages)
+    {
+      return AppCacheModule.FlexSettings.languages.filter(l => {
+        return l.key != "English"
+      })
+    }
+    else return []
+  }
+  
+  @Watch("languages")
+  private setLangs(langAry:any) {
+    const currentLangs = Object.keys(this.form.lang)
+    const newLangs = langAry.filter((lang:any) => {
+      return currentLangs.indexOf(lang.key) < 0
+    })
+    if (newLangs.length) {
+      newLangs.map((l:any) => {
+        this.form.lang = {...this.form.lang, [l.key]: {
+          name: '',
+          description: ''
+        }}
+        this.rules = {...this.rules, [`${l.key}Name`]:[{
+            required: true,
+            message: `Please input ${l.key} name`,
+            trigger: 'blur'
+          }
+        ]}
+      })
+    }
+  }
 
   handleChange(val: string) {
     console.log(val)
@@ -831,9 +867,9 @@ export default class extends Vue {
     this.$refs[formName].resetFields()
   }
 
-  updated() {
-    console.log('Here is NewEntity!')
-    console.log(AppDataModule.FlexApplicationPreferences)
+  created() {
+    this.setLangs(this.languages)
+    console.log('created')
   }
 }
 </script>
@@ -850,7 +886,7 @@ export default class extends Vue {
       border: none;
     }
   }
-  .hebrew-title {
+  .lang-title {
     font-weight: 500;
     font-size: 15px;
     padding-left: 5px;
