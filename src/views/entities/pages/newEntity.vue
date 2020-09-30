@@ -1,6 +1,6 @@
 <template>
   <el-form
-    ref="form"
+    ref="newEntityform"
     :rules="rules"
     class="container"
     :model="form"
@@ -17,7 +17,6 @@
         >
           <el-form-item
             size="normal"
-            prop="name"
             reset-field
           >
             <el-col :span="12">
@@ -73,7 +72,6 @@
                   Display name
                 </el-col>
                 <el-form-item
-                  :prop="lang.key + 'Name'"
                   reset-field
                 >
                   <el-col :span="9">
@@ -99,7 +97,7 @@
                 <el-form-item prop="hebrewDesc">
                   <el-col :span="9">
                     <el-input
-                      v-model="form.lang.hebrew.description"
+                      v-model="form.lang[lang.key].description"
                       type="textarea"
                       :rows="2"
                       resize="none"
@@ -126,7 +124,7 @@
               </div>
               <el-form-item prop="usagesCreateMethod">
                 <el-radio-group
-                  v-model="form.usages.createPolicyType"
+                  v-model="form.usages.creationPolicyType"
                   class="radio-group"
                 >
                   <el-radio :label="1">
@@ -196,7 +194,7 @@
                 <el-radio-group
                   v-model="form.admin.manageMethod"
                   class="radio-group"
-                  :disabled="form.usages.createPolicyType !== 3"
+                  :disabled="form.usages.creationPolicyType !== 3"
                 >
                   <el-radio
                     :label="'list'"
@@ -226,7 +224,7 @@
                         size="mini"
                         :disabled="
                           form.admin.manageMethod !== 'rootTree' ||
-                            form.usages.createPolicyType !== 3
+                            form.usages.creationPolicyType !== 3
                         "
                         @click="popupModal('rootIcon')"
                       >
@@ -241,7 +239,7 @@
                         plain
                         :disabled="
                           form.admin.manageMethod !== 'rootTree' ||
-                            form.usages.createPolicyType !== 3
+                            form.usages.creationPolicyType !== 3
                         "
                         size="mini"
                         @click="popupModal('relationship')"
@@ -324,7 +322,7 @@
                   :span="2"
                   style="min-width: 150px; font-size; 15px;"
                   :class="
-                    form.usages.createPolicyType !== 3
+                    form.usages.creationPolicyType !== 3
                       ? 'require-content'
                       : ''
                   "
@@ -576,7 +574,7 @@
                       style="min-width: 200px"
                     >
                       <el-input
-                        :value="`Cse_` + form.name"
+                        :value="`Cse_` + form.displayName"
                         size="mini"
                       />
                       <div class="require-content">
@@ -623,7 +621,7 @@
                   <el-form-item prop="advancedSystemName">
                     <el-col :span="9">
                       <el-input
-                        v-model="form.advanced.tableName"
+                        :value="`Cse` + form.displayName"
                         size="mini"
                       />
                       <div class="require-content">
@@ -669,7 +667,7 @@
             justify="center"
             style="align-items: center; padding-bottom: 10px"
           >
-            <el-button @click="submitForm('form')">
+            <el-button @click="createHandler('newEntityform')">
               Create
             </el-button>
             <div style="padding: 0 20px">
@@ -678,7 +676,7 @@
             <el-button
               type="text"
               style="text-decoration: underline"
-              @click="resetForm('form')"
+              @click="cancelHandler('newEntityform')"
             >
               cancel
             </el-button>
@@ -705,6 +703,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import SelectIconModal from '../components/selectIconModal.vue'
 import relationshipModal from '../components/relationshipModal.vue'
 import { AppCacheModule } from '@/store/modules/appCache.ts'
+import { Entity } from '@/models/Entity.ts'
 
 @Component({
   name: 'NewEntity',
@@ -717,13 +716,13 @@ export default class extends Vue {
     displayName: '',
     description: '',
     lang: {
-      hebrew: {
+      Hebrew: {
         name: '',
         description: ''
       }
     },
     usages: {
-      createPolicyType: 'dialog',
+      creationPolicyType: null,
       checkList: []
     },
     admin: {
@@ -835,8 +834,7 @@ export default class extends Vue {
             required: true,
             message: `Please input ${l.key} name`,
             trigger: 'blur'
-          }
-          ]
+          }]
         }
       })
     }
@@ -872,22 +870,31 @@ export default class extends Vue {
     }
   }
 
-  submitForm(formName: string) {
-    this.$refs[formName].validate((valid: boolean) => {
-      if (valid) {
-        alert('submit!')
-      } else {
-        console.log('error submit!!')
-        return false
-      }
+  createHandler(formName: string) {
+    const newEntity = new Entity()
+    newEntity.displayName = this.form.displayName
+    newEntity.systemName = 'Cse_' + newEntity.displayName
+    if (this.form.usages.creationPolicyType) { newEntity.creationPolicyType = this.form.usages.creationPolicyType }
+    this.form.usages.checkList.map((type:string) => {
+      newEntity[type] = true
     })
+    newEntity.createEntityHandler(newEntity)
+    console.log(newEntity)
+    // this.$refs[formName].validateField("name", (valid: boolean) => {
+    //   if (valid) {
+    //     alert('submit!')
+    //   } else {
+    //     console.log('error submit!!')
+    //     return false
+    //   }
+    // })
   }
 
-  resetForm(formName: string) {
+  cancelHandler(formName: string) {
     this.$refs[formName].resetFields()
   }
 
-  created() {
+  mounted() {
     this.setLangs(this.languages)
     console.log('created')
   }
