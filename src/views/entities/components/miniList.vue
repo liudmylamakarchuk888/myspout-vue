@@ -52,14 +52,15 @@ export default class extends Vue {
   }
 
   @Watch('currentEntity')
-  private handleChange(entity: string) {
+  private async handleChange(entity: string) {
+    console.log("here is Change!")
     if (entity.id === 'com.msp.dao.entities.Risk') {
       this.setLoading(this.tabLabel, true)
-      EntitiesModule.setProperties('getEntity/com.msp.dao.entities.Risk')
+      await EntitiesModule.setProperties('getEntity/com.msp.dao.entities.Risk')
       this.setLoading(this.tabLabel, false)
     } else {
       this.setLoading(this.tabLabel, true)
-      EntitiesModule.setProperties('getEntity/com.msp.dao.entities.Risk_')
+      await EntitiesModule.setProperties('getEntity/com.msp.dao.entities.Risk_')
       this.setLoading(this.tabLabel, false)
     }
   }
@@ -75,6 +76,7 @@ export default class extends Vue {
 
   mounted() {
     console.log('here is miniList')
+    this.handleChange(this.currentEntity)
     // console.log(AppDataModule.FlexApplicationPreferences) // returns undefined
   }
 }

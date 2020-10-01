@@ -37,11 +37,10 @@
         >
           <el-row>
             <el-col>
-              Orchestrators are the components responsible for running integration operations. After installing new orchestrators, add them to this list.</b-col>
+              Orchestrators are the components responsible for running integration operations. After installing new orchestrators, add them to this list.
             </el-col>
           </el-row>
           <!-- <Orchestrators /> -->
-          <SearchExample />
         </el-collapse-item>
         <el-collapse-item
           title="Server Health"
@@ -62,10 +61,9 @@ import { Component, Vue } from 'vue-property-decorator'
 import Prefrences from '@/components/Prefrences/Prefrences.vue'
 import AppLanguages from './components/AppLanguages.vue'
 import Orchestrators from '@/components/Orchestrators/Orchestrator.vue'
-import SearchExample from '@/components/Orchestrators/SearchExample.vue'
 @Component({
   name: 'settings',
-  components: { AppLanguages, Prefrences, Orchestrators, SearchExample }
+  components: { AppLanguages, Prefrences, Orchestrators }
 })
 export default class extends Vue {
   prefTable: any;

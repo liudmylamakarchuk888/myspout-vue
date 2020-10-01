@@ -25,8 +25,9 @@
         :span="18"
         class="card-panel-right"
       >
-        <new-entity v-show="rightSideViewId === 'newEntity'" />
-        <right-side v-show="rightSideViewId === 'leftSide'" />
+        <new-entity v-if="rightSideViewId === 'newEntity'" />
+        <right-side v-if="rightSideViewId === 'leftSide'" />
+        <new-virtual v-if="rightSideViewId === 'newVirtual'" />
       </el-col>
     </el-row>
   </el-container>
@@ -37,11 +38,12 @@ import { Component, Vue } from 'vue-property-decorator'
 import LeftSide from './pages/leftSide.vue'
 import RightSide from './pages/rightSide.vue'
 import NewEntity from './pages/newEntity.vue'
+import NewVirtual from './pages/newVirtual.vue'
 import { _allEntities, _allDisciplines, _riskProperties } from './data.js'
 
 @Component({
   name: 'Entities',
-  components: { LeftSide, RightSide, NewEntity }
+  components: { LeftSide, RightSide, NewEntity, NewVirtual }
 })
 export default class extends Vue {
   private leftLoading = false;
@@ -57,7 +59,7 @@ export default class extends Vue {
   /** tree node double click variables */
   private entitiyClicks = 0
   private dbClickTimer:any = null
-  private dbClickDelay = 700
+  private dbClickDelay = 500
   private selectedEntityId = -1
 
   private async fetchEntities() {

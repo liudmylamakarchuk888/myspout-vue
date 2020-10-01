@@ -24,6 +24,7 @@
         <el-button
           type="text"
           style="text-decoration: underline; margin: 0;"
+          @click="setRightSideViewId('newVirtual')"
         >
           New Virtual
         </el-button>
