@@ -88,6 +88,10 @@ router.get('/getOrchestrators', function(req, res, next) {
   res.send(new jsonReader().getFile('getOrchestrators.json'))
 })
 
+router.get('/getDisplayLanguages', function(req, res, next) {
+  res.send(new jsonReader().getFile('getDisplayLanguages.json'))
+})
+
 router.get('/getAvailableOrchestratorIlios', function(req, res, next) {
   // res.send(new jsonReader().getFile('getProducts.json'));
   res.send({
@@ -100,5 +104,14 @@ router.get('/getAvailableOrchestratorOlios', function(req, res, next) {
   })
   // res.send(new jsonReader().getFile('getProducts.json'));
 })
+
+router.get('/getEntityDataByQueryString/:entityId', function(req, res, next) {
+  var entity = req.params.entityId
+  debugger
+  var path = 'getEntityDataByQueryString_' + entity + '.json'
+
+  res.send(new jsonReader().getFile(path))
+})
+//= (entityId: string, queryString: string, pageSize: number) =>')
 
 module.exports = router

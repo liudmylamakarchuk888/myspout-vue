@@ -2,7 +2,7 @@ import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-dec
 import store from '@/store'
 
 import { Loading } from 'element-ui'
-import { getApplicationPreferences, getAuthorizableEntities, getEntities, getFlexApplicationPreferences, getForms } from '@/api/appCache';
+import { getApplicationPreferences, getAuthorizableEntities, getDisplayLanguages, getEntities, getEntityDataByQueryString, getFlexApplicationPreferences, getForms, getWorkflows } from '@/api/appCache';
 
 import { Entity } from '@/models/Entity';
 import { getRecentItems } from '@/api/data';
@@ -100,9 +100,9 @@ class AppCacheMod extends VuexModule implements IAppCache {
         this.SET_AUTH_ENTITIES(rs)
     }
 
-    @Action 
-    public async getFormsCache(){
-         const rs = await FormsModule.getForms();
+    @Action
+    public async getFormsCache() {
+        const rs = await FormsModule.getForms();
     }
     @Action
     public async getCache() {
@@ -116,7 +116,25 @@ class AppCacheMod extends VuexModule implements IAppCache {
 
     }
 
+    @Action
+    public async getDisplayLanguages() {
+        const rs = await getDisplayLanguages()
 
+        return rs.displayLanguages;
+    }
+
+    @Action
+    public async getWorkflows() {
+        const rs = await getWorkflows();
+        return rs;
+    }
+
+    @Action
+    public async getEntityByQueryString(entityId: string, queryString: string, pageSize: number) {
+        debugger
+        const rs = await getEntityDataByQueryString(entityId);
+        return rs;
+    }
 }
 
 export const AppCacheModule = getModule(AppCacheMod)

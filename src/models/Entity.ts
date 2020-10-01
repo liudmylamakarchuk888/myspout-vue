@@ -67,7 +67,7 @@ export class Entity extends BaseContent {
     outOfTheBox: boolean| undefined 
     supportAttachments: boolean| undefined 
     supportIntegration: boolean| undefined 
-    appearInRecentVisit: boolean| undefined 
+    appearInRecentVisit: boolean =true 
     primaryNamePropertySystemName: string | undefined
     cfgItemUniquePropertySystemName: string | undefined
     reportDisplayIndexPosition: number | undefined 

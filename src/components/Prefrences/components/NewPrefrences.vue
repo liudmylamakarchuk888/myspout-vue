@@ -1,31 +1,29 @@
 <template>
-  <el-dialog
+  <!-- <el-dialog
     ref="newFormModel"
     :visible.sync="openDialog"
     center
     title="New Form"
     :before-close="onNewDialogClose"
-  >
+  > -->
+  <div>
     <small>Create a new applicaton prefrence and set its value.</small>
     <el-form
+      v-if="form"
       ref="prefForm"
+      label-position="left"
       status-icon
       :model="form"
       :rules="rules"
-
       inline-message
       hide-required-asterisk
       class="demo-ruleForm"
     >
       <el-row>
         <el-col>
-          <el-form-item
-
-            prop="displayName"
-          >
+          <el-form-item prop="displayName">
             <el-input
               v-model="form.displayName"
-
               autocomplete="off"
               placeholder="Type display name here."
               style="min-width: 245px; font-size: 16px"
@@ -41,7 +39,6 @@
               v-model="form.descripttion"
               type="textarea"
               autosize
-
               style="min-width: 245px; font-size: 10px"
               placeholder="Type descripttion here"
             />
@@ -52,8 +49,7 @@
 
       <el-row>
         <el-col :span="12">
-          <span>
-            Data Types </span>
+          <span> Data Types </span>
           <el-divider />
           <el-form-item prop="dataType">
             <el-radio-group
@@ -89,7 +85,9 @@
                   slot="placeholder"
                   class="image-slot"
                 >
-                  Select one from Choice to See Preview<span class="dot">...</span>
+                  Select one from Choice to See Preview<span
+                    class="dot"
+                  >...</span>
                 </div>
               </el-image>
             </el-col>
@@ -98,21 +96,31 @@
       </el-row>
       <el-row>
         <el-col>
-          <LookupDataType v-if="form.dataType==9" />
+          <LookupDataType
+            v-if="form.dataType == 9"
+            :entityid.sync="form.lookupEntityId"
+            :lookupvalue.sync="form.lookupValueName"
+          />
+          <SingleLineDataType v-else />
           {{ form }}
+          {{ lookupData }}
         </el-col>
       </el-row>
       <el-row>
         <el-col>
-          <el-form-item prop="systemName">
-            <span>Advance Settings</span>
-            <el-divider />
+          <span>Advance Settings</span>
+          <el-divider />
+          <el-form-item
+            prop="systemName"
+            label="System Name"
+          >
             <el-input
               v-model="form.systemName"
               type="text"
               autocomplete="off"
             />
-            <small>Cannot contain spaces, Capitalize first word letters, Example MyApplicationPrefrence
+            <small>Cannot contain spaces, Capitalize first word letters, Example
+              MyApplicationPrefrence
             </small>
           </el-form-item>
         </el-col>
@@ -122,13 +130,14 @@
       slot="footer"
       class="dialog-footer"
     >
-      <el-button @click="resetForm('prefForm')">Cancel</el-button>
       <el-button
         type="primary"
         @click="submitForm('prefForm')"
-      >Confirm</el-button>
+      >Add</el-button>
+      <el-button @click="onNewDialogClose">Cancel</el-button>
     </span>
-  </el-dialog>
+    <!-- </el-dialog> -->
+  </div>
 </template>
 
 <script lang="ts">
@@ -138,140 +147,144 @@ import LangInput from '@/components/LangInput/LangInput.vue'
 import { AppCacheModule } from '@/store/modules/appCache'
 import { ApplicationPrefrence } from '@/models/ApplicationPreference'
 import LookupDataType from '@/components/InputDataTypes/LookupDataType.vue'
+import SingleLineDataType from '@/components/InputDataTypes/SingleLineDataType.vue'
 @Component({
   name: 'NewPerfrences',
-  components: { LangInput, LookupDataType }
+  components: { LookupDataType, SingleLineDataType }
 })
 export default class extends Vue {
-  @Prop({ required: true, default: false })
-  private openDialog!: boolean
+  // @Prop({ required: true, default: false })
+  // private openDialog!: boolean
 
-private form = new ApplicationPrefrence();
-propertytypes=[
-  {
-    key: 'Single Line of Text',
-    value: '1'
-  },
-  {
-    key: 'Date and Time',
-    value: '4'
-  },
-  {
-    key: 'Yes No',
-    value: '5'
-  },
-  {
-    key: 'Number',
-    value: '6'
-  },
-  {
-    key: 'Number with Decimal Point',
-    value: '8'
-  },
-  {
-    key: 'Lookup',
-    value: '9'
+  private form =new ApplicationPrefrence();
+  propertytypes = [
+    {
+      key: 'Single Line of Text',
+      value: '1'
+    },
+    {
+      key: 'Date and Time',
+      value: '4'
+    },
+    {
+      key: 'Yes No',
+      value: '5'
+    },
+    {
+      key: 'Number',
+      value: '6'
+    },
+    {
+      key: 'Number with Decimal Point',
+      value: '8'
+    },
+    {
+      key: 'Lookup',
+      value: '9'
+    }
+  ];
+
+  // form={
+  //   displayName: '',
+  //   description: '',
+  //   dataType: '',
+  //   systemName: ''
+  // }
+
+  rules = {
+    displayName: [
+      { required: true, message: 'Please input form name', trigger: 'blur' }
+    ],
+    dataType: [
+      {
+        required: true,
+        message: 'A property must be selected',
+        trigger: 'change'
+      }
+    ],
+    systemName: [
+      { required: true, message: 'System name required.', trigger: 'blur' }
+    ]
+  };
+
+  submitForm(refForm) {
+    this.$refs[refForm].validate((valid) => {
+      if (valid) {
+        alert('Submit success.')
+        debugger
+        console.log('saving prefrences ' + JSON.stringify(this.form))
+        AppCacheModule.Prefrences.push(this.form)
+        this.$refs[refForm].close()
+      } else {
+        console.log('error submit!!')
+
+        return false
+      }
+    })
   }
 
-]
+  resetForm(refForm) {
+    this.$refs[refForm].resetFields()
+  }
 
-// form={
-//   displayName: '',
-//   description: '',
-//   dataType: '',
-//   systemName: ''
-// }
+  onNewDialogClose() {
+    console.log('on close called.')
+    resetForm('prefForm')
+  }
 
-rules= {
-  displayName: [{ required: true, message: 'Please input form name', trigger: 'blur' }],
-  dataType: [{ required: true, message: 'A property must be selected', trigger: 'change' }],
-  systemName: [{ required: true, message: 'System name required.', trigger: 'blur' }]
-}
+  onSelectionChanged(value) {
+    debugger
+    this.getImage(value)
+  }
 
-submitForm(refForm) {
-  this.$refs[refForm].validate((valid) => {
-    if (valid) {
-      alert('Submit success.')
-      AppCacheModule.Prefrences.push(this.form)
-      this.$refs[refForm].close()
-    } else {
-      console.log('error submit!!')
+  getImage(type) {
+    const property = this.propertytypes.find((x) => x.value === type)
+    return `/img/typPrv/${property.key}.png`
+  }
 
-      return false
-    }
-  })
-}
-
-resetForm(refForm) {
-  this.$refs[refForm].resetFields()
-}
-
-onNewDialogClose() {
-  // alert('before dialog close')
-  // this.$refs[refForm].validate((valid) => {
-  //   if (valid) {
-  //     alert('submit!')
-  //   } else {
-  //     console.log('error submit!!')
-  //     return false
-  //   }
-  // })
-  this.openDialog = false
-}
-
-onSelectionChanged(value) {
-  this.getImage(value)
-}
-
-getImage(type) {
-  const property = this.propertytypes.find((x) => x.value === type)
-  return `/img/typPrv/${property.key}.png`
-}
-
-mounted() {
-  // has only valid types.
-}
+  mounted() {
+    // has only valid types.
+  }
 }
 </script>
 
 <style >
 .el-row {
-    margin-bottom: 0px;
-    width: 100%;
+  margin-bottom: 0px;
+  width: 100%;
 }
-.el-col
-{
- /* border:1px solid gray;*/
+.el-col {
+  /* border:1px solid gray;*/
 }
-.el-form-item--min.el-form-item
-.el-form-item--mini
-.el-form-item {
-    margin-bottom: 8px;
+.el-form-item--min.el-form-item .el-form-item--mini .el-form-item {
+  margin-bottom: 8px;
 }
 .el-form-item__content {
-    line-height: 30px;
-    width: 100%;
+  line-height: 30px;
+  width: 100%;
 }
-.el-divider--horizontal
-{
-  margin:0 0 10px 0;
+.el-form--inline .el-form-item {
+  display: contents;
+  margin-right: 10px;
+  vertical-align: top;
+}
+.el-divider--horizontal {
+  margin: 0 0 10px 0;
 }
 .el-dialog__header {
-   padding: 0px;
-    padding-bottom: 0px;
- background-color: beige;
-
+  padding: 0px;
+  padding-bottom: 0px;
+  background-color: beige;
 }
 .el-dialog__headerbtn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 0;
-    background: transparent;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    font-size: 16px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 16px;
 }
-
 </style>

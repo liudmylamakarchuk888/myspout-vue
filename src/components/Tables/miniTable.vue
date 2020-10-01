@@ -1,42 +1,51 @@
+/* eslint-disable no-undef */
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-input
-        v-model="search.text"
-        size="mini"
-        placeholder="Search item"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="searchData"
-      />
-
-      <el-select
-        v-model="search.type"
-        size="mini"
-        placeholder="Filter by Type"
-        clearable
-        class="filter-item"
-        style="width: 130px"
+    <el-row>
+      <el-col
+        v-show="showSearch"
+        :span="12"
       >
-        <el-option
-          v-for="item in typeOptions"
-          :key="item.key"
-          :label="item.key"
-          :value="item.value"
+        <el-input
+          v-model="search.text"
+          size="mini"
+          placeholder="Search item"
+          style="width: 200px;"
+          class="filter-item"
+          @keyup.enter.native="searchData"
         />
-      </el-select>
-    </div>
+
+        <el-select
+          v-model="search.type"
+          size="mini"
+          placeholder="Filter by Type"
+          clearable
+          class="filter-item"
+          style="width: 130px"
+        >
+          <el-option
+            v-for="item in typeOptions"
+            :key="item.key"
+            :label="item.key"
+            :value="item.value"
+          />
+        </el-select>
+      </el-col>
+      <el-col :span="12">
+        <slot name="commands" />
+      </el-col>
+    </el-row>
+
     <!-- :key="tableKey" -->
     <el-table
 
-      v-loading="listLoading"
-      :data="searchData( )"
+      :data="searchData()"
       border
-      fit
-      height="300px"
-      size="mini"
+      stripe
+
+      style="width:100%"
+      height="300"
       highlight-current-row
-      style="width: 100%;"
     >
       <el-table-column
         v-for="col in columns"
@@ -50,6 +59,7 @@
 </template>
 
 <script lang="ts">
+import data from '@/views/Others/pdf/content'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 
 @Component({
@@ -61,50 +71,33 @@ export default class extends Vue {
   @Prop({ required: true }) private items!: any[];
   @Prop({ required: false }) private typeOptions!: { key: string, value: string }[];
   @Prop({ required: true }) private columns!:{label:string, field:string, width:string}[];
-  // @Prop({ default: true, required: false }) private showSearch:boolean
-  // @Prop({ default: 'Available List', required: false }) private title:string;
-  // @Prop({ default: false, required: false }) private dragable:boolean
+  @Prop({ default: true, required: false }) private showSearch:boolean
+  @Prop({ default: 'dataType', required: false }) private searchTypeKey:string
 
-  private listLoading = false;
-  private searchBy=''
-  private search = {
+  @Prop({ default: 'displayName', required: false }) private searchOnField:string
+   @Prop({ default: false, required: false }) private dragable:boolean
+
+  private search= {
     text: '',
     type: ''
-  };
-
-  get list() {
-    return this.items
   }
 
-  getData(filter) {
-    return this.items.filter((f) => {
-      return f.entityName.toLowerCase().includes(filter.text.toLowerCase()) ||
-      f.itemType == filter.type
-    })
-  }
+  @Watch('search', { deep: true })
 
-  private async getList() {
-    // this.listLoading = true
-    const { data } = await this.getData(this.search)
-    this.list = data
-
-    // Just to simulate the time of the request
-    // setTimeout(() => {
-    //  this.listLoading = false
-    // }, 0.5 * 1000)
-  }
-
-@Watch('search', { deep: true })
   private searchData() {
-    /// console.log('search by ' + query)
+    if (this.search.text === '' && this.search.type === '') { return this.items }
 
-    if (this.search.text === undefined && this.search.type === undefined) { return this.items }
-
+    console.log('mini table searching on ' + JSON.stringify(this.search))
     const query = this.search
-    const rs = this.items.filter(data => !this.search ||
-     data.displayName.toLowerCase().includes(query.text.toLowerCase()) ||
-    data.itemType == query.type)
-
+    let rs = this.items
+    if (query.text.length > 0) {
+      rs = rs.filter(data => !this.search ||
+     data[this.searchOnField].toLowerCase().includes(query.text.toLowerCase()))
+    }
+    if (query.type.length > 0) {
+      rs = rs.filter(data => !this.search ||
+    data[this.searchTypeKey] === query.type) || data[this.searchTypeKey] == query.type
+    }
     return rs
   }
 }
