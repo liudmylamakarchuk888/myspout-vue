@@ -21,4 +21,25 @@ export class BaseContent implements IBaseContent {
     notes: string = '';
     systemName: string = '';
 
+
+    // get displayName() {
+    //     return this.displayName
+    // }
+    // set displayName(val) {
+    //     this.displayName = val;
+    //     this.systemName = "cse_" + val.toString().toLowerCase().replace(' ', '')
+    // }
+    // get systemName() {
+    //     return this.systemName
+    // }
+    // set systemName(val) {
+    //     this.systemName = val;
+    // }
+    /**
+     *
+     */
+    constructor() {
+
+
+    }
 }

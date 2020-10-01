@@ -84,9 +84,9 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 export default class extends Vue {
   @Prop({ required: true }) private treeData!: any[];
   @Prop({ required: false }) private typeOptions!: { key: string, value: string }[];
-  @Prop({ default: true, required: false }) private showSearch:boolean
-  @Prop({ default: 'Available List', required: false }) private title:string;
-  @Prop({ default: false, required: false }) private dragable:boolean
+  @Prop({ default: true, required: false }) private showSearch:boolean|undefined
+  @Prop({ default: 'Available List', required: false }) private title:string|undefined;
+  @Prop({ default: false, required: false }) private dragable:boolean|undefined
 
   private query = {
     text: undefined,
