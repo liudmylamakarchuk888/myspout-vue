@@ -52,7 +52,7 @@
           <el-image
             :src="require('@/assets/action-16x16.png')"
             style="padding-right: 2px"
-          />{{ d.entity }}
+          />{{ d.entityId }}
         </el-button>
       </div>
     </div>
@@ -72,7 +72,7 @@
             Entity
           </el-col>
           <el-col :span="10">
-            <el-input v-model="selectListItem.entity" />
+            <el-input v-model="selectListItem.entityId" />
           </el-col>
         </el-row>
         <el-row
@@ -84,7 +84,7 @@
           </el-col>
           <el-col :span="16">
             <el-select
-              v-model="selectListItem.property"
+              v-model="selectListItem.relationshipPropertyName"
               placeholder="Select"
               clearable
             >
@@ -246,7 +246,7 @@ export default class extends Vue {
   }
 
   outDialogOk() {
-    this.modalOkHandler(this.tempListData)
+    this.modalOkHandler(this.listData)
     this.outDialogCancel()
   }
 
