@@ -205,7 +205,7 @@ export default class extends Vue {
     debugger
     if (value === undefined) { return }
 
-    this.$refs.elTable.filter(data => !value ||
+    this.$refs.elTable.filter((data: { displayName: string; entityName: string }) => !value ||
         data.displayName.toLowerCase().includes(value.text.toLowerCase()) ||
         data.entityName.toLowerCase() === value.type.toLowerCase())
 

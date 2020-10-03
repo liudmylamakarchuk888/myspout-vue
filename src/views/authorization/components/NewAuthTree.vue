@@ -115,7 +115,6 @@
 </template>
 
 <script>
-import { required } from 'vuelidate/lib/validators'
 
 export default {
   Data() {
@@ -131,7 +130,7 @@ export default {
   },
   validations: {
     inputText: {
-      required
+
     }
   }
 }

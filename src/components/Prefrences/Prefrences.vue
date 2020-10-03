@@ -22,12 +22,12 @@
                 @click="showNewForm = !showNewForm"
               />
               <el-dialog
+                :ref="dialog"
                 :before-close="beforeNewFormClose"
                 :visible.sync="showNewForm"
                 title="Application Prefrence"
               >
-                <NewPrefrences />
-
+                <NewPrefrences :ref="dialog" />
               </el-dialog>
 
               <el-button
@@ -74,11 +74,12 @@ export default class extends Vue {
      type: null
    }
 
+  dialog={} as any
    searchby ='';
   selectedRow=null;
   showNewForm=false;
   selectedPropertyType=null;
-selectedPrefrence={}
+  selectedPrefrence={}
    tableData =[]
      fields= [
        {

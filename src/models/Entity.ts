@@ -2,7 +2,6 @@ import { BaseContent } from './BaseContent';
 import { LanguageTranslation } from './LanguageTranslation';
 import { KeyValue } from './KeyValue';
 import { Status } from './Status';
-import { BaseProperty } from './BaseProperty';
 import { Restriction } from './Restriction';
 import { TextAssembly } from './TextAssembly';
 import { EntityRelationship } from './EntityRelationship';
@@ -12,16 +11,130 @@ import { Notification } from './Notification';
 import { newGuid } from './Utils';
 import { AppCacheModule } from '@/store/modules/appCache.ts'
 
+// public interface IBaseCreatableContent extends IBaseContent {
+
+
+
+
+//     get id():String;
+
+
+
+
+//     set id(value:String):void;
+
+
+
+
+//     get clientId():String;
+
+
+
+ 
+
+//     set clientId(value:String):void;
+
+
+
+
+//     get newInstance():Boolean;
+
+
+ 
+
+//     set newInstance(value:Boolean):void;
+
+
+
+
+//     get deleted():Boolean;
+
+ 
+
+//     set deleted(value:Boolean):void;
+
+
+
+
+//     get dateCreated():Date;
+
+
+ 
+
+//     set dateCreated(value:Date):void;
+
+
+
+
+//     get createdBy():String;
+ 
+//     set createdBy(value:String):void;
+
+
+
+
+//     get dateModified():Date;
+
+ 
+
+//     set dateModified(value:Date):void;
+
+
+
+
+//     get modifiedBy():String;
+ 
+
+//     set modifiedBy(value:String):void;
+
+//   }
+// public interface IRecentlyEditedContent extends IBaseCreatableContent {
+
+
+
+
+
+//     get systemName():String;
+
+
+
+
+
+//     get entity():Entity;
+
+
+
+
+
+//     get itemType():int;
+
+
+
+
+
+//     get uniqueId():String;
+
+
+
+
+
+//     isOutOfTheBox():Boolean;
+
+
+// }
 
 export class Entity extends BaseContent {
 
     constructor() {
         super();
-        this.clientID = newGuid()
+        this.clientID = CreateUUID()
         this.newInstance = true;
         this.createNotification = {} as any
         this.defaultColumns = this.getDefaultColumns()
-
+        this.createdBy = UserModule.name
+        this.modifiedBy = UserModule.name
+        this.dateCreated = new Number(new Date())
+        this.dateModified = new Number(new Date())
     }
     clientID: string = CreateUUID();
     newInstance: boolean = false; 
@@ -104,11 +217,11 @@ export class Entity extends BaseContent {
             entity.supportFormConfiguration = true;
             entity.databaseTableName = "Cse" + entity.entityName
             entity.properties = []
-            entity.properties.push(...this.getBasicProperties());
+            entity.properties.push(...this.getBasicProperties(entity.id));
 
             if (entity.supportAttachments) {
 
-                entity.properties.push(... this.getSupportAttachmentsProperties());
+                entity.properties.push(... this.getSupportAttachmentsProperties(entity.id));
 
                 entity.canChangeAttachmentSupport = false;
 
@@ -116,7 +229,7 @@ export class Entity extends BaseContent {
 
             if (entity.supportFollowers) {
 
-                entity.properties.push(... this.getSupportFollowersProperties());
+                entity.properties.push(... this.getSupportFollowersProperties(entity.id));
 
                 entity.canChangeFollowersSupport = false;
 
@@ -124,7 +237,7 @@ export class Entity extends BaseContent {
 
             if (entity.supportIntegration) {
 
-                entity.properties.push(... this.getSupportIntegrationProperties());
+                entity.properties.push(... this.getSupportIntegrationProperties(entity.id));
 
                 entity.canChangeIntegrationSupport = false;
 
@@ -132,7 +245,7 @@ export class Entity extends BaseContent {
 
             if (entity.supportTimeTracking) {
 
-                entity.properties.push(... this.getSupportTimeTrackingProperties());
+                entity.properties.push(... this.getSupportTimeTrackingProperties(entity.id));
 
                 //TODO: Somthing very tricky here. 
                 // Create a lookup property in My Work Task - to this entity
@@ -144,683 +257,223 @@ export class Entity extends BaseContent {
 
             }
             if (entity.supportFormConfiguration) {
-                entity.properties.push(... this.getSupportCategorizableProperties());
+                entity.properties.push(... this.getSupportCategorizableProperties(entity.id));
             }
 
             if (entity.supportWorkflowConfiguration) {
 
-                entity.properties.push(...this.getSupportWorkflowConfigurationProperties());
+                entity.properties.push(...this.getSupportWorkflowConfigurationProperties(entity.id));
 
             }
 
 
             //TODO yet to be complete.
-            //     if (entity.supportTree) {
+            if (entity.supportTree) {
 
-            //         entity.properties.addAll(
-            //             PropertyFactory.getSupportTreeProperties(
-            //                 languagesPresentationModel,
-            //                 entity.databaseTableName,
-            //                 entity.id,
-            //                 entity.displayName,
-            //                 entity.creationPolicyType
-            //             )
-            //         );
+                entity.properties.push(...
+                    PropertyFactory.getSupportTreeProperties(
+                        entity.databaseTableName,
+                        entity.id,
+                        entity.displayName,
+                        entity.creationPolicyType
+                    )
+                );
 
-            //     }
+            }
 
-            //     else if (entity.supportIndexPosition) {
+            else if (entity.supportIndexPosition) {
 
-            //         entity.properties.push(... this.getIndexPositionProperty());
-            //     }
+                entity.properties.push(... this.getIndexPositionProperty(entity.id));
+            }
 
             //     // settings defaults
 
-            //     entity.primaryNamePropertySystemName = PropertyFactory.DEFAULT_PNP_PROPERTY_SYSTEM_NAME;
+            entity.primaryNamePropertySystemName = PropertyFactory.DEFAULT_PNP_PROPERTY_SYSTEM_NAME;
 
-            //     entity.cfgItemUniquePropertySystemName = PropertyFactory.DEFAULT_UNP_PROPERTY_SYSTEM_NAME;
+            entity.cfgItemUniquePropertySystemName = PropertyFactory.DEFAULT_UNP_PROPERTY_SYSTEM_NAME;
 
-            //     entity.lookupDefaultNameFormat = new TextAssembly();
+            entity.lookupDefaultNameFormat = new TextAssembly();
 
-            //     entity.lookupDefaultNameFormat.parts = new ArrayCollection(
-            //         [
-            //             new ArrayCollection(
-            //                 [
-            //                     new KeyValue().init(ConditionUtils.TBL, entity.id),
-            //                     new KeyValue().init(PropertyFactory.DEFAULT_PNP_PROPERTY_SYSTEM_NAME, null)
-            //                 ]
-            //             )
-            //         ]
-            //     );
 
-            //     entity.defaultColumns = getDefaultEntityColumns(entity);
+            entity.lookupDefaultNameFormat.parts = [
+                [
+                    new KeyValue("tbl", entity.id),
+                    new KeyValue(PropertyFactory.DEFAULT_PNP_PROPERTY_SYSTEM_NAME, null)
+                ]
+            ]
+
+
+            entity.defaultColumns = this.getDefaultColumns();
 
         }
 
-        // if (object.reverseLookupProperty != null) {
+        // if (obj.reverseLookupProperty != null) {
         //     entity.properties.addItem(
-        //         object.reverseLookupProperty as LookupProperty
+        //         (<LookupProperty>obj).reverseLookupProperty 
         //     );
         // }
 
-        // setEntityUrls(entity);
+        this.setEntityUrls(entity);
 
-        // if (entity.managementPolicy == ManagementPolicyType.TREE_ROOT) {
-        //     entity.entityRelationship = getNewEntityRelationship(entity);
+        if (entity.managementPolicy == ManagementPolicyType.TREE_ROOT) {
+            entity.entityRelationship = this.getNewEntityRelationship(entity);
+        }
+
+        //entity.properties?.sort((x)=> x.displayName);
+        //DataUtils.sortPropertiesByNameAndAddedOrOutOfTheBox(entity.properties);
+
+        this.addTreeNodeToCustomizedEntities(entity);
+
+        this.afterCreateOrUpdateEntity(obj);
+
+    }
+    //TODO: dirty state managment.
+    afterCreateOrUpdateEntity(object: any) {
+        // var entity: Entity = object.entity;
+        // var tableEntity: Entity = object.tableEntity;
+
+        // model.entities.put(entity.id, entity);
+
+        // model.dirtyEntities.put(entity.id, entity);
+
+        // if (tableEntity != null) {
+        //     model.entities.put(tableEntity.id, tableEntity);
+        //     model.dirtyEntities.put(tableEntity.id, tableEntity);
         // }
 
-        // DataUtils.sortPropertiesByNameAndAddedOrOutOfTheBox(entity.properties);
+        // //dispatcher.dispatchEvent(new MSPEvent(MSPEvent.ITEM_ADDED_TO_DIRTY_MAP, model.dirtyEntities));
 
-        // addTreeNodeToCustomizedEntities(entity);
+        // DataUtils.markModificationAndAddToRecentlyEdited(entity);
 
-        // afterCreateOrUpdateEntity(object);
+        // if (tableEntity != null) {
+        //     markModificationAndAddToRecentlyEdited(tableEntity);
+        // }
+
+        // model.toggleSaveButton();
+
+        // if (object.callback) {
+
+        //     if (object.callbackArguments) {
+        //         object.callback(object.callbackArguments);
+        //     }
+
+        //     else {
+        //         object.callback();
+        //     }
+
+        // }
+
+        // dispatcher.dispatchEvent(new EntitiesEvent(EntitiesEvent.REFRESH_ENTITIES_TREE));
+
+        // dispatch event to update the entities combo boxes in From / Workflow Landing Page
+        //dispatcher.dispatchEvent(new MSPEvent(MSPEvent.ENTITIES_LIST_CHANGED));
+    }
+    addTreeNodeToCustomizedEntities(entity: this) {
+
+        // for (var node: Node of model.treeDataProvider.children) {
+
+        //     if (node.branch && node.id == CUSTOMIZED_ENTITIES_NODE_ID) {
+
+        //         if (entityNode == null || node.children == null || !node.children.contains(entityNode)) {
+
+        //             if (entityNode == null) {
+
+        //                 entityNode = getNewNode(entity);
+
+        //             }
+
+        //             addChildNodeToParentNode(node, entityNode);
+
+        //             model.allTreeNodes.put(entityNode.id, entityNode);
+
+        //             model.allEntityNodes = [model.allTreeNodes.getValues()];
+
+        //             model.selectedEntity = entityNode;
+
+        //             DataUtils.sortCollectionBy(node.children, "name");
+
+        //         }
+
+        //     }
+
+        // }
+
 
     }
-    getSupportWorkflowConfigurationProperties(): any[] {
-        return []
-    }
-    getIndexPositionProperty(): any[] {
-        return [
-            {
-                "description": "",
-                "displayName": "Index Position",
-                "displayNameLanguageKey": null,
-                "descriptionLanguageKey": null,
-                "languageTranslations": [
-                    {
-                        "description": null,
-                        "displayName": "מיקום",
-                        "language": "he"
-                    }
-                ],
-                "notes": null,
-                "systemName": "indexPosition",
-                "customLink": null,
-                "dataType": {
-                    "key": "Number",
-                    "value": "6"
-                },
-                "entityId": this.id,
-                "valueChangedNotification": null,
-                "tabularReportsCategory": null,
-                "databaseColumnName": "IndexPosition",
-                "outOfTheBox": true,
-                "translated": false,
-                "excludePropertyFromReportGenerator": false,
-                "excludePropertyFromEventsGenerator": false,
-                "defaultWidth": 50,
-                "databaseColumnType": "int (10)",
-                "sql": null,
-                "formula": false,
-                "identity": false,
-                "virtualProperty": false,
-                "defaultMaxValue": null,
-                "defaultMinValue": null,
-                "defaultValue": null,
-                "useThousandSeparator": false
-            }
-        ]
-    }
-    getSupportCategorizableProperties() {
-        return [
+    private getNewEntityRelationship(entity: Entity): EntityRelationship {
+        var entityRelationship: EntityRelationship = new EntityRelationship();
 
-        ]
+        entityRelationship.entityId = entity.id;
+        entityRelationship.children = [];
+
+        return entityRelationship;
     }
-    getSupportTimeTrackingProperties(): any[] {
-        return [
-            {
-                "description": "The task will hold My Work information like actual work, % work complete and remaining work.",
-                "displayName": "My Work Task",
-                "displayNameLanguageKey": null,
-                "descriptionLanguageKey": null,
-                "languageTranslations": [
-                    {
-                        "description": "המשימה תכיל מידע \"גיליון עבודה\" כגון עבודה בפועל, % עבודה שהושלמה ועבודה נותרת.",
-                        "displayName": "משימת גליון עבודה",
-                        "language": "he"
-                    }
-                ],
-                "notes": null,
-                "systemName": "myWorkTask",
-                "customLink": null,
-                "dataType": {
-                    "key": "Lookup to My Work Task",
-                    "value": "9",
-                    "lookupClassName": "com.msp.dao.entities.MyWorkTask"
-                },
-                "entityId": "com.msp.dao.entities.cse.custom.Cse_Bb5",
-                "valueChangedNotification": null,
-                "tabularReportsCategory": null,
-                "databaseColumnName": "refMyWorkTaskid",
-                "outOfTheBox": true,
-                "translated": false,
-                "excludePropertyFromReportGenerator": false,
-                "excludePropertyFromEventsGenerator": false,
-                "defaultWidth": 200,
-                "databaseColumnType": "bigint (19)",
-                "sql": null,
-                "formula": false,
-                "identity": false,
-                "virtualProperty": false,
-                "displayAsAutoCompleteInReports": false,
-                "linkToEntity": false,
-                "defaultValue": null,
-                "canBeUseAsReferenceInReports": false,
-                "lookupToExtension": false
-            }
-        ]
+
+    private setEntityUrls(entity: Entity): void {
+
+        entity.createURL = "generated_create.jsp?entityCategoryId=$entityCategory.id";
+        entity.defaultURL = "generated_edit.jsp?entityCategoryId=$entityCategory.id&id=$id&current_tab_object=@@CURRENT_TAB_OBJECT@@";
+        entity.editURL = "generated_edit.jsp?entityCategoryId=$entityCategory.id&id=$id&current_tab_object=@@CURRENT_TAB_OBJECT@@";
+        entity.listURL = "generated_manage_entity.jsp?entityCategoryId=$entityCategory.id";
+
     }
-    getSupportIntegrationProperties(): any[] {
-        return [{
-            "description": "",
-            "displayName": "Integration Identifier",
-            "displayNameLanguageKey": null,
-            "descriptionLanguageKey": null,
-            "languageTranslations": [
-                {
-                    "description": null,
-                    "displayName": "מזהה אינטגרציה",
-                    "language": "he"
-                }
-            ],
-            "notes": null,
-            "systemName": "integrationIdentifier",
-            "customLink": null,
-            "dataType": {
-                "key": "Single Line of Text",
-                "value": "1"
-            },
-            "entityId": this.id,
-            "valueChangedNotification": null,
-            "tabularReportsCategory": null,
-            "databaseColumnName": "IntegrationIdentifier",
-            "outOfTheBox": true,
-            "translated": false,
-            "excludePropertyFromReportGenerator": false,
-            "excludePropertyFromEventsGenerator": false,
-            "defaultWidth": 200,
-            "databaseColumnType": "varchar (250)",
-            "sql": null,
-            "formula": false,
-            "identity": false,
-            "virtualProperty": false,
-            "defaultValue": null,
-            "maximumTextLength": null
-        }]
+    getSupportWorkflowConfigurationProperties(entityId: string): any[] {
+        return PropertyFactory.getSupportWorkflowConfigurationProperties(entityId)
     }
-    getSupportFollowersProperties(): any[] {
-        return [{
-            "description": "",
-            "displayName": "Followed by Users",
-            "displayNameLanguageKey": null,
-            "descriptionLanguageKey": null,
-            "languageTranslations": [
-                {
-                    "description": null,
-                    "displayName": "משתמשים עוקבים",
-                    "language": "he"
-                }
-            ],
-            "notes": null,
-            "systemName": "followerUsers",
-            "customLink": null,
-            "dataType": {
-                "key": "Table of Follow User",
-                "value": "10",
-                "lookupClassName": "com.msp.dao.entities.Attachment"
-            },
-            "entityId": "com.msp.dao.entities.cse.custom.Cse_Bb3",
-            "valueChangedNotification": null,
-            "tabularReportsCategory": null,
-            "databaseColumnName": "psurefEntityRefid",
-            "outOfTheBox": true,
-            "translated": false,
-            "excludePropertyFromReportGenerator": false,
-            "excludePropertyFromEventsGenerator": false,
-            "defaultWidth": 100,
-            "databaseColumnType": null,
-            "sql": null,
-            "formula": false,
-            "identity": false,
-            "virtualProperty": false,
-            "displayAsAutoCompleteInReports": false,
-            "linkToEntity": false,
-            "filter": null,
-            "orderByColumnName": null,
-            "table": "refObjectsFollowerUsers",
-            "usingVanillaReference": false
-        }];
+    getIndexPositionProperty(entityId: string): any[] {
+        return PropertyFactory.getIndexPositionProperty(entityId)
     }
-    getSupportAttachmentsProperties(): any[] {
-        return [{
-            "description": "",
-            "displayName": "Attachments",
-            "displayNameLanguageKey": null,
-            "descriptionLanguageKey": null,
-            "languageTranslations": [
-                {
-                    "description": null,
-                    "displayName": "מסמכים",
-                    "language": "he"
-                }
-            ],
-            "notes": null,
-            "systemName": "attachments",
-            "customLink": null,
-            "dataType": {
-                "key": "Table of Attachments",
-                "value": "10",
-                "lookupClassName": "com.msp.dao.entities.Attachment"
-            },
-            "entityId": this.id,
-            "valueChangedNotification": null,
-            "tabularReportsCategory": null,
-            "databaseColumnName": "psurefEntityRefid",
-            "outOfTheBox": true,
-            "translated": false,
-            "excludePropertyFromReportGenerator": false,
-            "excludePropertyFromEventsGenerator": false,
-            "defaultWidth": 100,
-            "databaseColumnType": null,
-            "sql": null,
-            "formula": false,
-            "identity": false,
-            "virtualProperty": false,
-            "displayAsAutoCompleteInReports": false,
-            "linkToEntity": false,
-            "filter": null,
-            "orderByColumnName": null,
-            "table": "Attachments",
-            "usingVanillaReference": false
-        }]
+    getSupportCategorizableProperties(entityId: string) {
+        return PropertyFactory.getSupportCategorizableProperties(entityId)
+    }
+    getSupportTimeTrackingProperties(entityId: string): any[] {
+        return PropertyFactory.getSupportTimeTrackingProperties(entityId)
+    }
+    getSupportIntegrationProperties(entityId: string): any[] {
+        return PropertyFactory.getSupportIntegrationProperties(entityId)
+
+    }
+    getSupportFollowersProperties(entityId: string): any[] {
+        return PropertyFactory.getSupportFollowersProperties(entityId)
+    }
+    getSupportAttachmentsProperties(entityId: string): any[] {
+        return PropertyFactory.getSupportAttachmentsProperties(entityId)
     }
 
 
     //as Hard coded in existing app.
     getDefaultColumns(): KeyValue[] {
-        return [
-            {
-                "key": "ID",
-                "value": [
-                    {
-                        "key": "tbl",
-                        "value": this.id
-                    },
-                    {
-                        "key": "id",
-                        "value": null
-                    }
-                ]
-            },
-            {
-                "key": "Name",
-                "value": [
-                    {
-                        "key": "tbl",
-                        "value": this.id
-                    },
-                    {
-                        "key": "name",
-                        "value": null
-                    }
-                ]
-            },
-            {
-                "key": "Time Created",
-                "value": [
-                    {
-                        "key": "tbl",
-                        "value": this.id
-                    },
-                    {
-                        "key": "timeCreated",
-                        "value": null
-                    }
-                ]
-            },
-            {
-                "key": "Time Updated",
-                "value": [
-                    {
-                        "key": "tbl",
-                        "value": this.id
-                    },
-                    {
-                        "key": "timeUpdated",
-                        "value": null
-                    }
-                ]
-            },
-            {
-                "key": "Updated By",
-                "value": [
-                    {
-                        "key": "tbl",
-                        "value": this.id
-                    },
-                    {
-                        "key": "updateUser",
-                        "value": "com.msp.dao.entities.User"
-                    }
-                ]
-            }
-        ]
+
+        let result = [new KeyValue("ID", [
+            new KeyValue("tbl", this.id),
+            new KeyValue("id", null)]
+        )
+            , new KeyValue("Name", [
+                new KeyValue("tbl", this.id),
+                new KeyValue("id", null)
+            ])
+            , new KeyValue("Time Created", [
+                new KeyValue("tbl", this.id),
+                new KeyValue("timeCreated", null)
+            ]),
+        new KeyValue("Time Updated", [
+            new KeyValue("tbl", this.id),
+            new KeyValue("timeUpdated", null)
+        ])
+            , new KeyValue("Updated By", [
+                new KeyValue("tbl", this.id),
+                new KeyValue("updatedBy", null)
+            ])
+        ];
+
+        return result;
 
 
 
     }
 
-    getBasicProperties(): any[] {
-        return [
-            {
-                "description": "",
-                "displayName": "ID",
-                "displayNameLanguageKey": null,
-                "descriptionLanguageKey": null,
-                "languageTranslations": [
-                    {
-                        "description": null,
-                        "displayName": "מזהה",
-                        "language": "he"
-                    }
-                ],
-                "notes": null,
-                "systemName": "id",
-                "customLink": null,
-                "dataType": {
-                    "key": "Large Number",
-                    "value": "7"
-                },
-                "entityId": this.id,
-                "valueChangedNotification": null,
-                "tabularReportsCategory": null,
-                "databaseColumnName": "id",
-                "outOfTheBox": true,
-                "translated": false,
-                "excludePropertyFromReportGenerator": false,
-                "excludePropertyFromEventsGenerator": false,
-                "defaultWidth": 50,
-                "databaseColumnType": "bigint identity (19)",
-                "sql": null,
-                "formula": false,
-                "identity": false,
-                "virtualProperty": false,
-                "defaultMaxValue": null,
-                "defaultMinValue": null,
-                "defaultValue": null,
-                "useThousandSeparator": false
-            },
-            {
-                "description": "",
-                "displayName": "Name",
-                "displayNameLanguageKey": null,
-                "descriptionLanguageKey": null,
-                "languageTranslations": [
-                    {
-                        "description": null,
-                        "displayName": "שם",
-                        "language": "he"
-                    }
-                ],
-                "notes": null,
-                "systemName": "name",
-                "customLink": null,
-                "dataType": {
-                    "key": "Single Line of Text",
-                    "value": "1"
-                },
-                "entityId": this.id,
-                "valueChangedNotification": null,
-                "tabularReportsCategory": null,
-                "databaseColumnName": "Name",
-                "outOfTheBox": true,
-                "translated": false,
-                "excludePropertyFromReportGenerator": false,
-                "excludePropertyFromEventsGenerator": false,
-                "defaultWidth": 200,
-                "databaseColumnType": "varchar (250)",
-                "sql": null,
-                "formula": false,
-                "identity": false,
-                "virtualProperty": false,
-                "defaultValue": null,
-                "maximumTextLength": null
-            },
-            {
-                "description": "",
-                "displayName": "Creation User",
-                "displayNameLanguageKey": null,
-                "descriptionLanguageKey": null,
-                "languageTranslations": [
-                    {
-                        "description": null,
-                        "displayName": "משתמש יוצר",
-                        "language": "he"
-                    }
-                ],
-                "notes": null,
-                "systemName": "creationUser",
-                "customLink": null,
-                "dataType": {
-                    "key": "Lookup to USER_DISPLAY_NAME",
-                    "value": "9",
-                    "lookupClassName": "com.msp.dao.entities.User"
-                },
-                "entityId": this.id,
-                "valueChangedNotification": null,
-                "tabularReportsCategory": null,
-                "databaseColumnName": "refCreationUserid",
-                "outOfTheBox": true,
-                "translated": false,
-                "excludePropertyFromReportGenerator": false,
-                "excludePropertyFromEventsGenerator": false,
-                "defaultWidth": 200,
-                "databaseColumnType": "bigint (19)",
-                "sql": null,
-                "formula": false,
-                "identity": false,
-                "virtualProperty": false,
-                "displayAsAutoCompleteInReports": false,
-                "linkToEntity": false,
-                "defaultValue": null,
-                "canBeUseAsReferenceInReports": false,
-                "lookupToExtension": false
-            },
-            {
-                "description": "",
-                "displayName": "State",
-                "displayNameLanguageKey": null,
-                "descriptionLanguageKey": null,
-                "languageTranslations": [
-                    {
-                        "description": null,
-                        "displayName": "מצב רשומה",
-                        "language": "he"
-                    }
-                ],
-                "notes": null,
-                "systemName": "state",
-                "customLink": null,
-                "dataType": {
-                    "key": "Number",
-                    "value": "6"
-                },
-                "entityId": this.id,
-                "valueChangedNotification": null,
-                "tabularReportsCategory": null,
-                "databaseColumnName": "State",
-                "outOfTheBox": true,
-                "translated": false,
-                "excludePropertyFromReportGenerator": false,
-                "excludePropertyFromEventsGenerator": false,
-                "defaultWidth": 50,
-                "databaseColumnType": "int (10)",
-                "sql": null,
-                "formula": false,
-                "identity": false,
-                "virtualProperty": false,
-                "defaultMaxValue": null,
-                "defaultMinValue": null,
-                "defaultValue": null,
-                "useThousandSeparator": false
-            },
-            {
-                "description": "",
-                "displayName": "Time Created",
-                "displayNameLanguageKey": null,
-                "descriptionLanguageKey": null,
-                "languageTranslations": [
-                    {
-                        "description": null,
-                        "displayName": "זמן יצירה",
-                        "language": "he"
-                    }
-                ],
-                "notes": null,
-                "systemName": "timeCreated",
-                "customLink": null,
-                "dataType": {
-                    "key": "Date and Time",
-                    "value": "4"
-                },
-                "entityId": this.id,
-                "valueChangedNotification": null,
-                "tabularReportsCategory": null,
-                "databaseColumnName": "TimeCreated",
-                "outOfTheBox": true,
-                "translated": false,
-                "excludePropertyFromReportGenerator": false,
-                "excludePropertyFromEventsGenerator": false,
-                "defaultWidth": 100,
-                "databaseColumnType": "datetime (23)",
-                "sql": null,
-                "formula": false,
-                "identity": false,
-                "virtualProperty": false,
-                "defaultMaxValue": null,
-                "defaultMinValue": null,
-                "defaultValue": null,
-                "periodPickerType": "3"
-            },
-            {
-                "description": "",
-                "displayName": "Time Updated",
-                "displayNameLanguageKey": null,
-                "descriptionLanguageKey": null,
-                "languageTranslations": [
-                    {
-                        "description": null,
-                        "displayName": "תאריך עדכון",
-                        "language": "he"
-                    }
-                ],
-                "notes": null,
-                "systemName": "timeUpdated",
-                "customLink": null,
-                "dataType": {
-                    "key": "Date and Time",
-                    "value": "4"
-                },
-                "entityId": this.id,
-                "valueChangedNotification": null,
-                "tabularReportsCategory": null,
-                "databaseColumnName": "TimeUpdated",
-                "outOfTheBox": true,
-                "translated": false,
-                "excludePropertyFromReportGenerator": false,
-                "excludePropertyFromEventsGenerator": false,
-                "defaultWidth": 100,
-                "databaseColumnType": "datetime (23)",
-                "sql": null,
-                "formula": false,
-                "identity": false,
-                "virtualProperty": false,
-                "defaultMaxValue": null,
-                "defaultMinValue": null,
-                "defaultValue": null,
-                "periodPickerType": "3"
-            },
-            {
-                "description": "",
-                "displayName": "Last Updated By",
-                "displayNameLanguageKey": null,
-                "descriptionLanguageKey": null,
-                "languageTranslations": [
-                    {
-                        "description": null,
-                        "displayName": "עודכן ע\"י",
-                        "language": "he"
-                    }
-                ],
-                "notes": null,
-                "systemName": "updateUser",
-                "customLink": null,
-                "dataType": {
-                    "key": "Lookup to User",
-                    "value": "9",
-                    "lookupClassName": "com.msp.dao.entities.User"
-                },
-                "entityId": this.id,
-                "valueChangedNotification": null,
-                "tabularReportsCategory": null,
-                "databaseColumnName": "refUpdateUserid",
-                "outOfTheBox": true,
-                "translated": false,
-                "excludePropertyFromReportGenerator": false,
-                "excludePropertyFromEventsGenerator": false,
-                "defaultWidth": 200,
-                "databaseColumnType": "bigint (19)",
-                "sql": null,
-                "formula": false,
-                "identity": false,
-                "virtualProperty": false,
-                "displayAsAutoCompleteInReports": false,
-                "linkToEntity": false,
-                "defaultValue": null,
-                "canBeUseAsReferenceInReports": false,
-                "lookupToExtension": false
-            },
-            {
-                "description": "",
-                "displayName": "Category",
-                "displayNameLanguageKey": null,
-                "descriptionLanguageKey": null,
-                "languageTranslations": [
-                    {
-                        "description": null,
-                        "displayName": "קטגוריה",
-                        "language": "he"
-                    }
-                ],
-                "notes": null,
-                "systemName": "entityCategory",
-                "customLink": null,
-                "dataType": {
-                    "key": "Lookup to ENTITYCATEGORY_DISPLAY_NAME",
-                    "value": "9",
-                    "lookupClassName": "com.msp.dao.entities.EntityCategory"
-                },
-                "entityId": this.id,
-                "valueChangedNotification": null,
-                "tabularReportsCategory": null,
-                "databaseColumnName": "refEntityCategoryid",
-                "outOfTheBox": true,
-                "translated": false,
-                "excludePropertyFromReportGenerator": false,
-                "excludePropertyFromEventsGenerator": false,
-                "defaultWidth": 200,
-                "databaseColumnType": "bigint (19)",
-                "sql": null,
-                "formula": false,
-                "identity": false,
-                "virtualProperty": false,
-                "displayAsAutoCompleteInReports": false,
-                "linkToEntity": false,
-                "defaultValue": null,
-                "canBeUseAsReferenceInReports": false,
-                "lookupToExtension": false
-            }
-        ]
+    getBasicProperties(entityId: string): any[] {
+        return PropertyFactory.getBasicProperties(entityId)
     }
 }
 

@@ -1,3 +1,5 @@
+import { DataTypeFactory } from './Utils/DataTypeFactory'
+import { PropertyFactory } from './Utils/PropertyFactory'
 
 export interface DataType {
   key: string;
@@ -71,4 +73,5 @@ const propertyDataTypes: DataType[] = [
 
 export const getPropertyDataType = (value:string) => {
   return propertyDataTypes.filter((type:DataType) => type.value === value)[0]
+  //return DataTypeFactory.dataTypeIcons.get()
 }

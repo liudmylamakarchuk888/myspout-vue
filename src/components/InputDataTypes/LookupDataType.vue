@@ -1,15 +1,15 @@
 <template>
-  <el-form v-model="value">
+  <el-form v-model="lookupObject">
     <el-form-item>
       <el-select
-        v-model="entityId"
-
+        v-model="lookupObject.lookupEntityId"
         filterable
         remote
         reserve-keyword
         placeholder="Search Entity"
-        :remote-method="remoteMethod"
+        :remote-method="searchEntities"
         :loading="loading"
+        @change="onselectedEntitychanged"
       >
         <el-option
           v-for="item in options"
@@ -20,7 +20,7 @@
       </el-select>
 
       <el-autocomplete
-        v-model="lookupvalue"
+        v-model="lookupObject.lookupValueName"
         :fetch-suggestions="querySearchAsync"
         placeholder="Please input"
         :value-key="'key'"
@@ -40,20 +40,18 @@ import { ApplicationPrefrence } from '@/models/ApplicationPreference'
   name: 'LookupDataType'
 })
 export default class extends Vue {
-  @Prop({ required: true }) public entityid:string
-  @Prop({ required: true }) public lookupvalue:string
+  // @Prop({ required: true }) public entityid:string
+  // @Prop({ required: true }) public lookupvalue:string
   // Lookup type.
-  options= []
-value =''
-  loading= false
-  remoteMethod(query) {
+  options = [];
+  loading = false;
+  searchEntities(query) {
     if (query !== '') {
       this.loading = true
       setTimeout(() => {
         this.loading = false
-        this.options = this.entitiesMap.filter(item => {
-          return item.key.toLowerCase()
-            .indexOf(query.toLowerCase()) > -1
+        this.options = this.entitiesMap.filter((item) => {
+          return item.key.toLowerCase().indexOf(query.toLowerCase()) > -1
         })
       }, 200)
     } else {
@@ -61,56 +59,80 @@ value =''
     }
   }
 
- entitiesMap =[];
- getNodesList(node, childrenKey) {
-   if (!node) { return this.entitiesMap }
+  onselectedEntitychanged(value) {
+    console.log('on select entity chagned ' + value)
+    this.emitLookupChanged()
+  }
 
-   if (node.branch === false) { this.entitiesMap.push({ key: node.name, value: node.id }) }
+  emitLookupChanged() {
+    console.log('emit lookupchanged ' + JSON.stringify(this.lookupObject))
+    this.$emit('lookupchanged', this.lookupObject)
+  }
 
-   if (node[childrenKey].length > 0) {
-     node[childrenKey].forEach((n) => {
-       this.getNodesList(n, childrenKey)
+  entitiesMap = [];
+  getNodesList(node, childrenKey) {
+    if (!node) {
+      return this.entitiesMap
+    }
 
-       //  Object.entries(  rs).forEach((x) => {
-       //      this.entitiesMap.push({ kye: x.name, value: x.id })
-       //    })
-     })
-   }
- }
+    if (node.branch === false) {
+      this.entitiesMap.push({ key: node.name, value: node.id })
+    }
 
-// selectedEntity=[]
-selectedLookupValue=[]
-private async getEntititsMap() {
-  return await this.getNodesList(AppCacheModule.Entities, 'children')
-}
+    if (node[childrenKey].length > 0) {
+      node[childrenKey].forEach((n) => {
+        this.getNodesList(n, childrenKey)
 
-querySearchAsync(queryString, cb) {
-  debugger
-  if (!this.entityId) { return }
-
-  const selectedEntity = this.entityId
-  clearTimeout(this.timeout)
-  this.timeout = setTimeout(async() => {
-    const entityid = selectedEntity
-    debugger
-    const results = await AppCacheModule.getEntityByQueryString(entityid, '', 50)
-    cb(results)
-  }, 1000 * Math.random())
-}
-
-// Auto Complete.
-
-  state= ''
-  timeout= null
-
-  createFilter(queryString) {
-    return (link) => {
-      return (link.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+        //  Object.entries(  rs).forEach((x) => {
+        //      this.entitiesMap.push({ kye: x.name, value: x.id })
+        //    })
+      })
     }
   }
 
+  // selectedEntity=[]
+  selectedLookupValue = [];
+  private async getEntititsMap() {
+    return await this.getNodesList(AppCacheModule.Entities, 'children')
+  }
+
+  querySearchAsync(queryString, cb) {
+    const selectedEntity = this.lookupObject.lookupEntityId
+    if (!selectedEntity) {
+      return
+    }
+    clearTimeout(this.timeout)
+    this.timeout = setTimeout(async() => {
+      const entityid = selectedEntity
+
+      const results = await AppCacheModule.getEntityByQueryString(
+        entityid,
+        '',
+        50
+      )
+      cb(results)
+    }, 1000 * Math.random())
+  }
+
+  // Auto Complete.
+
+  state = '';
+  timeout = null;
+
+  createFilter(queryString) {
+    return (link) => {
+      return link.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+    }
+  }
+
+  lookupObject: {
+    lookupEntityId?: string
+    lookupValueName?: string
+  } = {} as any;
+
   handleSelect(item) {
-    console.log(item)
+    console.log('selected value ' + item)
+    this.emitLookupChanged()
   }
 
   mounted() {

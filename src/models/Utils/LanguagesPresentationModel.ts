@@ -7,7 +7,6 @@ export class LanguagesPresentationModel {
 
     public static readonly PRIMARY_LANGUAGE_INITIALS: string = "en";
 
-    /**************************** Global **************************/
     public static readonly RECENT_DOCUMENTS: string = "RECENT_DOCUMENTS";
 
     public static readonly NO_RECENT_DOCUMENTS_EXPLANATION: string = "NO_RECENT_DOCUMENTS_EXPLANATION";
@@ -2665,10 +2664,10 @@ export class LanguagesPresentationModel {
     private _currentLocale: string = 'en';
 
 
-    private _languages: Map<string, any> = {} as any;
+    private _languages: Map<string, any> = new Map<string,any>();
 
 
-    private _languagesMap: Map<string, any> = {} as any
+    private _languagesMap: Map<string, any> =new Map<string,any>();
 
 
 
@@ -2678,8 +2677,13 @@ export class LanguagesPresentationModel {
      */
     private constructor() {
         AppCacheModule.FlexSettings.translations.forEach((lang) => {
-            this.languagesMap.set(lang.key, lang.value)
+            console.log('lang type is '+ typeof(lang))
+            let newlangmap = new KeyValue(lang.key,lang.value)
+            this.languagesMap.set(newlangmap.key,newlangmap.value);
         })
+
+        console.log('langMap: '+ JSON.stringify(this.languagesMap));
+        
 
     }
     public static getInstance(): LanguagesPresentationModel {
@@ -2722,12 +2726,12 @@ export class LanguagesPresentationModel {
 
     }
 
-    public getLocalizedstring(key: string): string {
-        return (this.languagesMap.get(this.currentLocale)[key]         
+    public getLocalizedString(key: string): string {
+        return (this.languagesMap.get(this.currentLocale)[key]    )     
     }
 
 
-    public getLocalizedstringOfPrimaryLanguage(key: string): string {
+    public getLocalizedStringOfPrimaryLanguage(key: string): string {
         return this.languagesMap.get(LanguagesPresentationModel.PRIMARY_LANGUAGE_INITIALS)[key];
 
     }
@@ -2739,14 +2743,14 @@ export class LanguagesPresentationModel {
     }
 
 
-    public changeLocale() {
-        if (this.languagesMap.size == 2) {
-            if (this.currentLocale == this.languagesMap[0]) {
-                this.currentLocale = this.languagesMap[1];
-            }
-            else {
-                this.currentLocale = this.languagesMap[0];
-            }
-        }
-    }
+    // public changeLocale() {
+    //     if (this.languagesMap.size == 2) {
+    //         if (this.currentLocale == this.languagesMap[0]) {
+    //             this.currentLocale = this.languagesMap[1];
+    //         }
+    //         else {
+    //             this.currentLocale = this.languagesMap[0];
+    //         }
+    //     }
+    // }
 }

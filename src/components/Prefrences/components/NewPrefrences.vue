@@ -96,14 +96,24 @@
       </el-row>
       <el-row>
         <el-col>
-          <LookupDataType
-            v-if="form.dataType == 9"
-            :entityid.sync="form.lookupEntityId"
-            :lookupvalue.sync="form.lookupValueName"
-          />
-          <SingleLineDataType v-else />
-          {{ form }}
-          {{ lookupData }}
+          <div v-if="form.dataType">
+            <LookupDataType
+              v-if="form.dataType == 9"
+              v-model="lookupObject"
+              @lookupchanged="onLookupChanged"
+            />
+            <SingleLineDataType v-else />
+          </div>
+        </el-col>
+      </el-row>
+
+      <el-row>
+        <el-col>
+          <el-collapse>
+            <el-collapse-item title="Model View">
+              <JsonEditor :value="form" />
+            </el-collapse-item>
+          </el-collapse>
         </el-col>
       </el-row>
       <el-row>
@@ -148,9 +158,12 @@ import { AppCacheModule } from '@/store/modules/appCache'
 import { ApplicationPrefrence } from '@/models/ApplicationPreference'
 import LookupDataType from '@/components/InputDataTypes/LookupDataType.vue'
 import SingleLineDataType from '@/components/InputDataTypes/SingleLineDataType.vue'
+
+import JsonEditor from '@/components/JsonEditor/index.vue'
+import { on } from 'events'
 @Component({
   name: 'NewPerfrences',
-  components: { LookupDataType, SingleLineDataType }
+  components: { LookupDataType, SingleLineDataType, JsonEditor }
 })
 export default class extends Vue {
   // @Prop({ required: true, default: false })
@@ -184,16 +197,24 @@ export default class extends Vue {
     }
   ];
 
-  // form={
-  //   displayName: '',
-  //   description: '',
-  //   dataType: '',
-  //   systemName: ''
-  // }
+ checkDisplayName = (rule, value, callback) => {
+   if (!value) {
+     return callback(new Error('Please input the displayName'))
+   }
+   setTimeout(() => {
+     const existingName = AppCacheModule.Prefrences.find((x) => x.displayName.toLowerCase() === value.toLowerCase())
+
+     if (existingName) {
+       callback(new Error('this ' + value + ' already exists. choose another name.'))
+     } else {
+       callback()
+     }
+   }, 1000)
+ }
 
   rules = {
     displayName: [
-      { required: true, message: 'Please input form name', trigger: 'blur' }
+      { required: true, validator: this.checkDisplayName, trigger: 'blur' }
     ],
     dataType: [
       {
@@ -233,7 +254,6 @@ export default class extends Vue {
   }
 
   onSelectionChanged(value) {
-    debugger
     this.getImage(value)
   }
 
@@ -242,9 +262,27 @@ export default class extends Vue {
     return `/img/typPrv/${property.key}.png`
   }
 
-  mounted() {
-    // has only valid types.
-  }
+    lookupObject:{
+        lookupEntityId?: string
+        lookupValueName?: string
+    }={} as any
+
+    private onLookupChanged(obj) {
+      alert('on lookup changed received' + JSON.stringify(obj))
+      this.form.lookupEntityId = obj.lookupEntityId
+      this.form.lookupValueName = obj.lookupValueName
+    }
+
+    mounted() {
+      // has only valid types.
+    }
+
+    // get systemName() {
+    //   if (!this.systemName) {
+    //     this.form.systemName = this.form.displayName
+    //   }
+    //   return this.form.displayName.toString().replace(' ', '')
+    // }
 }
 </script>
 
