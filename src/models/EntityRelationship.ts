@@ -1,6 +1,7 @@
 
-export class EntityRelationship {
-    children: EntityRelationship[]=[];
-    entityId: string|undefined;
-    relationshipPropertyName: string|undefined;
+export interface EntityRelationship {
+    children: EntityRelationship[];
+    entityId: string;
+    relationshipPropertyName: string;
+    parent: string;
 }

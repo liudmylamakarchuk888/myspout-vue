@@ -1,4 +1,5 @@
-import { BaseContent, IBaseContent } from './BaseContent';
+import { BaseContent } from './BaseContent';
+import { LanguageTranslation } from './LanguageTranslation';
 import { KeyValue } from './KeyValue';
 import { Status } from './Status';
 import { Restriction } from './Restriction';
@@ -7,11 +8,8 @@ import { EntityRelationship } from './EntityRelationship';
 import { CreateUUID } from '@/utils/helper';
 import { UserModule } from '@/store/modules/user';
 import { Notification } from './Notification';
-import { PropertyFactory } from './Utils/PropertyFactory';
-import { ManagementPolicyType } from './CreationPolicyType';
-import { BaseProperty, LookupProperty } from './Properties';
-import { DataUtils } from './Utils/DataUtils';
-import { Model } from './DataModel';
+import { newGuid } from './Utils';
+import { AppCacheModule } from '@/store/modules/appCache.ts'
 
 // public interface IBaseCreatableContent extends IBaseContent {
 
@@ -138,66 +136,75 @@ export class Entity extends BaseContent {
         this.dateCreated = new Number(new Date())
         this.dateModified = new Number(new Date())
     }
-    clientID: string;
-    newInstance: boolean;
+    clientID: string = CreateUUID();
+    newInstance: boolean = false; 
+
     createNotification: Notification;
     createdBy: string = UserModule.name;
     dateCreated: Number = new Number(new Date());
     dateModified: Number = new Number(new Date());
     defaultColumns: KeyValue[] = [];
-    deleteNotification: Notification | undefined
-    discipline: KeyValue | undefined
-    entityRelationship: EntityRelationship = {} as any
+    deleteNotification: Notification = {} as Notification;
+    discipline: KeyValue = {} as KeyValue;
+    entityRelationship: EntityRelationship[] = [] as any 
     lookupDefaultNameFormat: TextAssembly = {} as any;
     modifiedBy: string = UserModule.name;
     modifyNotification: Notification = {} as any;
     reportFilter: Restriction = {} as any;
-    properties: BaseProperty[] | undefined;
-    sql: string | undefined;
+    properties: BaseProperty[] = [] as any;
+    sql: string = '';
     sqlConnection: KeyValue = {} as any;
     status: Status[] = [];
-    milestonesTableProperty: string | undefined
-    milestonesTableDueDateProperty: string | undefined
-    milestonesTableStatusProperty: string | undefined
-    milestonesTableStatusDeliverableStatusProperty: string | undefined
-    milestonesTableDescriptionProperty: string | undefined
-    milestonesTableOwnerProperty: string | undefined
-    activityOwnerProperty: string | undefined
-    goalsProperty: string | undefined
+    milestonesTableProperty: string = '';
+    milestonesTableDueDateProperty: string = '';
+    milestonesTableStatusProperty: string = '';
+    milestonesTableStatusDeliverableStatusProperty: string = '';
+    milestonesTableDescriptionProperty: string = '';
+    milestonesTableOwnerProperty: string = '';
+    activityOwnerProperty: string = '';
+    goalsProperty: string = '';
     enableForExecutionCenter: boolean = false;
     allowCreatingReport: boolean = false;
     canChangeAttachmentSupport: boolean = false;
     canChangeFollowersSupport: boolean = false;
     canChangeIntegrationSupport: boolean = false;
-    creationPolicyType!: number
-    createURL: string | undefined
-    databaseTableName: string | undefined;
-    defaultURL: string | undefined
-    deleted: boolean | undefined;
-    editURL: string | undefined
-    icon: string | undefined;
-    id!: string
-    listURL: string | undefined
-    managementPolicy: number | undefined;
-    managementGenericURL: string | undefined
-    outOfTheBox: boolean | undefined
-    supportAttachments: boolean | undefined
-    supportIntegration: boolean | undefined
-    appearInRecentVisit: boolean = true
-    primaryNamePropertySystemName: string | undefined
-    cfgItemUniquePropertySystemName: string | undefined
-    reportDisplayIndexPosition: number | undefined
-    supportFollowers: boolean | undefined
-    supportTimeTracking: boolean | undefined
-    supportIndexPosition: boolean | undefined
-    supportTree: boolean | undefined
-    supportWorkflowConfiguration: boolean | undefined
-    virtual: boolean | undefined
-    supportFormConfiguration: boolean | undefined
-    entityName: string | undefined
-    itemType: number | undefined
-
-
+    creationPolicyType: number = 0;
+    createURL: string = '';
+    databaseTableName: string = '';
+    defaultURL: string = ''
+    deleted: boolean = false;
+    editURL: string = '';
+    icon: string = '';
+    id!: string;
+    listURL: string = ''
+    managementPolicy: number = 0;
+    managementGenericURL: string = '';
+    outOfTheBox: boolean = false;
+    supportAttachments: boolean = false;
+    supportIntegration: boolean = false;
+    appearInRecentVisit: boolean = true;
+    primaryNamePropertySystemName: string = '';
+    cfgItemUniquePropertySystemName: string = '';
+    reportDisplayIndexPosition: number = 0;
+    supportFollowers: boolean = false;
+    supportTimeTracking: boolean = false;
+    supportIndexPosition: boolean = false;
+    supportTree: boolean = false; 
+    supportWorkflowConfiguration: boolean = false;
+    virtual: boolean = false; 
+    supportFormConfiguration: boolean = false;
+    entityName: string = '';
+    itemType: number = 0;
+    languageTranslations: LanguageTranslation[] = 
+        AppCacheModule.FlexSettings.languages.reduce((total:any, lang:KeyValue) => {
+            if (lang.value !== AppCacheModule.FlexSettings.currentLocale)
+                return [...total, {
+                    description: '',
+                    displayName: '',
+                    language: lang.key
+                }]
+            else return total
+        }, []);
 
     public createEntityHandler(obj: Entity): void {
 
