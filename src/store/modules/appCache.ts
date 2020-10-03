@@ -131,7 +131,7 @@ class AppCacheMod extends VuexModule implements IAppCache {
 
     @Action
     public async getEntityByQueryString(entityId: string, queryString: string, pageSize: number) {
-        debugger
+      
         const rs = await getEntityDataByQueryString(entityId);
         return rs;
     }

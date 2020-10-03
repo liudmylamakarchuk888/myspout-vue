@@ -7,7 +7,7 @@
       >
         <el-button @click="handleClick(item)" class="list-button">
           <span class="item-content">
-            <img
+           <img
               v-if="iconUrl(item.dataType.value)"
               :src="require('@/assets/' + iconUrl(item.dataType.value))"
             >
@@ -17,6 +17,7 @@
               class="el-icon-set-up"
             />
             <span style="padding-left: 5px;">{{ item.displayName }}</span>
+            {{iconUrl(item.dataType.value)}}
           </span>
         </el-button>
       </div>
@@ -34,6 +35,7 @@ import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 // import { AppDataModule } from '@/store/modules/appData.ts'
 import { getPropertyDataType } from '@/models/DataType.ts'
 import { EntitiesModule } from '@/store/modules/entities.ts'
+import { DataTypeFactory } from '@/models/Utils/DataTypeFactory';
 
 @Component({
   name: 'MiniTree',
@@ -70,8 +72,13 @@ export default class extends Vue {
   }
 
   iconUrl(key:string) {
-    const dataType = getPropertyDataType(key)
-    return dataType ? dataType.icon : ''
+    // const dataType = getPropertyDataType(key)
+    // debugger
+    // return dataType ? dataType.icon : ''
+    debugger
+    const dataTypeicon = DataTypeFactory.getDataTypeIcon(key)
+    console.log('icon:'+ dataTypeicon)
+    return dataTypeicon
   }
 
   mounted() {

@@ -68,9 +68,9 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import miniTree from '@/components/Tables/miniTree'
-import authMainView from './components/mainView'
-import RolesView from './components/RolesView'
+import miniTree from '@/components/Tables/miniTree.vue'
+import authMainView from './components/mainView.vue'
+import RolesView from './components/RolesView.vue'
 import { AppCacheModule } from '@/store/modules/appCache'
 @Component({
   name: 'authorization',

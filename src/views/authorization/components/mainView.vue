@@ -176,7 +176,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import miniTree from '@/components/Tables/miniTree'
+import miniTree from '@/components/Tables/miniTree.vue'
 @Component({
   name: 'authMainView',
   components: { miniTree }

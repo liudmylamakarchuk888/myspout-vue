@@ -19,10 +19,10 @@ export class MyWorkPoliciesAssignmentOrder
 }
 export class DisplayLanguage extends BaseGeneralApplicationInformation {
 
-    id: number;
-    name: string;
-    active: boolean;
-    defaultLanguage: boolean;
+    id: number|undefined;
+    name: string|undefined;
+    active: boolean|undefined;
+    defaultLanguage: boolean|undefined;
     disabled: boolean = false;
 
     /**

@@ -871,6 +871,7 @@ export default class extends Vue {
   }
 
   createHandler(formName: string) {
+    debugger
     const newEntity = new Entity()
     newEntity.displayName = this.form.displayName
     newEntity.systemName = 'Cse_' + newEntity.displayName

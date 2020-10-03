@@ -1,5 +1,5 @@
 import { BaseDataType } from "./BaseDataType";
-export interface EntityBasedDataType
+export class EntityBasedDataType
     extends BaseDataType {
-    lookupClassName: string;
+    lookupClassName!: string;
 }

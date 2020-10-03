@@ -1,4 +1,4 @@
-export interface TextAssembly {
-    parts: any[];
+export class TextAssembly {
+    parts: any[]=[];
 
 }
