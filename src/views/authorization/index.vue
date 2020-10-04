@@ -4,7 +4,7 @@
     size="mini"
   >
     <el-aside class="elaside">
-      <miniTree
+      <!-- <miniTree
         :tree-data="nodelist"
         :type-options="typeOptions"
         show-search="false"
@@ -35,9 +35,9 @@
             </el-form-item>
           </el-form>
         </div>
-      </miniTree>
+      </miniTree> -->
     </el-aside>
-    <el-dialog
+    <!-- <el-dialog
       title="New Authorization tree "
       :visible.sync="showNew"
       center
@@ -57,19 +57,20 @@
       center
     >
       <RolesView />
-    </el-dialog>
+    </el-dialog> -->
 
     <el-main class="elmain">
-      <authMainView />
+      <!-- <authMainView /> -->
+      under construction
     </el-main>
   </el-container>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import miniTree from '@/components/Tables/miniTree'
-import authMainView from './components/mainView'
-import RolesView from './components/RolesView'
+import miniTree from '@/components/Tables/miniTree.vue'
+import authMainView from './components/mainView.vue'
+import RolesView from './components/RolesView.vue'
 import { AppCacheModule } from '@/store/modules/appCache'
 @Component({
   name: 'authorization',

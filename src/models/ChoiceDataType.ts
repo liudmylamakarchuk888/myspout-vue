@@ -1,5 +1,5 @@
 import { BaseDataType } from "./BaseDataType";
-export interface ChoiceDataType
-    extends BaseDataType {
-    options: ChoiceDataType[];
+import { ChoiceOption } from './ChoiceOption';
+export class ChoiceDataType extends BaseDataType {
+    options:ChoiceOption[] = [];
 }

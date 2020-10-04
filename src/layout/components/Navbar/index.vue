@@ -50,8 +50,8 @@
         <el-button
           type="Text"
           class="button right-menu-item hover-effect"
-
           icon="el-icon-refresh"
+          @click="onReloadSettingsClick"
         >
           Reload Settings
         </el-button>
@@ -97,6 +97,7 @@ import HeaderSearch from '@/components/HeaderSearch/index.vue'
 import LangSelect from '@/components/LangSelect/index.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
 import SizeSelect from '@/components/SizeSelect/index.vue'
+import { AppCacheModule } from '@/store/modules/appCache'
 
 @Component({
   name: 'Navbar',
@@ -124,7 +125,7 @@ export default class extends Vue {
   }
 
   get userName() {
-    return 'Administrator'
+    return UserModule.name
   }
 
   private toggleSideBar() {
@@ -138,6 +139,25 @@ export default class extends Vue {
   private async logout() {
     await UserModule.LogOut()
     this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+  }
+
+  private onReloadSettingsClick() {
+    this.$confirm('This will remove unSaved changes. Continue?', 'Warning', {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    }).then(async () => {
+      this.$message({
+        type: 'success',
+        message: 'Reloading cache.'
+      })
+      await AppCacheModule.getCache()
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: 'Reload cache cancelled.'
+      })
+    })
   }
 }
 </script>

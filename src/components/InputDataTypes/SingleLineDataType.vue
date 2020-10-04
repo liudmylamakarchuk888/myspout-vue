@@ -17,6 +17,5 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
   name: 'SingleLineDataType'
 })
 export default class extends Vue {
-  @Prop({ default: '1', required: true }) private dataType:Number;
 }
 </script>

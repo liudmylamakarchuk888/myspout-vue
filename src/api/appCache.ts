@@ -60,12 +60,7 @@ export const getFlexApplicationPreferences = () =>
 
     })
 
-export const getForms = () =>
-    request({
-        url: '/getForms',
-        method: 'get',
 
-    })
 export const getMyWorkCalendars = () =>
     request({
         url: '/getMyWorkCalendars',
@@ -127,7 +122,27 @@ export const getApplicationPreferences = () =>
     })
 
 
+export const getDisplayLanguages = () =>
+    request({
+        url: '/getDisplayLanguages',
+        method: 'get',
 
+    })
+
+//
+
+export const getEntityDataByQueryString = (entityId: string) =>
+    request({
+        url: '/getEntityDataByQueryString/' + entityId,
+        method: 'get'
+    })
+
+export const getEntityDataByQueryString1 = (entityId: string, queryString: string, pageSize: number) =>
+    request({
+        url: '/getEntityDataByQueryString',
+        method: 'get',
+        params: [{ entityId: entityId, queryString: queryString, pageSize: pageSize }]
+    })
 
 
 

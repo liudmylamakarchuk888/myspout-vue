@@ -1,8 +1,8 @@
 stages:
   - build
-  - deploy
 
-build prod:
+
+build:
   image: node:12.18.4-stretch
   stage: build
   only:

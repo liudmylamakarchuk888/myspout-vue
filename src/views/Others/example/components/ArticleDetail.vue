@@ -163,7 +163,6 @@ import { TagsViewModule, ITagView } from '@/store/modules/tags-view'
 import MaterialInput from '@/components/MaterialInput/index.vue'
 import Sticky from '@/components/Sticky/index.vue'
 import Tinymce from '@/components/Tinymce/index.vue'
-import UploadImage from '@/components/UploadImage/index.vue'
 import Warning from './Warning.vue'
 import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
 import { Form } from 'element-ui'
@@ -177,7 +176,7 @@ import { Form } from 'element-ui'
     MaterialInput,
     Sticky,
     Tinymce,
-    UploadImage,
+    
     Warning
   }
 })

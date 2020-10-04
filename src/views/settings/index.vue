@@ -37,11 +37,14 @@
         >
           <el-row>
             <el-col>
-              Orchestrators are the components responsible for running integration operations. After installing new orchestrators, add them to this list.</b-col>
+              Orchestrators are the components responsible for running integration operations. After installing new orchestrators, add them to this list.
             </el-col>
           </el-row>
           <!-- <Orchestrators /> -->
+<<<<<<< HEAD
       
+=======
+>>>>>>> 83d805e4397dab21f574a2c7faa37319ed5755c9
         </el-collapse-item>
         <el-collapse-item
           title="Server Health"
@@ -105,7 +108,6 @@ activeTab:any=''
 </script>
 
 <style >
-
 
 //OTHER Styles
 

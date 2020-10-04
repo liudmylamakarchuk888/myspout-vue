@@ -1,192 +1,303 @@
 <template>
-  <el-container class="container">
-    <el-row type="flex" style="flex-direction: column">
+  <el-form
+    ref="newEntityform"
+    :rules="rules"
+    class="container"
+    :model="form"
+  >
+    <el-row
+      type="flex"
+      style="flex-direction: column"
+    >
       <el-col style="padding: 20px">
-        <el-row type="flex" justify="start">
-          <el-col :span="12">
-            <el-input
-              v-model="entityName"
-              placeholder="Type display name here"
-              style="min-width: 245px; font-size: 23px"
-            />
-          </el-col>
+        <el-row
+          type="flex"
+          justify="start"
+          style="margin-bottom: 5px"
+        >
+          <el-form-item
+            size="normal"
+            reset-field
+            prop="displayName"
+          >
+            <el-col :span="12">
+              <el-input
+                v-model="form.displayName"
+                placeholder="Type display name here"
+                style="min-width: 245px; font-size: 23px"
+              />
+            </el-col>
+          </el-form-item>
         </el-row>
-        <el-row type="flex" justify="start">
-          <el-col :span="5">
-            <el-input
-              v-model="description"
-              class="description"
-              placeholder="Type description here"
-              style="min-width: 245px"
-            />
-          </el-col>
+        <el-row
+          type="flex"
+          justify="start"
+          style="margin-top: 19px"
+        >
+          <el-form-item prop="description">
+            <el-col :span="5">
+              <el-input
+                v-model="form.description"
+                class="description"
+                placeholder="Type description here"
+                style="min-width: 245px"
+              />
+            </el-col>
+          </el-form-item>
         </el-row>
       </el-col>
       <el-col style="height: 100%; overflow: auto">
-        <el-row style="padding: 0 40px; padding-left: 60px">
-          <el-col class="hebrew-title"> Hebrew </el-col>
-        </el-row>
-        <el-row
-          class="hebrew-content"
-          style="font-weight: 500; padding-left: 80px"
+        <div
+          v-for="lang in languages"
+          :key="lang.key"
+          style="margin-bottom: 15px"
         >
-          <el-col>
-            <el-row class="input-container" type="flex">
-              <el-col :span="2" style="min-width: 113px; font-size; 15px;">
-                Display name
-              </el-col>
-              <el-col :span="9">
-                <el-input
-                  v-model="hebrew.name"
-                  placeholder="he name"
-                  size="mini"
-                  style="min-width: 200px"
-                />
-              </el-col>
-            </el-row>
-            <el-row class="input-container" type="flex">
-              <el-col :span="2" style="min-width: 113px; font-size: 15px">
-                Description
-              </el-col>
-              <el-col :span="9">
-                <el-input
-                  v-model="hebrew.discription"
-                  type="textarea"
-                  :rows="2"
-                  resize="none"
-                  style="min-width: 200px"
-                />
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-        <el-collapse
-          v-model="activeCollapseName"
-          style="padding: 40px; padding-top: 20px"
-          @change="handleChange"
-        >
-          <el-collapse-item title="Usages" name="1">
+          <el-row style="padding: 0 40px; padding-left: 60px">
+            <el-col class="lang-title">
+              {{ lang.key }}
+            </el-col>
+          </el-row>
+          <el-row
+            class="lang-content"
+            style="font-weight: 500; padding-left: 80px"
+          >
+            <el-col>
+              <el-row
+                class="input-container"
+                type="flex"
+              >
+                <el-col
+                  :span="2"
+                  style="min-width: 113px; font-size; 15px;"
+                >
+                  Display name
+                </el-col>
+                <el-form-item
+                  reset-field
+                  :prop="`lang.${lang.key}.displayName`"
+                >
+                  <el-col :span="9">
+                    <el-input
+                      v-model="form.lang[lang.key].displayName"
+                      placeholder="he name"
+                      size="mini"
+                      style="min-width: 200px"
+                    />
+                  </el-col>
+                </el-form-item>
+              </el-row>
+              <el-row
+                class="input-container"
+                type="flex"
+              >
+                <el-col
+                  :span="2"
+                  style="min-width: 113px; font-size: 15px"
+                >
+                  Description
+                </el-col>
+                <el-form-item prop="hebrewDesc">
+                  <el-col :span="9">
+                    <el-input
+                      v-model="form.lang[lang.key].description"
+                      type="textarea"
+                      :rows="2"
+                      resize="none"
+                      style="min-width: 200px"
+                    />
+                  </el-col>
+                </el-form-item>
+              </el-row>
+            </el-col>
+          </el-row>
+        </div>
+        <el-collapse style="padding: 40px; padding-top: 10px">
+          <el-collapse-item
+            title="Usages"
+            name="1"
+          >
             <div class="collapse-content">
               <div style="font-size: 14px; padding-bottom: 5px">
                 Users can create items by:
               </div>
-              <el-radio-group v-model="usages.createMethod" class="radio-group">
-                <el-radio :label="'dialog'">
-                  Create New Item dialog box
-                </el-radio>
-                <el-radio :label="'table'"> Adding rows to a table </el-radio>
-                <el-radio :label="'adminPage'"> Administration Pages </el-radio>
-              </el-radio-group>
-              <el-checkbox-group
-                v-model="usages.checkList"
-                text-color="red"
-                class="checkbox-group"
-                style="margin-top: 30px"
-              >
-                <el-checkbox
-                  label="Users can change item status using a workflow and integrate it to external systems (cannot be unselelcted)"
-                />
-                <el-checkbox
-                  label="Users can attach files to items (cannot be unselected)"
-                />
-                <el-checkbox
-                  label="Users can add items to follow list(cannot be unselected)"
-                />
-                <el-checkbox
-                  label="Users can integrate this entity with third party integrations(cannot be unselected)"
-                />
-                <el-checkbox
-                  label="Users can change items order inside tables"
-                />
-                <el-checkbox
-                  label="This entity will appear in recent visited items"
-                />
-              </el-checkbox-group>
+              <el-form-item prop="usagesCreateMethod">
+                <el-radio-group
+                  v-model="form.usages.creationPolicyType"
+                  class="radio-group"
+                >
+                  <el-radio :label="1">
+                    Create New Item dialog box
+                  </el-radio>
+                  <el-radio :label="2">
+                    Adding rows to a table
+                  </el-radio>
+                  <el-radio :label="3">
+                    Administration Pages
+                  </el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item prop="usagesCheckList">
+                <el-checkbox-group
+                  v-model="form.usages.checkList"
+                  text-color="red"
+                  class="checkbox-group"
+                  style="margin-top: 30px"
+                >
+                  <el-checkbox label="supportWorkflowConfiguration">
+                    Users can change item status using a workflow and integrate
+                    it to external systems (cannot be unselelcted)
+                  </el-checkbox>
+                  <el-checkbox label="supportAttachments">
+                    Users can attach files to items (cannot be unselected)
+                  </el-checkbox>
+                  <el-checkbox label="supportFollowers">
+                    Users can add items to follow list(cannot be unselected)
+                  </el-checkbox>
+                  <el-checkbox label="supportIntegration">
+                    Users can integrate this entity with third party
+                    integrations(cannot be unselected)
+                  </el-checkbox>
+                  <el-checkbox label="supportIndexPosition">
+                    Users can change items order inside tables
+                  </el-checkbox>
+                  <el-checkbox label="appearInRecentVisit">
+                    This entity will appear in recent visited items
+                  </el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
             </div>
           </el-collapse-item>
-          <el-collapse-item title="Administration Pages Settings" name="2">
-            <div class="collapse-content" style="font-size: 14px">
+          <el-collapse-item
+            title="Administration Pages Settings"
+            name="2"
+          >
+            <div
+              class="collapse-content"
+              style="font-size: 14px"
+            >
               <div style="font-size: 15px">
                 Administrators can manage items by:
               </div>
-              <el-radio-group
-                v-model="admin.manageMethod"
-                class="radio-group"
-                :disabled="usages.createMethod !== 'adminPage'"
-              >
-                <el-radio
-                  :label="'list'"
-                  style="padding-bottom: 20px; padding-top: 20px"
+              <el-form-item prop="adminManageMethod">
+                <el-radio-group
+                  v-model="form.admin.managementPolicy"
+                  class="radio-group"
+                  :disabled="form.usages.creationPolicyType !== 3"
                 >
-                  List
-                </el-radio>
-                <el-row type="flex" :gutter="30" class="input-container">
-                  <el-col :span="4" style="min-width: 205px">
-                    <el-radio :label="'rootTree'">
-                      Tree (This entity as root)
-                    </el-radio>
-                  </el-col>
-                  <el-col :span="2" style="min-width: 100px">
-                    <el-button
-                      plain
-                      size="mini"
-                      :disabled="
-                        admin.manageMethod !== 'rootTree' ||
-                        usages.createMethod !== 'adminPage'
-                      "
-                      @click="popupModal('rootIcon')"
+                  <el-radio
+                    :label="0"
+                    style="padding-bottom: 20px; padding-top: 20px"
+                  >
+                    List
+                  </el-radio>
+                  <el-row
+                    type="flex"
+                    :gutter="30"
+                    class="input-container"
+                  >
+                    <el-col
+                      :span="4"
+                      style="min-width: 205px"
                     >
-                      Icon...
-                    </el-button>
-                  </el-col>
-                  <el-col :span="2" style="min-width: 100px">
-                    <el-button
-                      plain
-                      :disabled="
-                        admin.manageMethod !== 'rootTree' ||
-                        usages.createMethod !== 'adminPage'
-                      "
-                      size="mini"
-                      @click="popupModal('relationship')"
+                      <el-radio :label="1">
+                        Tree (This entity as root)
+                      </el-radio>
+                    </el-col>
+                    <el-col
+                      :span="2"
+                      style="min-width: 100px"
                     >
-                      Define...
-                    </el-button>
-                  </el-col>
-                </el-row>
-                <el-row type="flex" :gutter="30" class="input-container">
-                  <el-col :span="4" style="min-width: 240px">
-                    <el-radio :label="'tree'">
-                      Tree (Another entity is the root)
-                    </el-radio>
-                  </el-col>
-                  <el-col :span="2" style="min-width: 100px">
-                    <el-button
-                      plain
-                      :disabled="admin.manageMethod !== 'tree'"
-                      size="mini"
-                      @click="popupModal('tree')"
+                      <el-button
+                        plain
+                        size="mini"
+                        :disabled="
+                          form.admin.managementPolicy !== 1 ||
+                            form.usages.creationPolicyType !== 3
+                        "
+                        @click="popupModal('rootIcon')"
+                      >
+                        Icon...
+                      </el-button>
+                    </el-col>
+                    <el-col
+                      :span="2"
+                      style="min-width: 100px"
                     >
-                      Icon...
-                    </el-button>
-                  </el-col>
-                </el-row>
-                <el-row type="flex" :gutter="30" class="input-container">
-                  <el-col :span="4" style="min-width: 240px">
-                    <el-radio :label="'custom'"> Custom (Input URL) </el-radio>
-                  </el-col>
-                  <el-col :span="4" style="min-width: 100px">
-                    <el-input
-                      v-model="admin.customUrl"
-                      :disabled="admin.manageMethod !== 'custom'"
-                      plain
-                      size="mini"
-                      style="min-width: 150px"
-                    />
-                  </el-col>
-                </el-row>
-                <el-radio :label="'setItems'"> Configuration Items </el-radio>
-              </el-radio-group>
-              <div class="require-content" style="padding-left: 25px">
+                      <el-button
+                        plain
+                        :disabled="
+                          form.admin.managementPolicy !== 1 ||
+                            form.usages.creationPolicyType !== 3
+                        "
+                        size="mini"
+                        @click="popupModal('relationship')"
+                      >
+                        Define...
+                      </el-button>
+                    </el-col>
+                  </el-row>
+                  <el-row
+                    type="flex"
+                    :gutter="30"
+                    class="input-container"
+                  >
+                    <el-col
+                      :span="4"
+                      style="min-width: 240px"
+                    >
+                      <el-radio :label="2">
+                        Tree (Another entity is the root)
+                      </el-radio>
+                    </el-col>
+                    <el-col
+                      :span="2"
+                      style="min-width: 100px"
+                    >
+                      <el-button
+                        plain
+                        :disabled="form.admin.managementPolicy !== 2"
+                        size="mini"
+                        @click="popupModal('tree')"
+                      >
+                        Icon...
+                      </el-button>
+                    </el-col>
+                  </el-row>
+                  <el-row
+                    type="flex"
+                    :gutter="30"
+                    class="input-container"
+                  >
+                    <el-col
+                      :span="4"
+                      style="min-width: 240px"
+                    >
+                      <el-radio :label="3">
+                        Custom (Input URL)
+                      </el-radio>
+                    </el-col>
+                    <el-col
+                      :span="5"
+                      style="min-width: 100px"
+                    >
+                      <el-input
+                        v-model="form.admin.customUrl"
+                        :disabled="form.admin.managementPolicy !== 3"
+                        plain
+                        size="mini"
+                        style="min-width: 150px"
+                      />
+                    </el-col>
+                  </el-row>
+                  <el-radio :label="4">
+                    Configuration Items
+                  </el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <div
+                class="require-content"
+                style="padding-left: 25px"
+              >
                 The entity will be displayed in Configuration Items section and
                 not in the discipline section
               </div>
@@ -199,116 +310,20 @@
                   :span="2"
                   style="min-width: 150px; font-size; 15px;"
                   :class="
-                    usages.createMethod !== 'adminPage' ? 'require-content' : ''
+                    form.usages.creationPolicyType !== 3
+                      ? 'require-content'
+                      : ''
                   "
                 >
                   Unique Name property
                 </el-col>
-                <el-col :span="9">
-                  <el-select
-                    v-model="admin.selectUniqueName"
-                    placeholder="Select"
-                    size="mini"
-                    :disabled="admin.manageMethod !== 'setItems'"
-                  >
-                    <el-option
-                      v-for="item in options"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-col>
-              </el-row>
-            </div>
-          </el-collapse-item>
-          <el-collapse-item title="Execution Center Integration" name="3">
-            <div class="collapse-content">
-              <el-row class="input-container" type="flex">
-                <el-col :span="5" style="min-width: 113px" />
-                <el-col :span="9">
-                  <el-checkbox
-                    v-model="execution.enabled"
-                    label="Enabled for Execution Center"
-                  />
-                </el-col>
-              </el-row>
-              <el-row class="input-container" type="flex">
-                <el-col :span="5" style="min-width: 113px; font-weight: 500">
-                  MileStones Table Property
-                </el-col>
-                <el-col :span="9">
-                  <el-input v-model="execution.table" size="mini" />
-                </el-col>
-              </el-row>
-              <el-row class="input-container" type="flex">
-                <el-col :span="5" style="min-width: 113px; font-weight: 500">
-                  Milestones Table DueDate Date Property
-                </el-col>
-                <el-col :span="9">
-                  <el-input v-model="execution.tableData" size="mini" />
-                </el-col>
-              </el-row>
-              <el-row class="input-container" type="flex">
-                <el-col :span="5" style="min-width: 113px; font-weight: 500">
-                  Milestone Table Status Property
-                </el-col>
-                <el-col :span="9">
-                  <el-input v-model="execution.tableStatus" size="mini" />
-                </el-col>
-              </el-row>
-              <el-row class="input-container" type="flex">
-                <el-col :span="5" style="min-width: 113px; font-weight: 500">
-                  Milestones Table Description Textarea Property
-                </el-col>
-                <el-col :span="9">
-                  <el-input v-model="execution.tableDiscription" size="mini" />
-                </el-col>
-              </el-row>
-              <el-row class="input-container" type="flex">
-                <el-col :span="5" style="min-width: 113px; font-weight: 500">
-                  Milestones Table Owner User Property
-                </el-col>
-                <el-col :span="9">
-                  <el-input v-model="execution.tableOwner" size="mini" />
-                </el-col>
-              </el-row>
-              <el-row class="input-container" type="flex">
-                <el-col :span="5" style="min-width: 113px; font-weight: 500">
-                  Activity Owner User Property
-                </el-col>
-                <el-col :span="9">
-                  <el-input v-model="execution.activityOwner" size="mini" />
-                </el-col>
-              </el-row>
-              <el-row class="input-container" type="flex">
-                <el-col :span="5" style="min-width: 113px; font-weight: 500">
-                  Goals MultiLookup Property
-                </el-col>
-                <el-col :span="9">
-                  <el-input v-model="execution.multiLookup" size="mini" />
-                </el-col>
-              </el-row>
-            </div>
-          </el-collapse-item>
-          <el-collapse-item title="Advanced Settings" name="4">
-            <div class="collapse-content">
-              <div>
-                <el-checkbox
-                  v-model="advanced.checkTreeLooks"
-                  label="Items are arranged in a tree (like portfolios)"
-                />
-              </div>
-              <div style="padding-left: 20px; padding-top: 20px">
-                <el-row class="input-container" type="flex">
-                  <el-col :span="2" style="min-width: 113px; font-weight: 500">
-                    Discipline
-                  </el-col>
+                <el-form-item prop="adminUniqueName">
                   <el-col :span="9">
                     <el-select
-                      v-model="advanced.discipline"
+                      v-model="form.admin.uniqueName"
                       placeholder="Select"
                       size="mini"
+                      :disabled="form.admin.managementPolicy !== 4"
                     >
                       <el-option
                         v-for="item in options"
@@ -318,79 +333,312 @@
                       />
                     </el-select>
                   </el-col>
-                </el-row>
-                <el-row type="flex">
-                  <el-col :span="2" style="min-width: 113px; font-weight: 500">
-                    Note
-                  </el-col>
-                  <el-col :span="12">
-                    <el-input
-                      v-model="advanced.note"
-                      type="textarea"
-                      :rows="2"
-                      placeholder="Please input"
-                      resize="none"
+                </el-form-item>
+              </el-row>
+            </div>
+          </el-collapse-item>
+          <el-collapse-item
+            title="Execution Center Integration"
+            name="3"
+          >
+            <div class="collapse-content">
+              <el-row
+                class="input-container"
+                type="flex"
+              >
+                <el-col
+                  :span="5"
+                  style="min-width: 113px"
+                />
+                <el-form-item prop="executionEnabled">
+                  <el-col :span="9">
+                    <el-checkbox
+                      v-model="form.execution.enabled"
+                      label="Enabled for Execution Center"
                     />
                   </el-col>
+                </el-form-item>
+              </el-row>
+              <el-row
+                class="input-container"
+                type="flex"
+              >
+                <el-col
+                  :span="5"
+                  style="min-width: 113px; font-weight: 500"
+                >
+                  MileStones Table Property
+                </el-col>
+                <el-form-item prop="executionTable">
+                  <el-col :span="9">
+                    <el-input
+                      v-model="form.execution.table"
+                      size="mini"
+                    />
+                  </el-col>
+                </el-form-item>
+              </el-row>
+              <el-row
+                class="input-container"
+                type="flex"
+              >
+                <el-col
+                  :span="5"
+                  style="min-width: 113px; font-weight: 500"
+                >
+                  Milestones Table DueDate Date Property
+                </el-col>
+                <el-form-item prop="executionTableData">
+                  <el-col :span="9">
+                    <el-input
+                      v-model="form.execution.tableData"
+                      size="mini"
+                    />
+                  </el-col>
+                </el-form-item>
+              </el-row>
+              <el-row
+                class="input-container"
+                type="flex"
+              >
+                <el-col
+                  :span="5"
+                  style="min-width: 113px; font-weight: 500"
+                >
+                  Milestone Table Status Property
+                </el-col>
+                <el-form-item prop="executionTableData">
+                  <el-col :span="9">
+                    <el-input
+                      v-model="form.execution.tableStatus"
+                      size="mini"
+                    />
+                  </el-col>
+                </el-form-item>
+              </el-row>
+              <el-row
+                class="input-container"
+                type="flex"
+              >
+                <el-col
+                  :span="5"
+                  style="min-width: 113px; font-weight: 500"
+                >
+                  Milestones Table Description Textarea Property
+                </el-col>
+                <el-form-item prop="executionTableDescription">
+                  <el-col :span="9">
+                    <el-input
+                      v-model="form.execution.tableDescription"
+                      size="mini"
+                    />
+                  </el-col>
+                </el-form-item>
+              </el-row>
+              <el-row
+                class="input-container"
+                type="flex"
+              >
+                <el-col
+                  :span="5"
+                  style="min-width: 113px; font-weight: 500"
+                >
+                  Milestones Table Owner User Property
+                </el-col>
+                <el-form-item prop="executionTableOwner">
+                  <el-col :span="9">
+                    <el-input
+                      v-model="form.execution.tableOwner"
+                      size="mini"
+                    />
+                  </el-col>
+                </el-form-item>
+              </el-row>
+              <el-row
+                class="input-container"
+                type="flex"
+              >
+                <el-col
+                  :span="5"
+                  style="min-width: 113px; font-weight: 500"
+                >
+                  Activity Owner User Property
+                </el-col>
+                <el-form-item prop="executionActivityOwner">
+                  <el-col :span="9">
+                    <el-input
+                      v-model="form.execution.activityOwner"
+                      size="mini"
+                    />
+                  </el-col>
+                </el-form-item>
+              </el-row>
+              <el-row
+                class="input-container"
+                type="flex"
+              >
+                <el-col
+                  :span="5"
+                  style="min-width: 113px; font-weight: 500"
+                >
+                  Goals MultiLookup Property
+                </el-col>
+                <el-form-item prop="executionMultiLookup">
+                  <el-col :span="9">
+                    <el-input
+                      v-model="form.execution.multiLookup"
+                      size="mini"
+                    />
+                  </el-col>
+                </el-form-item>
+              </el-row>
+            </div>
+          </el-collapse-item>
+          <el-collapse-item
+            title="Advanced Settings"
+            name="4"
+          >
+            <div class="collapse-content">
+              <el-form-item prop="advancedTreeLooks">
+                <el-checkbox
+                  v-model="form.advanced.treeLooks"
+                  label="Items are arranged in a tree (like portfolios)"
+                />
+              </el-form-item>
+              <div style="padding-left: 20px; padding-top: 20px">
+                <el-row class="input-container">
+                  <el-col
+                    :span="3"
+                    style="min-width: 113px; font-weight: 500"
+                  >
+                    Discipline
+                  </el-col>
+                  <el-form-item prop="advancedDiscipline">
+                    <el-col :span="9">
+                      <el-select
+                        v-model="form.advanced.discipline"
+                        placeholder="Select"
+                        size="mini"
+                      >
+                        <el-option
+                          v-for="item in options"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        />
+                      </el-select>
+                    </el-col>
+                  </el-form-item>
+                </el-row>
+                <el-row>
+                  <el-col
+                    :span="3"
+                    style="min-width: 113px; font-weight: 500"
+                  >
+                    Note
+                  </el-col>
+                  <el-form-item prop="advancedNote">
+                    <el-col :span="12">
+                      <el-input
+                        v-model="form.advanced.note"
+                        type="textarea"
+                        :rows="2"
+                        placeholder="Please input"
+                        resize="none"
+                      />
+                    </el-col>
+                  </el-form-item>
                 </el-row>
                 <el-row class="input-container">
-                  <el-col :span="2" style="min-width: 113px; font-weight: 500">
+                  <el-col
+                    :span="3"
+                    style="min-width: 113px; font-weight: 500"
+                  >
                     System name
                   </el-col>
-                  <el-col :span="9" style="min-width: 430px">
-                    <el-input v-model="advanced.systemName" size="mini" />
-                    <div class="require-content">
-                      Cannot contain spaces. Capitalize first letters.
-                      Example:MyEntity
-                    </div>
-                  </el-col>
+                  <el-form-item prop="advancedSystemName">
+                    <el-col
+                      :span="9"
+                      style="min-width: 200px"
+                    >
+                      <el-input
+                        :value="`Cse_` + form.displayName"
+                        size="mini"
+                      />
+                      <div class="require-content">
+                        Cannot contain spaces. Capitalize first letters.
+                        Example:MyEntity
+                      </div>
+                    </el-col>
+                  </el-form-item>
                 </el-row>
                 <div style="padding-bottom: 20px; font-weight: 500">
                   Entity Class Name
                 </div>
-                <el-row class="input-container" type="flex">
-                  <el-col :span="2" style="min-width: 113px; font-weight: 500">
+                <el-row class="input-container">
+                  <el-col
+                    :span="3"
+                    style="min-width: 113px; font-weight: 500"
+                  >
                     SQL connection
                   </el-col>
-                  <el-col :span="9">
-                    <el-select
-                      v-model="advanced.sqlConnection"
-                      placeholder="Select"
-                      size="mini"
-                    >
-                      <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </el-col>
+                  <el-form-item prop="advancedSystemName">
+                    <el-col :span="9">
+                      <el-select
+                        v-model="form.advanced.sqlConnection"
+                        placeholder="Select"
+                        size="mini"
+                      >
+                        <el-option
+                          v-for="item in options"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        />
+                      </el-select>
+                    </el-col>
+                  </el-form-item>
                 </el-row>
-                <el-row class="input-container" type="flex">
-                  <el-col :span="2" style="min-width: 113px; font-weight: 500">
+                <el-row class="input-container">
+                  <el-col
+                    :span="3"
+                    style="min-width: 113px; font-weight: 500"
+                  >
                     Database table Name
                   </el-col>
-                  <el-col :span="9">
-                    <el-input v-model="advanced.tableName" size="mini" />
-                    <div class="require-content">
-                      Must begin with Cse. Cannot contain spaces. Example:
-                      CseMyEntity
-                    </div>
-                  </el-col>
+                  <el-form-item prop="advancedSystemName">
+                    <el-col :span="9">
+                      <el-input
+                        :value="`Cse` + form.displayName"
+                        size="mini"
+                      />
+                      <div class="require-content">
+                        Must begin with Cse. Cannot contain spaces. Example:
+                        CseMyEntity
+                      </div>
+                    </el-col>
+                  </el-form-item>
                 </el-row>
               </div>
             </div>
           </el-collapse-item>
-          <el-collapse-item title="Time and progress tracking" name="5">
+          <el-collapse-item
+            title="Time and progress tracking"
+            name="5"
+          >
             <div class="collapse-content">
               <el-row>
                 <el-col>
-                  <el-checkbox
-                    v-model="tracking"
-                    label="Include this entity in My work policies (cannot be unselected)"
-                  />
-                  <div style="padding-left: 24px" class="require-content">
+                  <el-form-item prop="tracking">
+                    <el-checkbox
+                      v-model="form.tracking"
+                      label="Include this entity in My work policies (cannot be unselected)"
+                    />
+                  </el-form-item>
+                  <div
+                    style="padding-left: 24px"
+                    class="require-content"
+                  >
                     If selected, users can track time spent on items and the
                     progress of the items via My Work
                   </div>
@@ -401,154 +649,253 @@
         </el-collapse>
       </el-col>
       <el-col>
-        <el-row
-          type="flex"
-          justify="center"
-          style="align-items: center; padding-bottom: 10px"
-        >
-          <el-button>Create</el-button>
-          <div style="padding: 0 20px">or</div>
-          <el-button type="text" style="text-decoration: underline">
-            cancel
-          </el-button>
-        </el-row>
+        <el-form-item>
+          <el-row
+            type="flex"
+            justify="center"
+            style="align-items: center; padding-bottom: 10px"
+          >
+            <el-button @click="createHandler('newEntityform')">
+              Create
+            </el-button>
+            <div style="padding: 0 20px">
+              or
+            </div>
+            <el-button
+              type="text"
+              style="text-decoration: underline"
+              @click="cancelHandler('newEntityform')"
+            >
+              cancel
+            </el-button>
+          </el-row>
+        </el-form-item>
       </el-col>
     </el-row>
     <select-icon-modal
+      v-if="modal.type === 'rootIcon' || modal.type === 'tree'"
       v-model="modal.show"
       :icon-url="modal.data"
-      :modalOkHandler="modalOkHandler"
-      v-if="modal.kind === 'rootIcon' || modal.kind === 'tree'"
+      :modal-ok-handler="modalOkHandler"
     />
     <relationship-modal
+      v-if="modal.type === 'relationship'"
       v-model="modal.show"
       :data="modal.data"
-      :modalOkHandler="modalOkHandler"
-      v-if="modal.kind === 'relationship'"
+      :modal-ok-handler="modalOkHandler"
     />
-  </el-container>
+  </el-form>
 </template>
 <script lang='ts'>
-import { Component, Vue } from "vue-property-decorator";
-import SelectIconModal from "../components/selectIconModal.vue";
-import relationshipModal from "../components/relationshipModal.vue";
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import SelectIconModal from '../components/selectIconModal.vue'
+import relationshipModal from '../components/relationshipModal.vue'
+import { AppCacheModule } from '@/store/modules/appCache.ts'
+import { Entity } from '@/models/Entity.ts'
 
 @Component({
-  name: "NewEntity",
-  components: { SelectIconModal, relationshipModal },
+  name: 'NewEntity',
+  components: { SelectIconModal, relationshipModal }
 })
 export default class extends Vue {
   // @Prop({ required: true }) private setLoading: any;
-  private entityName = "";
-  private description = "";
-  private activeCollapseName = "";
-  private showModal = false;
+  private form = {
+    displayName: '',
+    description: '',
+    lang: {},
+    usages: {
+      creationPolicyType: -1,
+      checkList: []
+    },
+    admin: {
+      managementPolicy: 0,
+      uniqueName: '',
+      customUrl: '',
+      rootIconUrl:
+        'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+      treeIconUrl:
+        './MSP/resources/images/flex/authorization-tree-document-16x16.png',
+      entityRelationship: [
+        { entityId: 'js admin prop', relationshipPropertyName: 'Option 1' },
+        { entityId: 'js admin prop--1', relationshipPropertyName: 'Option 2' }
+      ]
+    },
+    execution: {
+      enabled: false,
+      table: '',
+      tableData: '',
+      tableStatus: '',
+      tableDescription: '',
+      tableOwner: '',
+      activityOwner: '',
+      multiLookup: ''
+    },
+    advanced: {
+      treeLooks: false,
+      discipline: '',
+      note: '',
+      systemName: '',
+      sqlConnection: '',
+      tableName: ''
+    },
+    tracking: false
+  };
+
   private modal = {
     show: false,
     data: null,
-    kind: "",
+    type: ''
   };
 
-  private hebrew = {
-    name: "",
-    discription: "",
+  private rules = {
+    displayName: [
+      {
+        required: true,
+        message: 'Please input Entity name',
+        trigger: 'blur'
+      }
+    ]
   };
 
-  private usages = {
-    createMethod: "dialog",
-    checkList: [],
-  };
-
-  private admin = {
-    manageMethod: "list",
-    customUrl: "",
-    selectUniqueName: "",
-    rootIconUrl:
-      "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
-    treeIconUrl:
-      "./MSP/resources/images/flex/authorization-tree-document-16x16.png",
-    relationship: [
-      { entity: "js admin prop", property: "Option 1" },
-      { entity: "js admin prop--1", property: "Option 2" },
-    ],
-  };
-
-  private execution = {
-    enabled: false,
-    table: "",
-    tableData: "",
-    tableStatus: "",
-    tableDiscription: "",
-    tableOwner: "",
-    activityOwner: "",
-    multiLookup: "",
-  };
-
-  private advanced = {
-    checkTreeLooks: false,
-    discipline: "",
-    note: "",
-    systemName: "",
-    sqlConnection: "",
-    tableName: "",
-  };
-
-  private tracking = false;
   private options = [
     {
-      value: "Option1",
-      label: "Option1",
+      value: 'Option1',
+      label: 'Option1'
     },
     {
-      value: "Option2",
-      label: "Option2",
+      value: 'Option2',
+      label: 'Option2'
     },
     {
-      value: "Option3",
-      label: "Option3",
+      value: 'Option3',
+      label: 'Option3'
     },
     {
-      value: "Option4",
-      label: "Option4",
+      value: 'Option4',
+      label: 'Option4'
     },
     {
-      value: "Option5",
-      label: "Option5",
-    },
+      value: 'Option5',
+      label: 'Option5'
+    }
   ];
 
-  handleChange(val: string) {
-    console.log(val);
+  get languages() {
+    if (AppCacheModule.FlexSettings.languages) {
+      return AppCacheModule.FlexSettings.languages.filter((l) => {
+        return l.value !== AppCacheModule.FlexSettings.currentLocale
+      })
+    } else return []
   }
 
-  handleCheckedCitiesChange(value: string) {
-    console.log(value);
+  @Watch('languages')
+  private setLangs(langAry: any) {
+    const currentLangs = Object.keys(this.form.lang)
+    const newLangs = langAry.filter((lang: any) => {
+      return currentLangs.indexOf(lang.key) < 0
+    })
+    if (newLangs.length) {
+      newLangs.map((l: any) => {
+        this.form.lang = {
+          ...this.form.lang,
+          [l.key]: {
+            displayName: '',
+            description: '',
+            language: l.key
+          }
+        }
+        this.rules = {
+          ...this.rules,
+          [`lang.${l.key}.displayName`]: [
+            {
+              required: true,
+              message: `Please input ${l.key} name`,
+              trigger: 'blur'
+            }
+          ]
+        }
+      })
+    }
   }
 
-  popupModal(kind: string) {
-    this.modal.show = true;
-    this.modal.kind = kind;
-    if (kind === "rootIcon") {
-      this.modal.data = this.admin.rootIconUrl;
-    } else if (kind === "relationship") {
-      this.modal.data = this.admin.relationship;
-    } else if (kind === "tree") {
-      this.modal.data = this.admin.treeIconUrl;
+  popupModal(type: string) {
+    this.modal.show = true
+    this.modal.type = type
+    if (type === 'rootIcon') {
+      this.modal.data = this.form.admin.rootIconUrl
+    } else if (type === 'relationship') {
+      this.modal.data = this.form.admin.entityRelationship
+    } else if (type === 'tree') {
+      this.modal.data = this.form.admin.treeIconUrl
     }
   }
 
   modalOkHandler(val: any) {
-    if (this.modal.kind === "rootIcon") {
-      this.admin.rootIconUrl = val;
-    } else if (this.modal.kind === "relationship") {
-      this.admin.relationship = [...val];
-    } else if (this.modal.kind === "tree") {
-      this.admin.treeIconUrl = val;
+    if (this.modal.type === 'rootIcon') {
+      this.form.admin.rootIconUrl = val
+    } else if (this.modal.type === 'relationship') {
+      this.form.admin.entityRelationship = [...val]
+    } else if (this.modal.type === 'tree') {
+      this.form.admin.treeIconUrl = val
     }
   }
 
-  mounted() {
-    console.log("Here is NewEntity!");
+  createHandler(formName: string) {
+    // console.log(newEntity)
+    debugger
+    this.$refs[formName].validate((valid: boolean) => {
+      if (valid) {
+        const newEntity = new Entity()
+        newEntity.displayName = this.form.displayName
+        newEntity.systemName = 'Cse_' + newEntity.displayName
+        if (Object.values(this.form.lang).length > 0) { newEntity.languageTranslations = Object.values(this.form.lang) }
+
+        if (this.form.usages.creationPolicyType) {
+          newEntity.creationPolicyType = this.form.usages.creationPolicyType
+        }
+        this.form.usages.checkList.map((type: string) => {
+          newEntity[type] = true
+        })
+
+        const { admin, ...rest } = this.form
+        if (admin.managementPolicy !== 0) {
+          newEntity.managementPolicy = admin.managementPolicy
+          if (admin.managementPolicy === 1) {
+            newEntity.supportTree = true
+            newEntity.entityRelationship = admin.entityRelationship.map(
+              (relation: any) => {
+                return {
+                  children: [],
+                  entityId:
+                    'com.msp.dao.entities.cse.custom.Cse_' + relation.entityId,
+                  relationshipPropertyName: relation.relationshipPropertyName,
+                  parent: ''
+                }
+              }
+            )
+            newEntity.icon = admin.rootIconUrl
+          } else if (admin.managementPolicy === 2) {
+            newEntity.supportTree = true
+            newEntity.icon = admin.treeIconUrl
+          } else if (admin.managementPolicy === 3) {
+            newEntity.managementGenericURL = admin.customUrl
+          }
+        }
+        newEntity.createEntityHandler(newEntity)
+      } else {
+        console.log('error submit!!')
+        return false
+      }
+    })
+  }
+
+  cancelHandler(formName: string) {
+    this.$refs[formName].resetFields()
+  }
+
+  created() {
+    this.setLangs(this.languages)
+    console.log('created')
   }
 }
 </script>
@@ -557,13 +904,15 @@ export default class extends Vue {
 .container {
   margin: 0;
   color: #303133;
+  display: flex;
+  height: 100%;
   .description {
     width: 276px;
     input {
       border: none;
     }
   }
-  .hebrew-title {
+  .lang-title {
     font-weight: 500;
     font-size: 15px;
     padding-left: 5px;
@@ -615,6 +964,11 @@ export default class extends Vue {
 .el-checkbox__inner:hover,
 .el-checkbox__input.is-focus .el-checkbox__inner {
   border-color: inherit;
+}
+.el-form-item {
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
 }
 .el-collapse {
   border: none;

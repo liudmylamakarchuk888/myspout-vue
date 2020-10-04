@@ -161,6 +161,10 @@
 		{
 			"key": "Hebrew",
 			"value": "he"
+		},
+		{
+			"key": "Polish",
+			"value": "pl"
 		}
 	],
 	"logo": "/MSP/resources/images/karambit/msp_logo_gray.png",

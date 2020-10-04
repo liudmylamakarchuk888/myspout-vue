@@ -2,78 +2,56 @@
   <el-card class="box-card">
     <el-row>
       <el-col>
-        <el-form
-          :inline="true"
-          style="float:right"
-        >
-          <el-form-item>
-            <el-input
-              v-model="search.text"
-              placeholder="Find prefrence"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-select
-              v-model="search.type"
-              placeholder="find by Property type"
-              @change="onSearchTypeChanged"
-            >
-              <el-option
-                v-for="item in propertyDataTypes"
-                :key="item.key"
-                :label="item.key"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button
-              variant="outline-primary"
-              title="create New Form"
-              icon="el-icon-plus"
-              @click="showNewForm = true"
-            />
-            <NewPrefrences :open-dialog="showNewForm" />
-            <el-button
-              :disabled="!selectedRow"
-              icon="el-icon-document-copy"
-              title="Copy selected Form"
-              variant="outline-primary"
-            />
-            <el-button
-              :disabled="!selectedRow"
-              variant="outline-primary"
-              icon="el-icon-view"
-              title="open selected form"
-              @click="onOpenClick"
-            />
-            <el-button
-              variant="outline-danger"
-              title="Delete"
-              icon="el-icon-delete"
-              :disabled="!selectedRow"
-            />
-          </el-form-item>
-        </el-form>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col>
-        <vue-good-table
+        <miniTable
           :columns="fields"
-          :line-numbers="true"
-          :fixed-header="true"
-          max-height="300px"
-          :select-options="{enabled: true, selectAllByGroup: false}"
-          style-class="vgt-table striped bordered condensed"
-          :rows="tableData"
-          :group-options="{
-            enabled: true,
-            rowKey: 'uuid',
-            collapsable: false
-          }"
-          :search-options="{enabled: true, externalQuery: search.text}"
-        />
+          :items="appPrefrences"
+          :type-options="propertyDataTypes"
+          :search-type-key="'dataType'"
+          :search-on-field="'displayName'"
+        >
+          <el-form
+            slot="commands"
+            :inline="true"
+            style="float:right"
+          >
+            <el-form-item>
+              <el-button
+                variant="outline-primary"
+                title="create New Form"
+                icon="el-icon-plus"
+                @click="showNewForm = !showNewForm"
+              />
+              <el-dialog
+                :ref="dialog"
+                :before-close="beforeNewFormClose"
+                :visible.sync="showNewForm"
+                title="Application Prefrence"
+              >
+                <NewPrefrences :ref="dialog" />
+              </el-dialog>
+
+              <el-button
+                :disabled="!selectedRow"
+                icon="el-icon-document-copy"
+                title="Copy selected Form"
+                variant="outline-primary"
+              />
+              <el-button
+                :disabled="!selectedRow"
+                variant="outline-primary"
+                icon="el-icon-view"
+                title="open selected form"
+                @click="onOpenClick"
+              />
+              <el-button
+                variant="outline-danger"
+                title="Delete"
+                icon="el-icon-delete"
+                :disabled="!selectedRow"
+              />
+            </el-form-item>
+          </el-form>
+        </miniTable>
       </el-col>
     </el-row>
   </el-card>
@@ -81,15 +59,14 @@
 <script lang="ts">
 // import { RSA_PKCS1_PADDING } from "constants"
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import 'vue-good-table/dist/vue-good-table.css'
-import { VueGoodTable } from 'vue-good-table'
 import NewPrefrences from './components/NewPrefrences.vue'
 import { AppPrefrencesModule } from '@/store/modules/AppPrefrencesMod'
 import { FlexPrefrencesModule } from '@/store/modules/AppFlexPrefrencesMod'
 import { AppCacheModule } from '@/store/modules/appCache'
+import miniTable from '@/components/Tables/miniTable.vue'
 @Component({
   name: 'Perfrences',
-  components: { VueGoodTable, NewPrefrences }
+  components: { NewPrefrences, miniTable }
 })
 export default class extends Vue {
    search={
@@ -97,35 +74,37 @@ export default class extends Vue {
      type: null
    }
 
+  dialog={} as any
    searchby ='';
   selectedRow=null;
   showNewForm=false;
   selectedPropertyType=null;
-
+  selectedPrefrence={}
    tableData =[]
      fields= [
        {
          field: 'category',
          label: 'category',
-         sortable: false
+         sortable: false,
+         width: '150px'
 
        },
        {
          field: 'displayName',
          label: 'Name',
-         sortable: true
-
+         sortable: true,
+         width: '200px'
        },
        {
          field: 'value',
          label: 'Value',
-         sortable: true
-
+         sortable: true,
+         width: '200px'
        },
        {
          field: 'description',
-         label: 'description'
-
+         label: 'description',
+         width: '300px'
        }
      ]
 
@@ -149,12 +128,23 @@ export default class extends Vue {
       return types
     }
 
+    prefrences=[] as any;
+
     mounted() {
+      this.prefrences = AppCacheModule.Prefrences as any[]
       this.getGroupedData()
     }
 
     onOpenClick() {
       alert('open clicked')
+    }
+
+    beforeNewFormClose() {
+      this.$confirm('Are you sure to close this dialog?')
+        .then((_) => {
+          this.showNewForm = false
+        })
+        .catch((_) => {})
     }
 
     onSearchTypeChanged(data) {

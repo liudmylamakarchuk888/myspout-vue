@@ -13,6 +13,7 @@ import { FlexPrefrencesModule } from './modules/AppFlexPrefrencesMod'
 import { ApplicationPreference } from '@/models/ApplicationPreference';
 import { FlexApplicationPreferences } from '@/models/FlexApplicationPreferences';
 import { IAppCache } from './modules/appCache'
+import { IFormsData} from './modules/FormsStore'
 Vue.use(Vuex)
 
 
@@ -27,7 +28,8 @@ export interface IRootState {
   // errorLog: IErrorLogState
   // permission: IPermissionState
   // settings: ISettingsState
-  appCache: IAppCache
+  appCache: IAppCache,
+  formsMod:IFormsData
 }
 
 

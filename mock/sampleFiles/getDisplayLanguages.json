@@ -1,0 +1,25 @@
+{
+	"displayLanguages": [
+		{
+			"id": 1,
+			"name": "English",
+			"active": true,
+			"defaultLanguage": true,
+			"disabled": true
+		},
+		{
+			"id": 2,
+			"name": "Hebrew",
+			"active": true,
+			"defaultLanguage": false,
+			"disabled": false
+		},
+		{
+			"id": 3,
+			"name": "POLISH",
+			"active": false,
+			"defaultLanguage": false,
+			"disabled": false
+		}
+	]
+}
