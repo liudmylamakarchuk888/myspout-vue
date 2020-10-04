@@ -9,7 +9,7 @@
           <span class="item-content">
            <img
               v-if="iconUrl(item.dataType.value)"
-              :src="require('@/assets/' + iconUrl(item.dataType.value))"
+              :src="'/img/'+iconUrl(item.dataType.value)"
             >
             <i
               v-else

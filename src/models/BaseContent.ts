@@ -12,7 +12,6 @@ export interface IBaseContent {
     systemName: string;
     selected: Boolean;
     hideProperty: Boolean;
-    clientId: String;
 
 }
 
@@ -23,30 +22,27 @@ export class BaseContent implements IBaseContent {
     languageTranslations: LanguageTranslation[] = [];
     notes: string   ='';
     selected: Boolean =false;
-    hideProperty: Boolean =true;
-    clientId: String;
-    private _systemName!: string;
-    private _displayName!: string;
+    hideProperty: Boolean =true; 
+    systemName!: string;
+    displayName!: string;
 
 
-    get displayName(): string {
-        return this._displayName
-    }
-    set displayName(val) {
-        this._displayName = val;
-        if (!this.systemName) {
-            this._systemName = "cse_" + val.toString().toLowerCase().replaceAll(' ', '')
-        }
-    }
-    get systemName(): string {
-        return this._systemName
-    }
-    set systemName(val) {
-        this._systemName = val;
-    }
+    // get GetdisplayName(): string {
+    //     return this._displayName
+    // }
+    // set SetdisplayName(val) {
+    //     this._displayName = val;
+    //     if (!this.systemName) {
+    //         this._systemName = "cse_" + val.toString().toLowerCase().replaceAll(' ', '')
+    //     }
+    // }
+    // get GetsystemName(): string {
+    //     return this.systemName
+    // }
+    // set SetsystemName(val) {
+    //     this.systemName = val;
+    // }
 
     constructor() {
-
-        this.clientId = newGuid()
     }
 }

@@ -10,6 +10,9 @@ import { UserModule } from '@/store/modules/user';
 import { Notification } from './Notification';
 import { newGuid } from './Utils';
 import { AppCacheModule } from '@/store/modules/appCache.ts'
+import { PropertyFactory } from './Utils/PropertyFactory';
+import { ManagementPolicyType } from './CreationPolicyType';
+import { BaseProperty } from './Properties';
 
 // public interface IBaseCreatableContent extends IBaseContent {
 
@@ -127,7 +130,7 @@ export class Entity extends BaseContent {
 
     constructor() {
         super();
-        this.clientID = CreateUUID()
+        this.clientId = CreateUUID()
         this.newInstance = true;
         this.createNotification = {} as any
         this.defaultColumns = this.getDefaultColumns()
@@ -135,8 +138,8 @@ export class Entity extends BaseContent {
         this.modifiedBy = UserModule.name
         this.dateCreated = new Number(new Date())
         this.dateModified = new Number(new Date())
-    }
-    clientID: string = CreateUUID();
+    }    
+    clientId!:string
     newInstance: boolean = false; 
 
     createNotification: Notification;
@@ -146,12 +149,12 @@ export class Entity extends BaseContent {
     defaultColumns: KeyValue[] = [];
     deleteNotification: Notification = {} as Notification;
     discipline: KeyValue = {} as KeyValue;
-    entityRelationship: EntityRelationship[] = [] as any 
+    entityRelationship: EntityRelationship = {} as any  
     lookupDefaultNameFormat: TextAssembly = {} as any;
     modifiedBy: string = UserModule.name;
     modifyNotification: Notification = {} as any;
     reportFilter: Restriction = {} as any;
-    properties: BaseProperty[] = [] as any;
+    properties: BaseProperty[] = [] ;
     sql: string = '';
     sqlConnection: KeyValue = {} as any;
     status: Status[] = [];

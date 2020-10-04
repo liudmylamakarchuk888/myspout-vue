@@ -104,15 +104,25 @@ class AppCacheMod extends VuexModule implements IAppCache {
     public async getFormsCache() {
         const rs = await FormsModule.getForms();
     }
+
+
     @Action
     public async getCache() {
-
+        let indicator = Loading.service({
+            lock: true,
+            text: 'Loading Application Cache...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+        })
         await this.getFlexSettings();
         await this.getPrefrences();
         await this.getEntities()
         await this.getFormsCache();
         await this.getRecentItems();
         await this.getAuthorizableEntities();
+
+        indicator.close()
+
 
     }
 
@@ -131,7 +141,7 @@ class AppCacheMod extends VuexModule implements IAppCache {
 
     @Action
     public async getEntityByQueryString(entityId: string, queryString: string, pageSize: number) {
-      
+
         const rs = await getEntityDataByQueryString(entityId);
         return rs;
     }

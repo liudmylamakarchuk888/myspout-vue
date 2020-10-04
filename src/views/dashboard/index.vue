@@ -57,7 +57,7 @@ export default class extends Vue {
     return true
   }
 
-  getImage(itemType) {
+  getImage(itemType: any) {
     return `/img/objTyp/${itemType}.png`
   }
 }
